@@ -2334,7 +2334,7 @@ TeleportLocations.RandomSpots = {
     ["🌋 CRATER"] = CFrame.new(990.45, 21.06, 5059.85),
     ["🌴 TROPICAL"] = CFrame.new(-2128.23, 58.52, 3595.68),
     ["🗿 STONE"] = CFrame.new(-2636.19, 124.87, -27.49),
-    ["⚙️ MACHINE"] = CFrame.new(-1465.64, 3.49, 1895.21)
+    ["⚙️ MACHINE"] = CFrame.new(-1480.98, 3.49, 1923.66)
 }
 
 -- Player Teleportation Function (improved like main16.lua)
