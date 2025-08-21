@@ -225,7 +225,7 @@ local success, error = pcall(function()
     print("XSAN: Attempting to load UI...")
     
     -- Try ui_fixed.lua first (more stable)
-    local uiContent = game:HttpGet("https://raw.githubusercontent.com/MELLISAEFFENDY/UPDATEOLD/refs/heads/main/versi3/ui_fixed.lua", true)
+    local uiContent = game:HttpGet("https://raw.githubusercontent.com/donitono/full/refs/heads/main/ui_fixed.lua", true)
     if uiContent and #uiContent > 0 then
         print("XSAN: Loading stable UI library...")
         print("XSAN: UI content length:", #uiContent)
@@ -372,20 +372,20 @@ task.spawn(function()
                     if descendant:IsA("TextLabel") or descendant:IsA("TextButton") then
                         -- Smart text scaling based on device
                         if isMobile then
-                            -- Mobile: Smaller, more readable text
-                            descendant.TextScaled = true
-                            descendant.TextSize = math.max(12, math.min(descendant.TextSize, 14))
+                            -- Mobile: Much smaller, more readable text
+                            descendant.TextScaled = false  -- Use fixed size for consistency
+                            descendant.TextSize = 9        -- Much smaller than before (was 11-14)
                             
                             -- Adjust based on screen size
                             if screenSize.X < 500 then -- Small mobile screens
-                                descendant.TextSize = 11
+                                descendant.TextSize = 8
                             elseif screenSize.X > 800 then -- Tablets
-                                descendant.TextSize = 13
+                                descendant.TextSize = 10
                             end
                         else
-                            -- Desktop: Keep original or slightly smaller
-                            descendant.TextScaled = true
-                            descendant.TextSize = math.max(13, math.min(descendant.TextSize, 15))
+                            -- Desktop: Smaller than before but readable
+                            descendant.TextScaled = false  -- Use fixed size
+                            descendant.TextSize = 10       -- Smaller than before (was 13-15)
                         end
                         
                         -- Ensure text wraps properly
