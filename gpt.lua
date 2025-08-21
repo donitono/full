@@ -46,6 +46,30 @@ local events = {"Shark Hunt","Ghost Hunt","Worm Hunt","Treasure Hunt","Boss Batt
 
 -- ═══════════════════════════════════════════════════════════════
 -- EXPLOIT FUNCTIONS
+-- Auto Change Setting Exploit
+function XSAN.autoChangeSetting()
+    print("⚙️ Auto Change Setting ACTIVATED")
+    local remotes = ReplicatedStorage:FindFirstChild("RemoteEvents")
+    if remotes and remotes:FindFirstChild("ChangeSetting") then
+        local settings = {
+            {key = "XPBoost", value = true},
+            {key = "CoinMultiplier", value = 999},
+            {key = "FishingLuck", value = 1000},
+            {key = "ShinyChance", value = 100},
+            {key = "MutationChance", value = 100},
+        }
+        for _, s in ipairs(settings) do
+            pcall(function()
+                remotes.ChangeSetting:FireServer(s.key, s.value)
+                print("⚙️ Setting changed: " .. s.key .. " = " .. tostring(s.value))
+            end)
+            wait(0.5)
+        end
+        print("⚙️ All settings attempted!")
+    else
+        warn("⚠️ RemoteEvent ChangeSetting not found!")
+    end
+end
 -- Auto XP/Coins Boost Exploit
 function XSAN.autoXPCoinsBoost()
     print("⚡ Auto XP/Coins Boost ACTIVATED")
@@ -315,6 +339,43 @@ main.Position = UDim2.new(0.5,-250,0.5,-150)
 main.Size = UDim2.new(0,500,0,300)
 main.Parent = ui
 
+main.Visible = true
+
+-- Floating button untuk buka/tutup UI
+local floatBtn = Instance.new("ImageButton")
+floatBtn.Size = UDim2.new(0,40,0,40)
+floatBtn.Position = UDim2.new(1,-50,1,-50)
+floatBtn.AnchorPoint = Vector2.new(1,1)
+floatBtn.BackgroundColor3 = Color3.fromRGB(70,130,200)
+floatBtn.Image = "rbxassetid://3926305904" -- icon generic
+floatBtn.Parent = ui
+floatBtn.Visible = false
+
+-- Tombol minimize
+local minimizeBtn = Instance.new("TextButton")
+minimizeBtn.BackgroundColor3 = Color3.fromRGB(70,130,200)
+minimizeBtn.BorderSizePixel = 0
+minimizeBtn.Position = UDim2.new(1,-75,0,5)
+minimizeBtn.Size = UDim2.new(0,30,0,25)
+minimizeBtn.Font = Enum.Font.SourceSansBold
+minimizeBtn.Text = "_"
+minimizeBtn.TextColor3 = Color3.fromRGB(255,255,255)
+minimizeBtn.TextSize = 14
+minimizeBtn.Parent = main
+local minCorner = Instance.new("UICorner")
+minCorner.CornerRadius = UDim.new(0,6)
+minCorner.Parent = minimizeBtn
+
+minimizeBtn.MouseButton1Click:Connect(function()
+    main.Visible = false
+    floatBtn.Visible = true
+end)
+
+floatBtn.MouseButton1Click:Connect(function()
+    main.Visible = true
+    floatBtn.Visible = false
+end)
+
 local corner = Instance.new("UICorner")
 corner.CornerRadius = UDim.new(0,12)
 corner.Parent = main
@@ -515,6 +576,10 @@ local function createButton(name, callback)
 end
 
 -- Create UI elements
+createButton("⚙️ Auto Change Setting", function()
+    XSAN.autoChangeSetting()
+    notify("Change Setting", "Pengaturan game diubah otomatis!", Color3.fromRGB(200,200,200))
+end)
 createButton("⚡ Auto XP/Coins Boost", function()
     XSAN.autoXPCoinsBoost()
     notify("XP/Coins Boost", "Auto boost XP & Coins aktif!", Color3.fromRGB(200,200,50))
