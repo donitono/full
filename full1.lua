@@ -1973,7 +1973,7 @@ TeleportLocations.RandomSpots = {
     ["⚙️ MACHINE"] = CFrame.new(-1551.25, 2.87, 1920.26)
 }
 
--- Player Teleportation Function (improved like old.lua)
+-- Player Teleportation Function (improved like main16.lua)
 local function TeleportToPlayer(targetPlayerName)
     if not targetPlayerName or targetPlayerName == "" then
         NotifyError("Player TP", "❌ Nama player tidak boleh kosong!")
@@ -1984,15 +1984,13 @@ local function TeleportToPlayer(targetPlayerName)
     local normalizedName = targetPlayerName:gsub("^%s*(.-)%s*$", "%1") -- trim spaces
     
     local success = pcall(function()
-        local targetCharacter = nil
         local targetPlayer = nil
         
-        -- Method 1: Search in Players service first (most reliable)
+        -- Method 1: Search in Players service (like main16.lua approach)
         for _, player in pairs(game.Players:GetPlayers()) do
             if player.Name:lower() == normalizedName:lower() or 
                player.DisplayName:lower() == normalizedName:lower() then
                 targetPlayer = player
-                targetCharacter = player.Character
                 break
             end
         end
@@ -2003,50 +2001,32 @@ local function TeleportToPlayer(targetPlayerName)
                 if string.find(player.Name:lower(), normalizedName:lower()) or
                    string.find(player.DisplayName:lower(), normalizedName:lower()) then
                     targetPlayer = player
-                    targetCharacter = player.Character
                     NotifyInfo("Player Found", "🔍 Found partial match: " .. player.Name)
                     break
                 end
             end
         end
         
-        -- Method 3: Try workspace Characters folder as fallback
-        if not targetCharacter then
-            local charFolder = workspace:FindFirstChild("Characters")
-            if charFolder then
-                for _, char in pairs(charFolder:GetChildren()) do
-                    if char:IsA("Model") and 
-                       (char.Name:lower() == normalizedName:lower() or 
-                        string.find(char.Name:lower(), normalizedName:lower())) then
-                        targetCharacter = char
-                        break
-                    end
-                end
-            end
-        end
-        
         -- Validation
-        if not targetCharacter then
+        if not targetPlayer then
             NotifyError("Player TP", "❌ Player '" .. normalizedName .. "' tidak ditemukan!\n\n💡 Tips:\n• Pastikan nama player benar\n• Player harus online di server ini\n• Coba gunakan refresh player list")
             return
         end
         
-        local targetHRP = targetCharacter:FindFirstChild("HumanoidRootPart")
-        if not targetHRP then
-            NotifyError("Player TP", "❌ Character '" .. normalizedName .. "' tidak memiliki HumanoidRootPart!\n\n⚠️ Player mungkin sedang loading atau respawning")
-            return
+        -- Check if both players have valid characters (main16.lua method)
+        if targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") and 
+           LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            
+            -- Direct teleport using CFrame (main16.lua method - more reliable)
+            local targetCFrame = targetPlayer.Character.HumanoidRootPart.CFrame
+            local offsetCFrame = targetCFrame * CFrame.new(0, 0, -3) -- 3 studs behind target
+            
+            LocalPlayer.Character.HumanoidRootPart.CFrame = offsetCFrame
+            
+            NotifySuccess("Player TP", "✅ Berhasil teleport ke " .. targetPlayer.DisplayName .. " (@" .. targetPlayer.Name .. ")!")
+        else
+            NotifyError("Player TP", "❌ Tidak bisa teleport ke " .. normalizedName .. "\n\n⚠️ Character tidak ditemukan atau sedang loading")
         end
-        
-        -- Calculate safe teleport position (slightly offset to avoid overlap)
-        local offset = Vector3.new(
-            math.random(-3, 3),
-            2,
-            math.random(-3, 3)
-        )
-        local targetCFrame = targetHRP.CFrame + offset
-        
-        SafeTeleport(targetCFrame, "Player: " .. (targetPlayer and targetPlayer.Name or normalizedName))
-        NotifySuccess("Player TP", "✅ Berhasil teleport ke " .. (targetPlayer and targetPlayer.Name or normalizedName) .. "!")
         
     end)
     
