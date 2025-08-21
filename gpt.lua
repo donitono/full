@@ -322,8 +322,16 @@ content.AutomaticCanvasSize = Enum.AutomaticSize.Y
 content.Parent = main
 
 local layout = Instance.new("UIListLayout")
-layout.Padding = UDim.new(0,8)
+layout.Padding = UDim.new(0,12) -- padding lebih besar agar tidak saling menempel
+layout.SortOrder = Enum.SortOrder.LayoutOrder
 layout.Parent = content
+
+-- Tambahkan padding atas agar fitur tidak terlalu rapat ke title
+local topPad = Instance.new("Frame")
+topPad.Size = UDim2.new(1,0,0,8)
+topPad.BackgroundTransparency = 1
+topPad.LayoutOrder = 0
+topPad.Parent = content
 
 -- Notification function
 local function notify(title, text, color)
