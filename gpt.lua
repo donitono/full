@@ -46,6 +46,54 @@ local events = {"Shark Hunt","Ghost Hunt","Worm Hunt","Treasure Hunt","Boss Batt
 
 -- ═══════════════════════════════════════════════════════════════
 -- EXPLOIT FUNCTIONS
+-- Auto XP/Coins Boost Exploit
+function XSAN.autoXPCoinsBoost()
+    print("⚡ Auto XP/Coins Boost ACTIVATED")
+    spawn(function()
+        while true do
+            local eventsFolder = Workspace:FindFirstChild("Events")
+            if eventsFolder then
+                for _, obj in pairs(eventsFolder:GetChildren()) do
+                    if obj:IsA("Model") and (obj.Name == "Double Coins" or obj.Name == "XP Boost") and obj:FindFirstChild("Trigger") then
+                        local trigger = obj.Trigger
+                        if trigger.Position and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                            LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(trigger.Position + Vector3.new(0,5,0))
+                            wait(1)
+                            if trigger:FindFirstChild("ClickDetector") then fireclickdetector(trigger.ClickDetector) end
+                        end
+                    end
+                end
+            end
+            local remotes = ReplicatedStorage:FindFirstChild("RemoteEvents")
+            if remotes then
+                if remotes:FindFirstChild("Double Coins") then
+                    pcall(function() remotes["Double Coins"]:FireServer() end)
+                end
+                if remotes:FindFirstChild("XP Boost") then
+                    pcall(function() remotes["XP Boost"]:FireServer() end)
+                end
+            end
+            print("⚡ XP/Coins Boost triggered!")
+            wait(10)
+        end
+    end)
+end
+
+-- Auto Group Reward Claim Exploit
+function XSAN.autoGroupRewardClaim()
+    print("🎁 Auto Group Reward Claim ACTIVATED")
+    local remotes = ReplicatedStorage:FindFirstChild("RemoteEvents")
+    if remotes and remotes:FindFirstChild("VerifyGroupReward") then
+        for i = 1, 10 do
+            pcall(function() remotes.VerifyGroupReward:FireServer() end)
+            print("🎁 Group reward claim attempt " .. i)
+            wait(1)
+        end
+        print("🎁 Group reward claim finished!")
+    else
+        warn("⚠️ RemoteEvent VerifyGroupReward not found!")
+    end
+end
 -- ═══════════════════════════════════════════════════════════════
 
 function XSAN.toggleFishDetection()
@@ -467,6 +515,15 @@ local function createButton(name, callback)
 end
 
 -- Create UI elements
+createButton("⚡ Auto XP/Coins Boost", function()
+    XSAN.autoXPCoinsBoost()
+    notify("XP/Coins Boost", "Auto boost XP & Coins aktif!", Color3.fromRGB(200,200,50))
+end)
+
+createButton("🎁 Auto Group Reward Claim", function()
+    XSAN.autoGroupRewardClaim()
+    notify("Group Reward", "Klaim reward group otomatis!", Color3.fromRGB(50,200,200))
+end)
 createToggle("🐟 Fish Detection", "Real-time fish analysis", function(on)
     local result = XSAN.toggleFishDetection()
     if result then notify("Fish Detection", "Enhanced detection activated!", Color3.fromRGB(50,200,50))
