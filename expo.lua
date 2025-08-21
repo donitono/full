@@ -43,7 +43,8 @@ local exploitStates = {
     eventAutoTrigger = false,
     remotePurchaseExploit = false,
     autoEnchantingSystem = false,
-    statModifier = false
+    statModifier = false,
+    customRemoteFiring = false
 }
 
 -- Global data storage initialization
@@ -519,6 +520,37 @@ function SystemExploits.ToggleStatModifier()
 end
 
 -- ═══════════════════════════════════════════════════════════════
+-- 7. CUSTOM REMOTE FIRING EXPLOIT
+-- ═══════════════════════════════════════════════════════════════
+
+function SystemExploits.ToggleCustomRemoteFiring()
+    if not exploitStates.customRemoteFiring then
+        exploitStates.customRemoteFiring = true
+        print("🧙‍♂️ XSAN: Custom Remote Firing ACTIVATED")
+        spawn(function()
+            while exploitStates.customRemoteFiring do
+                wait(8)
+                pcall(function()
+                    local remoteEvents = ReplicatedStorage:FindFirstChild("RemoteEvents")
+                    if remoteEvents then
+                        for _, remote in ipairs(remoteEvents:GetChildren()) do
+                            if remote:IsA("RemoteEvent") and remote.Name ~= "Purchase" and remote.Name ~= "BuyGamepass" then
+                                remote:FireServer({custom = true, time = os.time(), user = LocalPlayer.Name})
+                                print("🧙‍♂️ Fired custom data to RemoteEvent:", remote.Name)
+                            end
+                        end
+                    end
+                end)
+            end
+        end)
+    else
+        exploitStates.customRemoteFiring = false
+        print("🧙‍♂️ XSAN: Custom Remote Firing DEACTIVATED")
+    end
+    return exploitStates.customRemoteFiring
+end
+
+-- ═══════════════════════════════════════════════════════════════
 -- UTILITY FUNCTIONS
 -- ═══════════════════════════════════════════════════════════════
 
@@ -579,6 +611,12 @@ function SystemExploits.GetExploitInfo()
    • Modifies player stats: Speed, Jump, Luck
    • Real-time stat adjustment
    • Works with RemoteEvents and Humanoid properties
+   • Toggle activation for safety
+
+7. 🧙‍♂️ Custom Remote Firing
+   • Sends custom data to all RemoteEvents
+   • Useful for testing and debugging exploits
+   • Can simulate various data payloads
    • Toggle activation for safety
 
 ⚠️ DISCLAIMER: These are advanced exploitation features.
@@ -1048,6 +1086,15 @@ CreateToggle("🧬 Stat Modifier", "Modify Speed, Jump, Luck secara otomatis (st
         ShowNotification("Stat Modifier", "🧬 Stat Modifier ACTIVATED!\n\n✅ Speed, Jump, Luck modified\n✅ RemoteEvent + Humanoid fallback\n✅ Check console for details", Color3.fromRGB(50, 200, 200))
     else
         ShowNotification("Stat Modifier", "🧬 Stat Modifier DEACTIVATED\n\nStats reset to default", Color3.fromRGB(200, 150, 50))
+    end
+end)
+
+CreateToggle("🧙‍♂️ Custom Remote Firing", "Kirim data custom ke semua RemoteEvent (testing exploit)", function(enabled)
+    local result = SystemExploits.ToggleCustomRemoteFiring()
+    if result then
+        ShowNotification("Custom Remote Firing", "🧙‍♂️ Custom Remote Firing ACTIVATED!\n\n✅ Data custom dikirim ke semua RemoteEvent\n✅ Cek console untuk log", Color3.fromRGB(200, 100, 255))
+    else
+        ShowNotification("Custom Remote Firing", "🧙‍♂️ Custom Remote Firing DEACTIVATED", Color3.fromRGB(200, 150, 50))
     end
 end)
 
