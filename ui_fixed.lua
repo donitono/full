@@ -535,7 +535,7 @@
         ContentContainer.Name = "ContentContainer"
         ContentContainer.BackgroundTransparency = 1
         ContentContainer.Position = UDim2.new(0, 120, 0, 22)  -- Adjusted for smaller tab width (120) and topbar (22)
-        ContentContainer.Size = UDim2.new(1, -120, 1, -22)    -- More space untuk content area
+        ContentContainer.Size = UDim2.new(1, -125, 1, -22)   -- Increased space by reducing offset from -120 to -125
         ContentContainer.Parent = Main
 
         -- Create Content with scrolling
@@ -557,12 +557,12 @@
         ContentLayout.Padding = UDim.new(0, 1)  -- Further reduced from 2 to 1 for maximum compactness
         ContentLayout.Parent = Content
 
-        -- Add UIPadding to Content - MINIMAL PADDING
+        -- Add UIPadding to Content - IMPROVED PADDING FOR RIGHT SIDE
         local ContentPadding = Instance.new("UIPadding")
         ContentPadding.PaddingTop = UDim.new(0, 2)     -- Further reduced from 4 to 2
         ContentPadding.PaddingBottom = UDim.new(0, 2)  -- Further reduced from 4 to 2
         ContentPadding.PaddingLeft = UDim.new(0, 8)    -- Increased from 4 to 8 to fix margin kiri terpotong
-        ContentPadding.PaddingRight = UDim.new(0, 2)   -- Further reduced from 4 to 2
+        ContentPadding.PaddingRight = UDim.new(0, 18)  -- Increased from 12 to 18 to account for scrollbar (5px) + safe margin
         ContentPadding.Parent = Content
 
         -- Mobile landscape scroll optimization
@@ -749,7 +749,7 @@
             TabContentPadding.PaddingTop = UDim.new(0, 1)     -- Reduced from 2 to 1
             TabContentPadding.PaddingBottom = UDim.new(0, 1)  -- Reduced from 2 to 1
             TabContentPadding.PaddingLeft = UDim.new(0, 6)    -- Increased from 2 to 6 to prevent left margin cut-off
-            TabContentPadding.PaddingRight = UDim.new(0, 2)   -- Keep 2 for right spacing
+            TabContentPadding.PaddingRight = UDim.new(0, 18)  -- Increased from 2 to 18 to fix right side cut-off
             TabContentPadding.Parent = TabContent
             
             -- Mobile touch scrolling for tab content
