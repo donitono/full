@@ -225,54 +225,86 @@ local success, error = pcall(function()
     print("XSAN: Attempting to load UI...")
     
     -- Try ui_fixed.lua first (more stable)
-    local uiContent = game:HttpGet("https://raw.githubusercontent.com/donitono/full/refs/heads/main/ui_fixed.lua", true)
-    if uiContent and #uiContent > 0 then
+    local success, uiContent = pcall(function()
+        return game:HttpGet("https://raw.githubusercontent.com/donitono/full/refs/heads/main/ui_fixed.lua", true)
+    end)
+    
+    if success and uiContent and #uiContent > 0 then
         print("XSAN: Loading stable UI library...")
         print("XSAN: UI content length:", #uiContent)
         local uiFunc, loadError = loadstring(uiContent)
         if uiFunc then
-            Rayfield = uiFunc()
-            if not Rayfield then
-                error("UI function returned nil")
+            local uiResult = uiFunc()
+            if uiResult and type(uiResult) == "table" then
+                Rayfield = uiResult
+                print("XSAN: Stable UI loaded successfully!")
+            else
+                error("UI function returned invalid result: " .. type(uiResult))
             end
-            print("XSAN: Stable UI loaded successfully!")
         else
             error("Failed to compile UI: " .. tostring(loadError))
         end
     else
         print("XSAN: Trying fallback UI library...")
         -- Fallback to Rayfield directly
-        Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield", true))()
-        if not Rayfield then
-            error("Failed to load fallback UI")
+        local fallbackSuccess, fallbackResult = pcall(function()
+            return loadstring(game:HttpGet("https://sirius.menu/rayfield", true))()
+        end)
+        
+        if fallbackSuccess and fallbackResult then
+            Rayfield = fallbackResult
+            print("XSAN: Fallback UI loaded successfully!")
+        else
+            error("Failed to load fallback UI: " .. tostring(fallbackResult))
         end
-        print("XSAN: Fallback UI loaded successfully!")
     end
 end)
 
 if not success then
     warn("XSAN Error: Failed to load Rayfield UI Library - " .. tostring(error))
-    -- Try alternative loading method
-    NotifyError("UI Error", "Primary UI failed. Attempting alternative method...")
     
-    local backupSuccess = pcall(function()
-        Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield", true))()
+    -- Final emergency fallback
+    print("XSAN: Attempting emergency UI fallback...")
+    local emergencySuccess = pcall(function()
+        -- Try a completely different approach
+        local rayfield = game:HttpGet("https://raw.githubusercontent.com/shlexware/Rayfield/main/source")
+        if rayfield and #rayfield > 0 then
+            local func = loadstring(rayfield)
+            if func then
+                Rayfield = func()
+            end
+        end
     end)
     
-    if not backupSuccess or not Rayfield then
-        NotifyError("CRITICAL ERROR", "All UI loading methods failed! Script cannot continue.")
+    if not emergencySuccess or not Rayfield then
+        -- Show error notification if notification system works
+        pcall(function()
+            NotifyError("CRITICAL ERROR", "All UI loading methods failed! Script cannot continue.")
+        end)
+        warn("XSAN CRITICAL ERROR: Cannot load any UI library. Script stopped.")
         return
     else
-        NotifySuccess("UI Recovery", "Backup UI loaded successfully!")
+        print("XSAN: Emergency UI fallback successful!")
     end
 end
 
+-- Final validation check
 if not Rayfield then
-    warn("XSAN Error: Rayfield is nil after loading")
+    warn("XSAN CRITICAL ERROR: Rayfield is nil after all loading attempts")
     return
 end
 
-print("XSAN: UI Library loaded successfully!")
+if type(Rayfield) ~= "table" then
+    warn("XSAN CRITICAL ERROR: Rayfield is not a table, got: " .. type(Rayfield))
+    return
+end
+
+if not Rayfield.CreateWindow then
+    warn("XSAN CRITICAL ERROR: Rayfield.CreateWindow function not found")
+    return
+end
+
+print("XSAN: UI Library loaded and validated successfully!")
 
 -- Mobile/Android detection and UI scaling
 local UserInputService = game:GetService("UserInputService")
@@ -889,6 +921,8 @@ do
     })
 end
 
+print("XSAN: WEATHER tab completed successfully!")
+
 -- Debug tab creation
 task.spawn(function()
     task.wait(3)
@@ -1476,11 +1510,20 @@ local noClipEnabled = false
 local spinnerEnabled = false
 local antiDrownEnabled = false
 
+-- Speed & Jump Settings
+local walkspeedEnabled = false
+local currentWalkspeed = 16
+local defaultWalkspeed = 16
+local unlimitedJumpEnabled = false
+local currentJumpHeight = 7.2
+local defaultJumpHeight = 7.2
+
 -- Connections for cleanup
 local floatConnection = nil
 local noClipConnection = nil
 local spinnerConnection = nil
 local antiDrownConnection = nil
+local unlimitedJumpConnection = nil
 
 print("XSAN: Variables initialized successfully!")
 
@@ -2045,9 +2088,9 @@ print("XSAN: Ultimate Reset System initialized successfully!")
 -- ═══════════════════════════════════════════════════════════════
 -- WALKSPEED SYSTEM
 -- ═══════════════════════════════════════════════════════════════
-local walkspeedEnabled = false
-local currentWalkspeed = 16
-local defaultWalkspeed = 16
+-- ═══════════════════════════════════════════════════════════════
+-- WALK SPEED FUNCTIONS
+-- ═══════════════════════════════════════════════════════════════
 
 local function setWalkSpeed(speed)
     local success, error = pcall(function()
@@ -2076,10 +2119,6 @@ print("XSAN: Walkspeed system initialized!")
 -- ═══════════════════════════════════════════════════════════════
 -- UNLIMITED JUMP SYSTEM
 -- ═══════════════════════════════════════════════════════════════
-local unlimitedJumpEnabled = false
-local currentJumpHeight = 7.2 -- Default Roblox jump height
-local defaultJumpHeight = 7.2
-local unlimitedJumpConnection = nil
 
 local function setJumpHeight(height)
     local success, error = pcall(function()
@@ -4523,7 +4562,6 @@ SettingTab:CreateParagraph({
               "🚶 Walk Speed: Mengubah kecepatan jalan karakter\n" ..
               "🦘 Jump Height: Mengatur tinggi lompatan\n" ..
               "🚀 Unlimited Jump: Lompat tanpa batas di udara"
-})
 })
 
 print("XSAN: SETTING tab completed successfully!")
