@@ -2328,7 +2328,7 @@ TeleportLocations.Events = {
 -- Random Spot Fishing Locations for Auto Random Fishing
 TeleportLocations.RandomSpots = {
     ["🏝️ SISYPUS"] = CFrame.new(-3659.55, -135.08, -971.61),
-    ["🦈 TREASURE"] = CFrame.new(-3599.90, -275.96, -1640.84),
+    ["🦈 TREASURE"] = CFrame.new(-3628.77, -283.35, -1638.54),
     ["🎣 STRINGRY"] = CFrame.new(102.05, 29.64, 3054.35),
     ["❄️ ICE LAND"] = CFrame.new(1990.55, 3.09, 3021.91),
     ["🌋 CRATER"] = CFrame.new(990.45, 21.06, 5059.85),
