@@ -214,7 +214,7 @@ function Rayfield:CreateWindow(Settings)
 	Title.Name = "Title"
 	Title.BackgroundTransparency = 1
 	Title.Position = UDim2.new(0, 15, 0, 0)
-	Title.Size = UDim2.new(1, -30, 1, 0)
+	Title.Size = UDim2.new(1, -80, 1, 0)  -- Reduced size to make space for buttons
 	Title.Font = Enum.Font.SourceSans  -- Changed from SourceSansBold for smaller appearance
 	Title.Text = WindowSettings.Name
 	Title.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -223,6 +223,234 @@ function Rayfield:CreateWindow(Settings)
 	Title.TextWrapped = true
 	Title.TextXAlignment = Enum.TextXAlignment.Left
 	Title.Parent = Topbar
+
+	-- Create Floating Button (minimize to floating mode)
+	local FloatingButton = Instance.new("TextButton")
+	FloatingButton.Name = "FloatingButton"
+	FloatingButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+	FloatingButton.BorderSizePixel = 0
+	FloatingButton.Position = UDim2.new(1, -65, 0, 2)
+	FloatingButton.Size = UDim2.new(0, 20, 0, 21)
+	FloatingButton.Font = Enum.Font.SourceSansBold
+	FloatingButton.Text = "_"
+	FloatingButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+	FloatingButton.TextScaled = true
+	FloatingButton.Parent = Topbar
+
+	-- Add UICorner to FloatingButton
+	local FloatingButtonCorner = Instance.new("UICorner")
+	FloatingButtonCorner.CornerRadius = UDim.new(0, 3)
+	FloatingButtonCorner.Parent = FloatingButton
+
+	-- Create Close Button
+	local CloseButton = Instance.new("TextButton")
+	CloseButton.Name = "CloseButton"
+	CloseButton.BackgroundColor3 = Color3.fromRGB(200, 100, 100)
+	CloseButton.BorderSizePixel = 0
+	CloseButton.Position = UDim2.new(1, -40, 0, 2)
+	CloseButton.Size = UDim2.new(0, 20, 0, 21)
+	CloseButton.Font = Enum.Font.SourceSansBold
+	CloseButton.Text = "X"
+	CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+	CloseButton.TextScaled = true
+	CloseButton.Parent = Topbar
+
+	-- Add UICorner to CloseButton
+	local CloseButtonCorner = Instance.new("UICorner")
+	CloseButtonCorner.CornerRadius = UDim.new(0, 3)
+	CloseButtonCorner.Parent = CloseButton
+
+	-- Button hover effects
+	FloatingButton.MouseEnter:Connect(function()
+		TweenService:Create(FloatingButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(120, 120, 120)}):Play()
+	end)
+
+	FloatingButton.MouseLeave:Connect(function()
+		TweenService:Create(FloatingButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(100, 100, 100)}):Play()
+	end)
+
+	CloseButton.MouseEnter:Connect(function()
+		TweenService:Create(CloseButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(220, 120, 120)}):Play()
+	end)
+
+	CloseButton.MouseLeave:Connect(function()
+		TweenService:Create(CloseButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(200, 100, 100)}):Play()
+	end)
+
+	-- Button functionality
+	local isFloatingMode = false
+	
+	-- Floating Button Click - Toggle floating mode
+	FloatingButton.MouseButton1Click:Connect(function()
+		isFloatingMode = not isFloatingMode
+		
+		if isFloatingMode then
+			-- Switch to floating mode - hide main UI, show floating button
+			Main.Visible = false
+			
+			-- Create or show external floating button
+			local FloatingGUI = Player.PlayerGui:FindFirstChild("XSAN_FloatingButton") or game.CoreGui:FindFirstChild("XSAN_FloatingButton")
+			if FloatingGUI then
+				FloatingGUI.Enabled = true
+			else
+				-- Create new floating button if it doesn't exist
+				pcall(function()
+					loadstring([[
+						local Players = game:GetService("Players")
+						local TweenService = game:GetService("TweenService")
+						local LocalPlayer = Players.LocalPlayer
+						
+						local FloatingButtonGui = Instance.new("ScreenGui")
+						FloatingButtonGui.Name = "XSAN_FloatingButton"
+						FloatingButtonGui.ResetOnSpawn = false
+						FloatingButtonGui.IgnoreGuiInset = true
+						
+						local success = pcall(function()
+							FloatingButtonGui.Parent = game.CoreGui
+						end)
+						if not success then
+							FloatingButtonGui.Parent = LocalPlayer.PlayerGui
+						end
+						
+						local FloatingBtn = Instance.new("TextButton")
+						FloatingBtn.Size = UDim2.new(0, 50, 0, 50)
+						FloatingBtn.Position = UDim2.new(0, 15, 0.5, -25)
+						FloatingBtn.BackgroundColor3 = Color3.fromRGB(70, 130, 200)
+						FloatingBtn.Text = "X"
+						FloatingBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+						FloatingBtn.TextScaled = true
+						FloatingBtn.Font = Enum.Font.SourceSansBold
+						FloatingBtn.BorderSizePixel = 0
+						FloatingBtn.Parent = FloatingButtonGui
+						
+						local Corner = Instance.new("UICorner")
+						Corner.CornerRadius = UDim.new(0, 25)
+						Corner.Parent = FloatingBtn
+						
+						FloatingBtn.MouseButton1Click:Connect(function()
+							FloatingButtonGui:Destroy()
+							local RayfieldGUI = game.CoreGui:FindFirstChild("RayfieldLibrary") or LocalPlayer.PlayerGui:FindFirstChild("RayfieldLibrary")
+							if RayfieldGUI then
+								local Main = RayfieldGUI:FindFirstChild("Main")
+								if Main then
+									Main.Visible = true
+								end
+							end
+						end)
+					]])()
+				end)
+			end
+		else
+			-- Switch back to normal mode
+			Main.Visible = true
+			local FloatingGUI = Player.PlayerGui:FindFirstChild("XSAN_FloatingButton") or game.CoreGui:FindFirstChild("XSAN_FloatingButton")
+			if FloatingGUI then
+				FloatingGUI:Destroy()
+			end
+		end
+	end)
+	
+	-- Close Button Click - Close script completely
+	CloseButton.MouseButton1Click:Connect(function()
+		-- Show confirmation dialog first
+		local ConfirmFrame = Instance.new("Frame")
+		ConfirmFrame.Name = "ConfirmDialog"
+		ConfirmFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+		ConfirmFrame.BorderSizePixel = 0
+		ConfirmFrame.Position = UDim2.new(0.5, -100, 0.5, -50)
+		ConfirmFrame.Size = UDim2.new(0, 200, 0, 100)
+		ConfirmFrame.ZIndex = 1000
+		ConfirmFrame.Parent = Main
+		
+		local ConfirmCorner = Instance.new("UICorner")
+		ConfirmCorner.CornerRadius = UDim.new(0, 8)
+		ConfirmCorner.Parent = ConfirmFrame
+		
+		local ConfirmTitle = Instance.new("TextLabel")
+		ConfirmTitle.BackgroundTransparency = 1
+		ConfirmTitle.Position = UDim2.new(0, 0, 0, 5)
+		ConfirmTitle.Size = UDim2.new(1, 0, 0, 25)
+		ConfirmTitle.Font = Enum.Font.SourceSansBold
+		ConfirmTitle.Text = "Close Script?"
+		ConfirmTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+		ConfirmTitle.TextSize = 14
+		ConfirmTitle.Parent = ConfirmFrame
+		
+		local ConfirmText = Instance.new("TextLabel")
+		ConfirmText.BackgroundTransparency = 1
+		ConfirmText.Position = UDim2.new(0, 10, 0, 30)
+		ConfirmText.Size = UDim2.new(1, -20, 0, 30)
+		ConfirmText.Font = Enum.Font.SourceSans
+		ConfirmText.Text = "Are you sure you want to close XSAN Script?"
+		ConfirmText.TextColor3 = Color3.fromRGB(200, 200, 200)
+		ConfirmText.TextSize = 11
+		ConfirmText.TextWrapped = true
+		ConfirmText.Parent = ConfirmFrame
+		
+		local YesButton = Instance.new("TextButton")
+		YesButton.BackgroundColor3 = Color3.fromRGB(200, 100, 100)
+		YesButton.BorderSizePixel = 0
+		YesButton.Position = UDim2.new(0, 10, 1, -30)
+		YesButton.Size = UDim2.new(0, 80, 0, 25)
+		YesButton.Font = Enum.Font.SourceSansBold
+		YesButton.Text = "Yes"
+		YesButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+		YesButton.TextSize = 12
+		YesButton.Parent = ConfirmFrame
+		
+		local YesCorner = Instance.new("UICorner")
+		YesCorner.CornerRadius = UDim.new(0, 4)
+		YesCorner.Parent = YesButton
+		
+		local NoButton = Instance.new("TextButton")
+		NoButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+		NoButton.BorderSizePixel = 0
+		NoButton.Position = UDim2.new(1, -90, 1, -30)
+		NoButton.Size = UDim2.new(0, 80, 0, 25)
+		NoButton.Font = Enum.Font.SourceSansBold
+		NoButton.Text = "No"
+		NoButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+		NoButton.TextSize = 12
+		NoButton.Parent = ConfirmFrame
+		
+		local NoCorner = Instance.new("UICorner")
+		NoCorner.CornerRadius = UDim.new(0, 4)
+		NoCorner.Parent = NoButton
+		
+		-- Button functionality
+		YesButton.MouseButton1Click:Connect(function()
+			-- Close script completely
+			pcall(function()
+				-- Clean up any global variables
+				if _G.XSANReset then
+					_G.XSANReset()
+				end
+				
+				-- Destroy all XSAN related GUIs
+				local GUIs = {
+					game.CoreGui:FindFirstChild("RayfieldLibrary"),
+					game.CoreGui:FindFirstChild("XSAN_FloatingButton"),
+					Player.PlayerGui:FindFirstChild("RayfieldLibrary"),
+					Player.PlayerGui:FindFirstChild("XSAN_FloatingButton")
+				}
+				
+				for _, gui in pairs(GUIs) do
+					if gui then gui:Destroy() end
+				end
+				
+				-- Send notification
+				game.StarterGui:SetCore("SendNotification", {
+					Title = "XSAN Script";
+					Text = "Script closed successfully!";
+					Duration = 2;
+				})
+			end)
+		end)
+		
+		NoButton.MouseButton1Click:Connect(function()
+			ConfirmFrame:Destroy()
+		end)
+	end)
 
 	-- Create Tabs Container
 	local TabContainer = Instance.new("Frame")
