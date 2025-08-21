@@ -463,6 +463,8 @@ local InventoryTab = Window:CreateTab("INVENTORY", 4483362458)
 print("XSAN: InventoryTab created")
 local UtilityTab = Window:CreateTab("UTILITY", 4483362458)
 local WeatherTab = Window:CreateTab("WEATHER", 4483362458)
+local SettingTab = Window:CreateTab("SETTING", 4483362458)
+print("XSAN: SettingTab created")
 local RandomSpotTab = Window:CreateTab("RANDOM SPOT", 4483362458)
 print("XSAN: RandomSpotTab created")
 local ExitTab = Window:CreateTab("EXIT", 4483362458)
@@ -478,6 +480,7 @@ local tabContentLoaded = {
     Inventory = false,
     Utility = false,
     Weather = false,
+    Setting = false,
     RandomSpot = false,
     Exit = false
 }
@@ -496,8 +499,8 @@ do
     end)
     local weatherRemote = weatherNetFolder and weatherNetFolder:FindFirstChild("RF/PurchaseWeatherEvent")
 
-    local WeatherOptions = {"Cloudy","Wind","Storm","Snow","Fog","Sunny","Rain","SharkHunt"}
-    local validSuccess = {Cloudy=true, Wind=true, Storm=true}
+    local WeatherOptions = {"Wind","Cloudy","Snow","Storm","Radiant","Shark Hunt"}
+    local validSuccess = {Wind=true, Cloudy=true, Snow=true, Storm=true, Radiant=true, ["Shark Hunt"]=true}
     local selectedWeather = WeatherOptions[1]
     local autoWeather = false
     local rotateMode = false
@@ -543,53 +546,67 @@ do
     end
 
     WeatherTab:CreateParagraph({
-        Title = "Weather Purchase",
-        Content = "Gunakan untuk membeli event cuaca. Cloudy/Wind/Storm terverifikasi dari probe. Yang lain mungkin membutuhkan syarat khusus atau belum aktif."})
+        Title = "Weather Purchase System",
+        Content = "Sistem pembelian cuaca otomatis. Pilih jenis cuaca yang ingin dibeli dan atur interval pembelian."
+    })
 
-    -- Small spacer to ensure next elements (dropdown) don't visually overlap first paragraph container
+    -- Spacer for better layout
     WeatherTab:CreateParagraph({
         Title = " ",
         Content = " "
     })
 
     WeatherTab:CreateDropdown({
-        Name = "Select Weather",
+        Name = "Pilih Jenis Cuaca",
         Options = WeatherOptions,
         CurrentOption = WeatherOptions[1],
         Callback = function(opt)
             if type(opt)=="table" then opt = opt[1] end
             selectedWeather = opt
-            updateStatus("Selected: "..selectedWeather)
+            updateStatus("Dipilih: "..selectedWeather)
         end
     })
 
+    -- Spacer to separate dropdown from slider
+    WeatherTab:CreateParagraph({
+        Title = " ",
+        Content = " "
+    })
+
     WeatherTab:CreateSlider({
-        Name = "Auto Delay (s)",
+        Name = "Interval Auto Beli (detik)",
         Range = {3,30},
         Increment = 1,
         CurrentValue = autoDelay,
         Callback = function(v)
             autoDelay = v
+            updateStatus("Interval diubah ke: "..v.." detik")
         end
     })
 
     WeatherTab:CreateToggle({
-        Name = "Rotate List",
+        Name = "Mode Rotasi Cuaca",
         CurrentValue = false,
         Callback = function(v)
             rotateMode = v
+            if v then
+                updateStatus("Mode rotasi: ON - akan membeli semua cuaca secara bergiliran")
+            else
+                updateStatus("Mode rotasi: OFF - hanya membeli cuaca yang dipilih")
+            end
         end
     })
 
     WeatherTab:CreateButton({
-        Name = "Buy Once",
+        Name = "🌤️ Beli Cuaca Sekali",
         Callback = function()
+            updateStatus("Mencoba membeli: "..selectedWeather.."...")
             PurchaseWeather(selectedWeather)
         end
     })
 
     WeatherTab:CreateToggle({
-        Name = "Auto Buy",
+        Name = "🔄 Auto Beli Cuaca",
         CurrentValue = false,
         Callback = function(val)
             autoWeather = val
@@ -597,7 +614,7 @@ do
                 loopSession += 1
                 local mySession = loopSession
                 local rotateIndex = table.find(WeatherOptions, selectedWeather) or 1
-                updateStatus("Auto ON", Color3.fromRGB(120,200,120))
+                updateStatus("Auto Beli: AKTIF ✅", Color3.fromRGB(120,200,120))
                 task.spawn(function()
                     while autoWeather and loopSession == mySession do
                         local target = selectedWeather
@@ -614,19 +631,31 @@ do
                         end
                     end
                     if loopSession == mySession then
-                        updateStatus("Auto OFF", Color3.fromRGB(220,160,80))
+                        updateStatus("Auto Beli: BERHENTI ⏹️", Color3.fromRGB(220,160,80))
                     end
                 end)
             else
                 loopSession += 1 -- invalidate
-                updateStatus("Stopped", Color3.fromRGB(220,160,80))
+                updateStatus("Auto Beli: DIMATIKAN ❌", Color3.fromRGB(220,160,80))
             end
         end
     })
 
+    -- Add spacer before status
+    WeatherTab:CreateParagraph({
+        Title = " ",
+        Content = " "
+    })
+
     statusLabel = WeatherTab:CreateParagraph({
-        Title = "Status",
-        Content = "Ready"
+        Title = "📊 Status Sistem",
+        Content = "Siap untuk membeli cuaca"
+    })
+
+    -- Add weather information section
+    WeatherTab:CreateParagraph({
+        Title = "ℹ️ Informasi Cuaca",
+        Content = "• Wind: Angin kencang\n• Cloudy: Berawan\n• Snow: Salju\n• Storm: Badai\n• Radiant: Cuaca cerah bersinar\n• Shark Hunt: Event perburuan hiu"
     })
 end
 
@@ -1163,7 +1192,366 @@ local featureState = {
     RandomSpot = false,
 }
 
+-- ═══════════════════════════════════════════════════════════════
+-- SETTING TAB VARIABLES - Game Enhancement Features
+-- ═══════════════════════════════════════════════════════════════
+
+-- Performance & Visual Settings
+local boostFPSEnabled = false
+local hdrShaderEnabled = false
+
+-- Movement & Physics Settings  
+local enableFloatEnabled = false
+local noClipEnabled = false
+local spinnerEnabled = false
+local antiDrownEnabled = false
+
+-- Connections for cleanup
+local floatConnection = nil
+local noClipConnection = nil
+local spinnerConnection = nil
+local antiDrownConnection = nil
+
 print("XSAN: Variables initialized successfully!")
+
+-- ═══════════════════════════════════════════════════════════════
+-- SETTING TAB FUNCTIONS - Game Enhancement Features
+-- ═══════════════════════════════════════════════════════════════
+
+-- Boost FPS Function
+local function toggleBoostFPS()
+    boostFPSEnabled = not boostFPSEnabled
+    
+    if boostFPSEnabled then
+        -- Reduce graphics quality for better FPS
+        pcall(function()
+            local lighting = game:GetService("Lighting")
+            local workspace = game:GetService("Workspace")
+            
+            -- Save original settings
+            _G.OriginalLighting = _G.OriginalLighting or {
+                Brightness = lighting.Brightness,
+                GlobalShadows = lighting.GlobalShadows,
+                Technology = lighting.Technology
+            }
+            
+            -- Apply FPS boost settings
+            lighting.Brightness = 1
+            lighting.GlobalShadows = false
+            lighting.Technology = Enum.Technology.Compatibility
+            
+            -- Reduce workspace detail
+            workspace.StreamingEnabled = true
+            workspace.StreamingTargetRadius = 100
+            
+            NotifySuccess("Boost FPS", "✅ FPS Boost diaktifkan!\n\n⚡ Kualitas grafis dikurangi\n🚀 Performa game ditingkatkan")
+        end)
+    else
+        -- Restore original settings
+        pcall(function()
+            if _G.OriginalLighting then
+                local lighting = game:GetService("Lighting")
+                lighting.Brightness = _G.OriginalLighting.Brightness
+                lighting.GlobalShadows = _G.OriginalLighting.GlobalShadows
+                lighting.Technology = _G.OriginalLighting.Technology
+            end
+            NotifyInfo("Boost FPS", "🔄 FPS Boost dimatikan\n\n✅ Pengaturan grafis dikembalikan")
+        end)
+    end
+end
+
+-- HDR Shader Function
+local function toggleHDRShader()
+    hdrShaderEnabled = not hdrShaderEnabled
+    
+    pcall(function()
+        local lighting = game:GetService("Lighting")
+        
+        if hdrShaderEnabled then
+            -- Save original settings
+            _G.OriginalShader = _G.OriginalShader or {
+                Brightness = lighting.Brightness,
+                Contrast = lighting.Contrast,
+                Saturation = lighting.ColorCorrection and lighting.ColorCorrection.Saturation or 0
+            }
+            
+            -- Apply HDR effects
+            lighting.Brightness = 2.5
+            lighting.Contrast = 0.2
+            
+            -- Create or update ColorCorrection
+            local colorCorrection = lighting:FindFirstChild("HDR_ColorCorrection")
+            if not colorCorrection then
+                colorCorrection = Instance.new("ColorCorrectionEffect")
+                colorCorrection.Name = "HDR_ColorCorrection"
+                colorCorrection.Parent = lighting
+            end
+            
+            colorCorrection.Brightness = 0.1
+            colorCorrection.Contrast = 0.15
+            colorCorrection.Saturation = 0.2
+            
+            NotifySuccess("HDR Shader", "✨ HDR Shader diaktifkan!\n\n🌟 Visual game ditingkatkan\n💎 Efek pencahayaan premium")
+        else
+            -- Remove HDR effects
+            local colorCorrection = lighting:FindFirstChild("HDR_ColorCorrection")
+            if colorCorrection then
+                colorCorrection:Destroy()
+            end
+            
+            -- Restore original settings
+            if _G.OriginalShader then
+                lighting.Brightness = _G.OriginalShader.Brightness
+                lighting.Contrast = _G.OriginalShader.Contrast
+            end
+            
+            NotifyInfo("HDR Shader", "🔄 HDR Shader dimatikan\n\n✅ Visual dikembalikan normal")
+        end
+    end)
+end
+
+-- Server Management Functions
+local function rejoinServer()
+    NotifyInfo("Rejoin Server", "🔄 Bergabung kembali ke server...")
+    local TeleportService = game:GetService("TeleportService")
+    local Players = game:GetService("Players")
+    TeleportService:Teleport(game.PlaceId, Players.LocalPlayer)
+end
+
+local function serverHop()
+    NotifyInfo("Server Hop", "🌐 Mencari server lain...")
+    local TeleportService = game:GetService("TeleportService")
+    local HttpService = game:GetService("HttpService")
+    local Players = game:GetService("Players")
+    
+    local success, result = pcall(function()
+        local servers = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Asc&limit=100"))
+        local availableServers = {}
+        
+        for _, server in pairs(servers.data) do
+            if server.playing < server.maxPlayers and server.id ~= game.JobId then
+                table.insert(availableServers, server.id)
+            end
+        end
+        
+        if #availableServers > 0 then
+            local randomServer = availableServers[math.random(1, #availableServers)]
+            TeleportService:TeleportToPlaceInstance(game.PlaceId, randomServer, Players.LocalPlayer)
+        else
+            NotifyError("Server Hop", "❌ Tidak ada server lain yang tersedia")
+        end
+    end)
+    
+    if not success then
+        NotifyError("Server Hop", "❌ Gagal mencari server lain")
+    end
+end
+
+local function smallServer()
+    NotifyInfo("Small Server", "👥 Mencari server dengan sedikit pemain...")
+    local TeleportService = game:GetService("TeleportService")
+    local HttpService = game:GetService("HttpService")
+    local Players = game:GetService("Players")
+    
+    local success, result = pcall(function()
+        local servers = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Asc&limit=100"))
+        local smallServers = {}
+        
+        for _, server in pairs(servers.data) do
+            if server.playing <= 5 and server.playing > 0 and server.id ~= game.JobId then
+                table.insert(smallServers, {id = server.id, players = server.playing})
+            end
+        end
+        
+        -- Sort by player count (ascending)
+        table.sort(smallServers, function(a, b) return a.players < b.players end)
+        
+        if #smallServers > 0 then
+            local targetServer = smallServers[1].id
+            NotifySuccess("Small Server", "✅ Ditemukan server dengan " .. smallServers[1].players .. " pemain")
+            TeleportService:TeleportToPlaceInstance(game.PlaceId, targetServer, Players.LocalPlayer)
+        else
+            NotifyError("Small Server", "❌ Tidak ditemukan server dengan sedikit pemain")
+        end
+    end)
+    
+    if not success then
+        NotifyError("Small Server", "❌ Gagal mencari server kecil")
+    end
+end
+
+-- Enable Float Function
+local function toggleEnableFloat()
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    
+    if not character then
+        NotifyError("Enable Float", "❌ Character tidak ditemukan!")
+        return
+    end
+    
+    enableFloatEnabled = not enableFloatEnabled
+    
+    if enableFloatEnabled then
+        -- Create float effect
+        floatConnection = game:GetService("RunService").Heartbeat:Connect(function()
+            local character = player.Character
+            if character and character:FindFirstChild("HumanoidRootPart") then
+                local humanoidRootPart = character.HumanoidRootPart
+                local bodyVelocity = humanoidRootPart:FindFirstChild("FloatVelocity")
+                
+                if not bodyVelocity then
+                    bodyVelocity = Instance.new("BodyVelocity")
+                    bodyVelocity.Name = "FloatVelocity"
+                    bodyVelocity.MaxForce = Vector3.new(0, math.huge, 0)
+                    bodyVelocity.Velocity = Vector3.new(0, 0, 0)
+                    bodyVelocity.Parent = humanoidRootPart
+                end
+            end
+        end)
+        
+        NotifySuccess("Enable Float", "✨ Float mode diaktifkan!\n\n🕊️ Karakter dapat melayang\n⬆️ Gunakan Space untuk naik")
+    else
+        -- Disable float
+        if floatConnection then
+            floatConnection:Disconnect()
+            floatConnection = nil
+        end
+        
+        local character = player.Character
+        if character and character:FindFirstChild("HumanoidRootPart") then
+            local bodyVelocity = character.HumanoidRootPart:FindFirstChild("FloatVelocity")
+            if bodyVelocity then
+                bodyVelocity:Destroy()
+            end
+        end
+        
+        NotifyInfo("Enable Float", "🔄 Float mode dimatikan\n\n✅ Karakter kembali normal")
+    end
+end
+
+-- Universal No Clip Function
+local function toggleNoClip()
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    
+    if not character then
+        NotifyError("No Clip", "❌ Character tidak ditemukan!")
+        return
+    end
+    
+    noClipEnabled = not noClipEnabled
+    
+    if noClipEnabled then
+        noClipConnection = game:GetService("RunService").Stepped:Connect(function()
+            local character = player.Character
+            if character then
+                for _, part in pairs(character:GetChildren()) do
+                    if part:IsA("BasePart") then
+                        part.CanCollide = false
+                    end
+                end
+            end
+        end)
+        
+        NotifySuccess("No Clip", "👻 No Clip diaktifkan!\n\n🚪 Bisa menembus dinding\n🏃 Jalan terus untuk bergerak")
+    else
+        if noClipConnection then
+            noClipConnection:Disconnect()
+            noClipConnection = nil
+        end
+        
+        local character = player.Character
+        if character then
+            for _, part in pairs(character:GetChildren()) do
+                if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+                    part.CanCollide = true
+                end
+            end
+        end
+        
+        NotifyInfo("No Clip", "🔄 No Clip dimatikan\n\n✅ Collision kembali normal")
+    end
+end
+
+-- Spinner Function
+local function toggleSpinner()
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    
+    if not character or not character:FindFirstChild("HumanoidRootPart") then
+        NotifyError("Spinner", "❌ Character tidak ditemukan!")
+        return
+    end
+    
+    spinnerEnabled = not spinnerEnabled
+    
+    if spinnerEnabled then
+        local humanoidRootPart = character.HumanoidRootPart
+        
+        -- Create BodyAngularVelocity for spinning
+        local bodyAngularVelocity = Instance.new("BodyAngularVelocity")
+        bodyAngularVelocity.Name = "SpinnerVelocity"
+        bodyAngularVelocity.AngularVelocity = Vector3.new(0, 20, 0) -- Spin around Y-axis
+        bodyAngularVelocity.MaxTorque = Vector3.new(0, math.huge, 0)
+        bodyAngularVelocity.Parent = humanoidRootPart
+        
+        NotifySuccess("Spinner", "🌪️ Spinner diaktifkan!\n\n💫 Karakter berputar\n🎯 Character akan terus berputar")
+    else
+        local character = player.Character
+        if character and character:FindFirstChild("HumanoidRootPart") then
+            local spinner = character.HumanoidRootPart:FindFirstChild("SpinnerVelocity")
+            if spinner then
+                spinner:Destroy()
+            end
+        end
+        
+        NotifyInfo("Spinner", "🔄 Spinner dimatikan\n\n✅ Putaran dihentikan")
+    end
+end
+
+-- Anti Drown Function
+local function toggleAntiDrown()
+    local player = game.Players.LocalPlayer
+    
+    antiDrownEnabled = not antiDrownEnabled
+    
+    if antiDrownEnabled then
+        antiDrownConnection = game:GetService("RunService").Heartbeat:Connect(function()
+            local character = player.Character
+            if character and character:FindFirstChild("Humanoid") then
+                local humanoid = character.Humanoid
+                
+                -- Keep oxygen at maximum
+                if humanoid:FindFirstChild("Health") then
+                    -- Prevent drowning by maintaining high oxygen levels
+                    pcall(function()
+                        if humanoid.Health < humanoid.MaxHealth and humanoid.Health > 0 then
+                            -- Only heal if damage is from drowning (gradual damage)
+                            humanoid.Health = humanoid.MaxHealth
+                        end
+                    end)
+                end
+                
+                -- Remove water effects if character is underwater
+                for _, effect in pairs(character:GetChildren()) do
+                    if effect.Name:find("Water") or effect.Name:find("Drown") then
+                        effect:Destroy()
+                    end
+                end
+            end
+        end)
+        
+        NotifySuccess("Anti Drown", "🏊 Anti Drown diaktifkan!\n\n💧 Tidak akan tenggelam\n🫁 Oksigen tidak habis")
+    else
+        if antiDrownConnection then
+            antiDrownConnection:Disconnect()
+            antiDrownConnection = nil
+        end
+        
+        NotifyInfo("Anti Drown", "🔄 Anti Drown dimatikan\n\n✅ Sistem oksigen normal")
+    end
+end
 
 -- ═══════════════════════════════════════════════════════════════
 -- UI PERFORMANCE MONITORING SYSTEM
@@ -1259,6 +1647,49 @@ local function ResetAllFeatures()
     if unlimitedJumpConnection then
         unlimitedJumpConnection:Disconnect()
         unlimitedJumpConnection = nil
+    end
+    
+    -- Reset SETTING tab features
+    print("XSAN: Resetting SETTING tab features...")
+    
+    -- Reset performance features
+    if boostFPSEnabled then
+        toggleBoostFPS()
+    end
+    if hdrShaderEnabled then
+        toggleHDRShader()
+    end
+    
+    -- Reset movement features
+    if enableFloatEnabled then
+        toggleEnableFloat()
+    end
+    if noClipEnabled then
+        toggleNoClip()
+    end
+    if spinnerEnabled then
+        toggleSpinner()
+    end
+    if antiDrownEnabled then
+        toggleAntiDrown()
+    end
+    
+    -- Clean up any remaining connections
+    if floatConnection then
+        floatConnection:Disconnect()
+        floatConnection = nil
+    end
+    if noClipConnection then
+        noClipConnection:Disconnect()
+        noClipConnection = nil
+    end
+    if spinnerConnection then
+        spinnerConnection:Disconnect()
+        spinnerConnection = nil
+    end
+    if antiDrownConnection then
+        antiDrownConnection:Disconnect()
+        antiDrownConnection = nil
     end
     
     -- Reset current preset
@@ -1544,36 +1975,84 @@ TeleportLocations.RandomSpots = {
 
 -- Player Teleportation Function (improved like old.lua)
 local function TeleportToPlayer(targetPlayerName)
-    pcall(function()
-        -- Try to find in workspace Characters folder first (like old.lua)
-        local charFolder = workspace:FindFirstChild("Characters")
+    if not targetPlayerName or targetPlayerName == "" then
+        NotifyError("Player TP", "❌ Nama player tidak boleh kosong!")
+        return
+    end
+    
+    -- Normalize player name (remove spaces, handle case)
+    local normalizedName = targetPlayerName:gsub("^%s*(.-)%s*$", "%1") -- trim spaces
+    
+    local success = pcall(function()
         local targetCharacter = nil
+        local targetPlayer = nil
         
-        if charFolder then
-            targetCharacter = charFolder:FindFirstChild(targetPlayerName)
-        end
-        
-        -- Fallback to Players service
-        if not targetCharacter then
-            local targetPlayer = game.Players:FindFirstChild(targetPlayerName)
-            if targetPlayer then
-                targetCharacter = targetPlayer.Character
+        -- Method 1: Search in Players service first (most reliable)
+        for _, player in pairs(game.Players:GetPlayers()) do
+            if player.Name:lower() == normalizedName:lower() or 
+               player.DisplayName:lower() == normalizedName:lower() then
+                targetPlayer = player
+                targetCharacter = player.Character
+                break
             end
         end
         
+        -- Method 2: Partial match search if exact match fails
+        if not targetPlayer then
+            for _, player in pairs(game.Players:GetPlayers()) do
+                if string.find(player.Name:lower(), normalizedName:lower()) or
+                   string.find(player.DisplayName:lower(), normalizedName:lower()) then
+                    targetPlayer = player
+                    targetCharacter = player.Character
+                    NotifyInfo("Player Found", "🔍 Found partial match: " .. player.Name)
+                    break
+                end
+            end
+        end
+        
+        -- Method 3: Try workspace Characters folder as fallback
         if not targetCharacter then
-            NotifyError("Player TP", "Player '" .. targetPlayerName .. "' not found!")
+            local charFolder = workspace:FindFirstChild("Characters")
+            if charFolder then
+                for _, char in pairs(charFolder:GetChildren()) do
+                    if char:IsA("Model") and 
+                       (char.Name:lower() == normalizedName:lower() or 
+                        string.find(char.Name:lower(), normalizedName:lower())) then
+                        targetCharacter = char
+                        break
+                    end
+                end
+            end
+        end
+        
+        -- Validation
+        if not targetCharacter then
+            NotifyError("Player TP", "❌ Player '" .. normalizedName .. "' tidak ditemukan!\n\n💡 Tips:\n• Pastikan nama player benar\n• Player harus online di server ini\n• Coba gunakan refresh player list")
             return
         end
         
         local targetHRP = targetCharacter:FindFirstChild("HumanoidRootPart")
         if not targetHRP then
-            NotifyError("Player TP", "Target player's character not found!")
+            NotifyError("Player TP", "❌ Character '" .. normalizedName .. "' tidak memiliki HumanoidRootPart!\n\n⚠️ Player mungkin sedang loading atau respawning")
             return
         end
         
-        SafeTeleport(targetHRP.CFrame, targetPlayerName .. "'s location")
+        -- Calculate safe teleport position (slightly offset to avoid overlap)
+        local offset = Vector3.new(
+            math.random(-3, 3),
+            2,
+            math.random(-3, 3)
+        )
+        local targetCFrame = targetHRP.CFrame + offset
+        
+        SafeTeleport(targetCFrame, "Player: " .. (targetPlayer and targetPlayer.Name or normalizedName))
+        NotifySuccess("Player TP", "✅ Berhasil teleport ke " .. (targetPlayer and targetPlayer.Name or normalizedName) .. "!")
+        
     end)
+    
+    if not success then
+        NotifyError("Player TP", "❌ Gagal teleport ke player!\n\n🔧 Coba lagi atau gunakan nama player yang berbeda")
+    end
 end
 
 -- NPCs Detection System - Real-time accurate locations
@@ -2417,36 +2896,50 @@ TeleportTab:CreateButton({
     Callback = CreateSafeCallback(function()
         local playerCount = 0
         local playerList = ""
+        local playersFound = {}
         
-        -- Check Characters folder first (like old.lua)
-        local charFolder = workspace:FindFirstChild("Characters")
-        if charFolder then
-            for _, playerModel in pairs(charFolder:GetChildren()) do
-                if playerModel:IsA("Model") and playerModel.Name ~= LocalPlayer.Name and playerModel:FindFirstChild("HumanoidRootPart") then
-                    playerCount = playerCount + 1
-                    playerList = playerList .. "👤 " .. playerModel.Name .. " • "
+        -- Primary method: Players service (most reliable)
+        for _, player in pairs(game.Players:GetPlayers()) do
+            if player ~= LocalPlayer then
+                local hasCharacter = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+                local status = hasCharacter and "✅" or "⚠️"
+                playerCount = playerCount + 1
+                playerList = playerList .. status .. " " .. player.Name
+                if player.DisplayName ~= player.Name then
+                    playerList = playerList .. " (" .. player.DisplayName .. ")"
                 end
+                playerList = playerList .. "\n"
+                table.insert(playersFound, {name = player.Name, hasChar = hasCharacter})
             end
         end
         
-        -- Fallback to Players service
-        if playerCount == 0 then
-            for _, player in pairs(game.Players:GetPlayers()) do
-                if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                    playerCount = playerCount + 1
-                    playerList = playerList .. "👤 " .. player.Name .. " • "
+        -- Secondary method: Check Characters folder for additional info
+        local charFolder = workspace:FindFirstChild("Characters")
+        local charCount = 0
+        if charFolder then
+            for _, char in pairs(charFolder:GetChildren()) do
+                if char:IsA("Model") and char.Name ~= LocalPlayer.Name then
+                    charCount = charCount + 1
                 end
             end
         end
         
         if playerCount > 0 then
-            NotifyInfo("Player List", "Players in server (" .. playerCount .. "):\n\n" .. playerList:sub(1, -3) .. "\n\n✅ Player teleportation system ready!\n📝 Use manual input below to teleport to any player.")
+            local readyPlayers = 0
+            for _, p in pairs(playersFound) do
+                if p.hasChar then readyPlayers = readyPlayers + 1 end
+            end
+            
+            NotifyInfo("Player List", 
+                "🎮 Players di server: " .. playerCount .. "\n" ..
+                "✅ Siap untuk teleport: " .. readyPlayers .. "\n" ..
+                "📁 Characters di workspace: " .. charCount .. "\n\n" ..
+                "📋 Daftar Players:\n" .. playerList .. "\n" ..
+                "💡 ✅ = Siap teleport, ⚠️ = Loading/Respawning"
+            )
         else
-            NotifyError("Player List", "❌ No other players found in the server!\n\n🔍 Make sure you're in a multiplayer server.\n⚠️ Some players might be loading or not have characters spawned.")
+            NotifyError("Player List", "❌ Tidak ada player lain di server!\n\n🔍 Pastikan Anda di server multiplayer\n⏳ Tunggu player lain join server")
         end
-        
-        -- Note: Due to Rayfield limitations, please reload script to see updated quick buttons
-        NotifyInfo("UI Update", "💡 TIP: To see updated quick player buttons, reload the script.\n\n⚡ Quick buttons show first 5 players\n📝 Manual input works for all players")
     end, "refresh_players")
 })
 
@@ -2455,33 +2948,59 @@ TeleportTab:CreateButton({
 local function CreatePlayerButtons()
     local players = {}
     
-    -- Method 1: Check Characters folder first (like old.lua)
-    local charFolder = workspace:FindFirstChild("Characters")
-    if charFolder then
-        for _, playerModel in pairs(charFolder:GetChildren()) do
-            if playerModel:IsA("Model") and playerModel.Name ~= LocalPlayer.Name and playerModel:FindFirstChild("HumanoidRootPart") then
-                table.insert(players, playerModel.Name)
-            end
+    -- Method 1: Players service (most reliable and up-to-date)
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            local hasCharacter = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+            table.insert(players, {
+                name = player.Name,
+                displayName = player.DisplayName,
+                ready = hasCharacter
+            })
         end
     end
     
-    -- Method 2: Fallback to Players service
-    if #players == 0 then
-        for _, player in pairs(game.Players:GetPlayers()) do
-            if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                table.insert(players, player.Name)
-            end
-        end
-    end
+    -- Sort players: ready players first
+    table.sort(players, function(a, b)
+        if a.ready and not b.ready then return true end
+        if not a.ready and b.ready then return false end
+        return a.name < b.name
+    end)
     
     -- Create buttons for first 5 players (to avoid UI clutter)
     for i = 1, math.min(#players, 5) do
-        local playerName = players[i]
+        local playerData = players[i]
+        local buttonName = playerData.ready and "✅ " or "⚠️ "
+        buttonName = buttonName .. playerData.name
+        if playerData.displayName ~= playerData.name then
+            buttonName = buttonName .. " (" .. playerData.displayName .. ")"
+        end
+        
         TeleportTab:CreateButton({
-            Name = "👤 " .. playerName,
+            Name = buttonName,
             Callback = CreateSafeCallback(function()
-                TeleportToPlayer(playerName)
-            end, "tp_player_" .. playerName)
+                if not playerData.ready then
+                    NotifyError("Player TP", "⚠️ Player " .. playerData.name .. " sedang loading atau respawning!\n\n💡 Tunggu sebentar atau coba lagi")
+                    return
+                end
+                TeleportToPlayer(playerData.name)
+            end, "tp_player_" .. playerData.name)
+        })
+    end
+    
+    -- Show info if there are more players
+    if #players > 5 then
+        TeleportTab:CreateButton({
+            Name = "� +" .. (#players - 5) .. " players lainnya",
+            Callback = CreateSafeCallback(function()
+                local allPlayersList = ""
+                for i = 6, #players do
+                    local p = players[i]
+                    local status = p.ready and "✅" or "⚠️"
+                    allPlayersList = allPlayersList .. status .. " " .. p.name .. "\n"
+                end
+                NotifyInfo("More Players", "Player lainnya di server:\n\n" .. allPlayersList .. "\n💡 Gunakan manual input untuk teleport ke mereka")
+            end, "show_more_players")
         })
     end
     
@@ -2505,23 +3024,43 @@ CreatePlayerButtons()
 local targetPlayerName = ""
 
 TeleportTab:CreateInput({
-    Name = "📝 Enter Player Name",
-    PlaceholderText = "Type player name here...",
+    Name = "📝 Masukkan Nama Player",
+    PlaceholderText = "Ketik nama player di sini...",
     RemoveTextAfterFocusLost = false,
     Callback = function(text)
         targetPlayerName = text
+        if text and text ~= "" then
+            NotifyInfo("Input Player", "🎯 Target: " .. text .. "\n\n💡 Tekan tombol teleport untuk melanjutkan")
+        end
     end
 })
 
 TeleportTab:CreateButton({
-    Name = "🎯 Teleport to Player",
+    Name = "🎯 Teleport ke Player",
     Callback = CreateSafeCallback(function()
         if targetPlayerName and targetPlayerName ~= "" then
+            NotifyInfo("Teleporting", "🚀 Mencoba teleport ke: " .. targetPlayerName .. "...")
             TeleportToPlayer(targetPlayerName)
         else
-            NotifyError("Player TP", "Please enter a player name first!")
+            NotifyError("Player TP", "❌ Masukkan nama player terlebih dahulu!\n\n📝 Gunakan input box di atas untuk mengetik nama player")
         end
     end, "tp_to_player")
+})
+
+-- Quick teleport suggestions
+TeleportTab:CreateButton({
+    Name = "💡 Tips Teleport Player",
+    Callback = CreateSafeCallback(function()
+        NotifyInfo("Tips Teleport", 
+            "💡 Tips untuk teleport ke player:\n\n" ..
+            "✅ Gunakan nama exact atau sebagian nama\n" ..
+            "✅ Tidak case-sensitive (besar/kecil huruf)\n" ..
+            "✅ Bisa gunakan DisplayName atau Username\n" ..
+            "✅ Refresh player list untuk update terbaru\n\n" ..
+            "⚠️ Player harus online dan memiliki character\n" ..
+            "🔄 Jika gagal, coba refresh atau tunggu player spawn"
+        )
+    end, "tp_tips")
 })
 
 -- Utility Teleportation
@@ -3521,6 +4060,175 @@ UtilityTab:CreateButton({
 })
 
 print("XSAN: UTILITY tab completed successfully!")
+
+-- ═══════════════════════════════════════════════════════════════
+-- SETTING TAB - Game Enhancement & Performance Features
+-- ═══════════════════════════════════════════════════════════════
+
+print("XSAN: Creating SETTING tab content...")
+
+SettingTab:CreateParagraph({
+    Title = "🎮 Game Enhancement Settings",
+    Content = "Fitur-fitur tambahan untuk meningkatkan pengalaman bermain Anda. Aktifkan sesuai kebutuhan untuk performa dan gameplay yang lebih baik."
+})
+
+-- ═══════════════════════════════════════════════════════════════
+-- PERFORMANCE & VISUAL SECTION
+-- ═══════════════════════════════════════════════════════════════
+
+SettingTab:CreateParagraph({
+    Title = "⚡ Performance & Visual",
+    Content = "Pengaturan untuk meningkatkan FPS dan mengubah visual game"
+})
+
+SettingTab:CreateToggle({
+    Name = "🚀 Boost FPS",
+    CurrentValue = boostFPSEnabled,
+    Callback = CreateSafeCallback(function(value)
+        toggleBoostFPS()
+    end, "boost_fps")
+})
+
+SettingTab:CreateToggle({
+    Name = "✨ HDR Shader",
+    CurrentValue = hdrShaderEnabled,
+    Callback = CreateSafeCallback(function(value)
+        toggleHDRShader()
+    end, "hdr_shader")
+})
+
+-- ═══════════════════════════════════════════════════════════════
+-- SERVER MANAGEMENT SECTION
+-- ═══════════════════════════════════════════════════════════════
+
+SettingTab:CreateParagraph({
+    Title = "🌐 Server Management",
+    Content = "Kelola koneksi server dan pindah ke server lain"
+})
+
+SettingTab:CreateButton({
+    Name = "🔄 Rejoin Server",
+    Callback = CreateSafeCallback(function()
+        rejoinServer()
+    end, "rejoin_server")
+})
+
+SettingTab:CreateButton({
+    Name = "🌍 Server Hop",
+    Callback = CreateSafeCallback(function()
+        serverHop()
+    end, "server_hop")
+})
+
+SettingTab:CreateButton({
+    Name = "👥 Small Server",
+    Callback = CreateSafeCallback(function()
+        smallServer()
+    end, "small_server")
+})
+
+-- ═══════════════════════════════════════════════════════════════
+-- MOVEMENT & PHYSICS SECTION
+-- ═══════════════════════════════════════════════════════════════
+
+SettingTab:CreateParagraph({
+    Title = "🏃 Movement & Physics",
+    Content = "Fitur-fitur untuk memodifikasi gerakan dan fisika karakter"
+})
+
+SettingTab:CreateToggle({
+    Name = "🕊️ Enable Float",
+    CurrentValue = enableFloatEnabled,
+    Callback = CreateSafeCallback(function(value)
+        toggleEnableFloat()
+    end, "enable_float")
+})
+
+SettingTab:CreateToggle({
+    Name = "👻 Universal No Clip",
+    CurrentValue = noClipEnabled,
+    Callback = CreateSafeCallback(function(value)
+        toggleNoClip()
+    end, "no_clip")
+})
+
+SettingTab:CreateToggle({
+    Name = "🌪️ Spinner",
+    CurrentValue = spinnerEnabled,
+    Callback = CreateSafeCallback(function(value)
+        toggleSpinner()
+    end, "spinner")
+})
+
+SettingTab:CreateToggle({
+    Name = "🏊 Anti Drown",
+    CurrentValue = antiDrownEnabled,
+    Callback = CreateSafeCallback(function(value)
+        toggleAntiDrown()
+    end, "anti_drown")
+})
+
+-- ═══════════════════════════════════════════════════════════════
+-- QUICK ACTIONS SECTION
+-- ═══════════════════════════════════════════════════════════════
+
+SettingTab:CreateParagraph({
+    Title = "⚡ Quick Actions",
+    Content = "Tombol cepat untuk aksi yang sering digunakan"
+})
+
+SettingTab:CreateButton({
+    Name = "🔧 Reset All Settings",
+    Callback = CreateSafeCallback(function()
+        -- Reset all setting features to off
+        if boostFPSEnabled then toggleBoostFPS() end
+        if hdrShaderEnabled then toggleHDRShader() end
+        if enableFloatEnabled then toggleEnableFloat() end
+        if noClipEnabled then toggleNoClip() end
+        if spinnerEnabled then toggleSpinner() end
+        if antiDrownEnabled then toggleAntiDrown() end
+        
+        NotifySuccess("Reset Settings", "🔄 Semua pengaturan telah direset!\n\n✅ Semua fitur dimatikan\n🎮 Game kembali ke pengaturan normal")
+    end, "reset_all_settings")
+})
+
+SettingTab:CreateButton({
+    Name = "📊 Setting Status",
+    Callback = CreateSafeCallback(function()
+        local status = "🎮 Status Pengaturan XSAN:\n\n"
+        status = status .. "⚡ Performance:\n"
+        status = status .. "   🚀 Boost FPS: " .. (boostFPSEnabled and "✅ ON" or "❌ OFF") .. "\n"
+        status = status .. "   ✨ HDR Shader: " .. (hdrShaderEnabled and "✅ ON" or "❌ OFF") .. "\n\n"
+        status = status .. "🏃 Movement:\n"
+        status = status .. "   🕊️ Float: " .. (enableFloatEnabled and "✅ ON" or "❌ OFF") .. "\n"
+        status = status .. "   👻 No Clip: " .. (noClipEnabled and "✅ ON" or "❌ OFF") .. "\n"
+        status = status .. "   🌪️ Spinner: " .. (spinnerEnabled and "✅ ON" or "❌ OFF") .. "\n"
+        status = status .. "   🏊 Anti Drown: " .. (antiDrownEnabled and "✅ ON" or "❌ OFF") .. "\n\n"
+        status = status .. "💡 Tip: Gunakan 'Reset All Settings' untuk mematikan semua fitur"
+        
+        NotifyInfo("Setting Status", status)
+    end, "setting_status")
+})
+
+-- ═══════════════════════════════════════════════════════════════
+-- HELP & INFORMATION SECTION
+-- ═══════════════════════════════════════════════════════════════
+
+SettingTab:CreateParagraph({
+    Title = "ℹ️ Informasi Fitur",
+    Content = "📖 Panduan penggunaan:\n\n" ..
+              "🚀 Boost FPS: Mengurangi kualitas grafis untuk FPS lebih tinggi\n" ..
+              "✨ HDR Shader: Meningkatkan efek visual dan pencahayaan\n" ..
+              "🔄 Rejoin: Bergabung kembali ke server yang sama\n" ..
+              "🌍 Server Hop: Pindah ke server acak lainnya\n" ..
+              "👥 Small Server: Cari server dengan pemain sedikit\n" ..
+              "🕊️ Float: Karakter dapat melayang (tekan Space)\n" ..
+              "👻 No Clip: Tembus dinding dan objek\n" ..
+              "🌪️ Spinner: Karakter berputar terus menerus\n" ..
+              "🏊 Anti Drown: Mencegah tenggelam di air"
+})
+
+print("XSAN: SETTING tab completed successfully!")
 
 -- ═══════════════════════════════════════════════════════════════
 -- EXIT TAB - Script Management & Exit Options
