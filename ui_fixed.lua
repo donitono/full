@@ -500,7 +500,7 @@
         -- Add UIListLayout to TabList
         local TabListLayout = Instance.new("UIListLayout")
         TabListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-        TabListLayout.Padding = UDim.new(0, 1)  -- Reduced padding from 2 to 1
+        TabListLayout.Padding = UDim.new(0, 0)  -- No padding for maximum compactness
         TabListLayout.Parent = TabList
         
         -- Mobile touch scrolling for TabList
@@ -555,18 +555,18 @@
         Content.ScrollingDirection = Enum.ScrollingDirection.Y
         Content.Parent = ContentContainer
 
-        -- Add UIListLayout to Content
+        -- Add UIListLayout to Content - MINIMAL PADDING
         local ContentLayout = Instance.new("UIListLayout")
         ContentLayout.SortOrder = Enum.SortOrder.LayoutOrder
-        ContentLayout.Padding = UDim.new(0, 2)  -- Reduced from 3 to 2 for more compact
+        ContentLayout.Padding = UDim.new(0, 1)  -- Further reduced from 2 to 1 for maximum compactness
         ContentLayout.Parent = Content
 
-        -- Add UIPadding to Content
+        -- Add UIPadding to Content - MINIMAL PADDING
         local ContentPadding = Instance.new("UIPadding")
-        ContentPadding.PaddingTop = UDim.new(0, 4)     -- Reduced from 5 to 4
-        ContentPadding.PaddingBottom = UDim.new(0, 4)  -- Reduced from 5 to 4
-        ContentPadding.PaddingLeft = UDim.new(0, 4)    -- Reduced from 5 to 4
-        ContentPadding.PaddingRight = UDim.new(0, 4)   -- Reduced from 5 to 4
+        ContentPadding.PaddingTop = UDim.new(0, 2)     -- Further reduced from 4 to 2
+        ContentPadding.PaddingBottom = UDim.new(0, 2)  -- Further reduced from 4 to 2
+        ContentPadding.PaddingLeft = UDim.new(0, 8)    -- Increased from 4 to 8 to fix margin kiri terpotong
+        ContentPadding.PaddingRight = UDim.new(0, 2)   -- Further reduced from 4 to 2
         ContentPadding.Parent = Content
 
         -- Mobile landscape scroll optimization
@@ -705,7 +705,7 @@
             TabButton.Name = Name
             TabButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
             TabButton.BorderSizePixel = 0
-            TabButton.Size = UDim2.new(1, 0, 0, 26)  -- Reduced from 28 to 26 for smaller font
+            TabButton.Size = UDim2.new(1, 0, 0, 24)  -- Further reduced from 26 to 24 for more compact tabs
             TabButton.Font = Enum.Font.SourceSans
             TabButton.Text = Name
             TabButton.TextColor3 = Color3.fromRGB(200, 200, 200)
@@ -742,18 +742,18 @@
                 applyTextStyle(d, UIStyle.ContentTextSize)
             end)
 
-            -- Add UIListLayout to TabContent
+            -- Add UIListLayout to TabContent - MINIMAL SPACING
             local TabContentLayout = Instance.new("UIListLayout")
             TabContentLayout.SortOrder = Enum.SortOrder.LayoutOrder
-            TabContentLayout.Padding = UDim.new(0, 2)  -- Reduced padding for compact
+            TabContentLayout.Padding = UDim.new(0, 1)  -- Further reduced from 2 to 1
             TabContentLayout.Parent = TabContent
             
-            -- Add padding for mobile
+            -- Add padding for mobile - OPTIMIZED FOR READABILITY
             local TabContentPadding = Instance.new("UIPadding")
-            TabContentPadding.PaddingTop = UDim.new(0, 2)
-            TabContentPadding.PaddingBottom = UDim.new(0, 2)
-            TabContentPadding.PaddingLeft = UDim.new(0, 2)
-            TabContentPadding.PaddingRight = UDim.new(0, 2)
+            TabContentPadding.PaddingTop = UDim.new(0, 1)     -- Reduced from 2 to 1
+            TabContentPadding.PaddingBottom = UDim.new(0, 1)  -- Reduced from 2 to 1
+            TabContentPadding.PaddingLeft = UDim.new(0, 6)    -- Increased from 2 to 6 to prevent left margin cut-off
+            TabContentPadding.PaddingRight = UDim.new(0, 2)   -- Keep 2 for right spacing
             TabContentPadding.Parent = TabContent
             
             -- Mobile touch scrolling for tab content
