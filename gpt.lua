@@ -112,19 +112,14 @@ function SystemExploits.ToggleEnhancedFishDetection()
         print("🐟 XSAN: Enhanced Fish Detection ACTIVATED")
         
         -- Real fish detection hook
-        spawn(function()
-            local success, error = pcall(function()
-                -- Try to hook into actual fish catching
-                local remoteEvents = ReplicatedStorage:FindFirstChild("RemoteEvents")
                 if remoteEvents then
                     local catchFishRemote = remoteEvents:FindFirstChild("CatchFish")
-                    if catchFishRemote then
+                    if catchFishRemote and catchFishRemote.OnClientEvent then
                         catchFishRemote.OnClientEvent:Connect(function(fishData)
                             if fishData and fishData.Name then
                                 local fishName = fishData.Name
                                 local rarity = fishData.Rarity or "Unknown"
                                 local variant = nil
-                                
                                 -- Detect fish variant
                                 for _, v in ipairs(fishVariants) do
                                     if string.find(fishName:lower(), v:lower()) then
@@ -132,7 +127,6 @@ function SystemExploits.ToggleEnhancedFishDetection()
                                         break
                                     end
                                 end
-                                
                                 -- Calculate estimated value
                                 local baseValue = 100
                                 if rarity == "Common" then baseValue = math.random(50, 150)
@@ -142,11 +136,9 @@ function SystemExploits.ToggleEnhancedFishDetection()
                                 elseif rarity == "Legendary" then baseValue = math.random(1200, 2500)
                                 elseif rarity == "Mythical" then baseValue = math.random(2500, 5000)
                                 end
-                                
                                 if variant then
                                     baseValue = baseValue * 3 -- Variant multiplier
                                 end
-                                
                                 print("🐟 ENHANCED FISH DETECTED:")
                                 print("  📛 Name: " .. fishName)
                                 print("  ⭐ Rarity: " .. rarity)
@@ -155,7 +147,6 @@ function SystemExploits.ToggleEnhancedFishDetection()
                                 end
                                 print("  💰 Estimated Value: " .. baseValue .. " coins")
                                 print("  ⏰ Time: " .. os.date("%H:%M:%S"))
-                                
                                 -- Store in global log
                                 table.insert(_G.XSANFishLog, {
                                     name = fishName,
@@ -167,6 +158,11 @@ function SystemExploits.ToggleEnhancedFishDetection()
                             end
                         end)
                         print("🐟 XSAN: Fish detection hook established successfully!")
+                    else
+                        warn("🐟 XSAN: CatchFish remote not found, or OnClientEvent is nil. Using simulation mode.")
+                    end
+                else
+                    warn("🐟 XSAN: RemoteEvents not found in ReplicatedStorage. Using simulation mode.")
                     else
                         print("🐟 XSAN: CatchFish remote not found, using simulation mode")
                     end
