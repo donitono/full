@@ -45,7 +45,8 @@ local exploitStates = {
     autoEnchantingSystem = false,
     statModifier = false,
     customRemoteFiring = false,
-    autoUpgradeRod = false
+    autoUpgradeRod = false,
+    autoCastCatch = false
 }
 
 -- Global data storage initialization
@@ -250,8 +251,7 @@ function SystemExploits.ToggleVariantTracker()
                                     local fishName = fishItem.Name
                                     
                                     -- Check for variants
-                                    for _, variant in ipairs(fishVariants) do
-                                        if string.find(fishName:lower(), variant:lower()) then
+                                    for _, variant in ipairs(fishVariants)
                                             _G.XSANVariantStats[variant].count = _G.XSANVariantStats[variant].count + 1
                                             _G.XSANVariantStats[variant].lastCaught = os.date("%H:%M:%S")
                                             
