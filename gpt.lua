@@ -382,7 +382,7 @@ local function notify(title, text, color)
 end
 
 -- Toggle button function
-local function createToggle(name, desc, callback)
+local function createToggle(name, descText, callback)
     local frame = Instance.new("Frame")
     frame.BackgroundColor3 = Color3.fromRGB(25,25,25)
     frame.BorderSizePixel = 0
@@ -404,17 +404,17 @@ local function createToggle(name, desc, callback)
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = frame
     
-    local desc = Instance.new("TextLabel")
-    desc.BackgroundTransparency = 1
-    desc.Position = UDim2.new(0,10,0,20)
-    desc.Size = UDim2.new(1,-80,0,20)
-    desc.Font = Enum.Font.SourceSans
-    desc.Text = desc
-    desc.TextColor3 = Color3.fromRGB(180,180,180)
-    desc.TextSize = 10
-    desc.TextXAlignment = Enum.TextXAlignment.Left
-    desc.TextWrapped = true
-    desc.Parent = frame
+    local descLabel = Instance.new("TextLabel")
+    descLabel.BackgroundTransparency = 1
+    descLabel.Position = UDim2.new(0,10,0,20)
+    descLabel.Size = UDim2.new(1,-80,0,20)
+    descLabel.Font = Enum.Font.SourceSans
+    descLabel.Text = descText
+    descLabel.TextColor3 = Color3.fromRGB(180,180,180)
+    descLabel.TextSize = 10
+    descLabel.TextXAlignment = Enum.TextXAlignment.Left
+    descLabel.TextWrapped = true
+    descLabel.Parent = frame
     
     local btn = Instance.new("TextButton")
     btn.BackgroundColor3 = Color3.fromRGB(60,60,60)
