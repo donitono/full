@@ -293,51 +293,74 @@ function Rayfield:CreateWindow(Settings)
 			if FloatingGUI then
 				FloatingGUI.Enabled = true
 			else
-				-- Create new floating button if it doesn't exist
-				pcall(function()
-					loadstring([[
-						local Players = game:GetService("Players")
-						local TweenService = game:GetService("TweenService")
-						local LocalPlayer = Players.LocalPlayer
+				-- Create new floating button
+				local FloatingButtonGui = Instance.new("ScreenGui")
+				FloatingButtonGui.Name = "XSAN_FloatingButton"
+				FloatingButtonGui.ResetOnSpawn = false
+				FloatingButtonGui.IgnoreGuiInset = true
+				
+				-- Try to parent to CoreGui first, then fallback to PlayerGui
+				local success = pcall(function()
+					FloatingButtonGui.Parent = game.CoreGui
+				end)
+				if not success then
+					FloatingButtonGui.Parent = Player.PlayerGui
+				end
+				
+				local FloatingBtn = Instance.new("TextButton")
+				FloatingBtn.Size = UDim2.new(0, 50, 0, 50)
+				FloatingBtn.Position = UDim2.new(0, 15, 0.5, -25)
+				FloatingBtn.BackgroundColor3 = Color3.fromRGB(70, 130, 200)
+				FloatingBtn.Text = "XSAN"
+				FloatingBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+				FloatingBtn.TextScaled = true
+				FloatingBtn.Font = Enum.Font.SourceSansBold
+				FloatingBtn.BorderSizePixel = 0
+				FloatingBtn.Parent = FloatingButtonGui
+				
+				local Corner = Instance.new("UICorner")
+				Corner.CornerRadius = UDim.new(0, 25)
+				Corner.Parent = FloatingBtn
+				
+				-- Make floating button draggable
+				local dragging = false
+				local dragInput, dragStart, startPos
+				
+				FloatingBtn.InputBegan:Connect(function(input)
+					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+						dragging = true
+						dragStart = input.Position
+						startPos = FloatingBtn.Position
 						
-						local FloatingButtonGui = Instance.new("ScreenGui")
-						FloatingButtonGui.Name = "XSAN_FloatingButton"
-						FloatingButtonGui.ResetOnSpawn = false
-						FloatingButtonGui.IgnoreGuiInset = true
-						
-						local success = pcall(function()
-							FloatingButtonGui.Parent = game.CoreGui
-						end)
-						if not success then
-							FloatingButtonGui.Parent = LocalPlayer.PlayerGui
-						end
-						
-						local FloatingBtn = Instance.new("TextButton")
-						FloatingBtn.Size = UDim2.new(0, 50, 0, 50)
-						FloatingBtn.Position = UDim2.new(0, 15, 0.5, -25)
-						FloatingBtn.BackgroundColor3 = Color3.fromRGB(70, 130, 200)
-						FloatingBtn.Text = "X"
-						FloatingBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-						FloatingBtn.TextScaled = true
-						FloatingBtn.Font = Enum.Font.SourceSansBold
-						FloatingBtn.BorderSizePixel = 0
-						FloatingBtn.Parent = FloatingButtonGui
-						
-						local Corner = Instance.new("UICorner")
-						Corner.CornerRadius = UDim.new(0, 25)
-						Corner.Parent = FloatingBtn
-						
-						FloatingBtn.MouseButton1Click:Connect(function()
-							FloatingButtonGui:Destroy()
-							local RayfieldGUI = game.CoreGui:FindFirstChild("RayfieldLibrary") or LocalPlayer.PlayerGui:FindFirstChild("RayfieldLibrary")
-							if RayfieldGUI then
-								local Main = RayfieldGUI:FindFirstChild("Main")
-								if Main then
-									Main.Visible = true
-								end
+						input.Changed:Connect(function()
+							if input.UserInputState == Enum.UserInputState.End then
+								dragging = false
 							end
 						end)
-					]])()
+					end
+				end)
+				
+				FloatingBtn.InputChanged:Connect(function(input)
+					if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+						dragInput = input
+					end
+				end)
+				
+				UserInputService.InputChanged:Connect(function(input)
+					if input == dragInput and dragging then
+						local delta = input.Position - dragStart
+						FloatingBtn.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+					end
+				end)
+				
+				-- Click to restore main UI
+				FloatingBtn.MouseButton1Click:Connect(function()
+					-- Destroy floating button
+					FloatingButtonGui:Destroy()
+					-- Show main UI
+					Main.Visible = true
+					-- Reset floating mode state
+					isFloatingMode = false
 				end)
 			end
 		else
@@ -1625,6 +1648,7 @@ function Rayfield:CreateWindow(Settings)
 			DropdownFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 			DropdownFrame.BorderSizePixel = 0
 			DropdownFrame.Size = UDim2.new(1, 0, 0, 40)
+			DropdownFrame.ZIndex = 998  -- High Z-index for dropdown frame
 			DropdownFrame.Parent = TabContent
 
 			-- Add UICorner
@@ -1642,6 +1666,7 @@ function Rayfield:CreateWindow(Settings)
 			DropdownButton.TextScaled = false
 			DropdownButton.TextSize = UIStyle.ContentTextSize
 			DropdownButton.TextXAlignment = Enum.TextXAlignment.Left
+			DropdownButton.ZIndex = 999  -- High Z-index for dropdown button
 			DropdownButton.Parent = DropdownFrame
 
 			-- Add padding to dropdown text
@@ -1650,7 +1675,7 @@ function Rayfield:CreateWindow(Settings)
 			DropdownPadding.PaddingRight = UDim.new(0, 15)
 			DropdownPadding.Parent = DropdownButton
 
-			-- Create Options Frame
+			-- Create Options Frame - HIGH Z-INDEX for proper layering
 			local OptionsFrame = Instance.new("ScrollingFrame")
 			OptionsFrame.Name = "Options"
 			OptionsFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
@@ -1658,13 +1683,19 @@ function Rayfield:CreateWindow(Settings)
 			OptionsFrame.Position = UDim2.new(0, 0, 1, 2)
 			OptionsFrame.Size = UDim2.new(1, 0, 0, 0)
 			OptionsFrame.Visible = false
-			OptionsFrame.ZIndex = 10
+			OptionsFrame.ZIndex = 1000  -- MUCH higher Z-index to appear above all other content
 			OptionsFrame.ScrollBarThickness = 8
 			OptionsFrame.ScrollBarImageColor3 = Color3.fromRGB(80, 80, 80)
 			OptionsFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
 			OptionsFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
 			OptionsFrame.ScrollingDirection = Enum.ScrollingDirection.Y
 			OptionsFrame.Parent = DropdownFrame
+
+			-- Add UIStroke for better visibility
+			local OptionsStroke = Instance.new("UIStroke")
+			OptionsStroke.Color = Color3.fromRGB(80, 80, 80)
+			OptionsStroke.Thickness = 1
+			OptionsStroke.Parent = OptionsFrame
 
 			-- Add UICorner to Options
 			local OptionsCorner = Instance.new("UICorner")
@@ -1702,6 +1733,7 @@ function Rayfield:CreateWindow(Settings)
 					OptionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 					OptionButton.TextScaled = false
 					OptionButton.TextSize = UIStyle.ContentTextSize
+					OptionButton.ZIndex = 1001  -- Higher than OptionsFrame
 					OptionButton.Parent = OptionsFrame
 
 					-- Add UICorner
@@ -1727,27 +1759,54 @@ function Rayfield:CreateWindow(Settings)
 				end
 			end
 
+			-- Close dropdown when clicking outside - IMPROVED
+			local clickOutsideConnection
+			
 			-- Toggle dropdown
 			DropdownButton.MouseButton1Click:Connect(function()
 				isOpen = not isOpen
 				OptionsFrame.Visible = isOpen
 				if isOpen then
 					UpdateOptions()
-				end
-			end)
-
-			-- Close dropdown when clicking outside
-			UserInputService.InputBegan:Connect(function(input)
-				if input.UserInputType == Enum.UserInputType.MouseButton1 and isOpen then
-					local mousePos = UserInputService:GetMouseLocation()
-					local dropdownPos = DropdownFrame.AbsolutePosition
-					local dropdownSize = DropdownFrame.AbsoluteSize
-					local optionsSize = OptionsFrame.AbsoluteSize
-
-					if mousePos.X < dropdownPos.X or mousePos.X > dropdownPos.X + dropdownSize.X or
-					   mousePos.Y < dropdownPos.Y or mousePos.Y > dropdownPos.Y + dropdownSize.Y + optionsSize.Y then
-						OptionsFrame.Visible = false
-						isOpen = false
+					
+					-- Create connection to detect outside clicks
+					if clickOutsideConnection then
+						clickOutsideConnection:Disconnect()
+					end
+					
+					clickOutsideConnection = UserInputService.InputBegan:Connect(function(input)
+						if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+							-- Wait a frame to ensure the dropdown button click is processed first
+							task.wait()
+							
+							local mousePos = UserInputService:GetMouseLocation()
+							local dropdownPos = DropdownFrame.AbsolutePosition
+							local dropdownSize = DropdownFrame.AbsoluteSize
+							local optionsPos = OptionsFrame.AbsolutePosition
+							local optionsSize = OptionsFrame.AbsoluteSize
+							
+							-- Check if click is outside both dropdown button and options frame
+							local clickInDropdown = mousePos.X >= dropdownPos.X and mousePos.X <= dropdownPos.X + dropdownSize.X and
+													mousePos.Y >= dropdownPos.Y and mousePos.Y <= dropdownPos.Y + dropdownSize.Y
+													
+							local clickInOptions = mousePos.X >= optionsPos.X and mousePos.X <= optionsPos.X + optionsSize.X and
+												   mousePos.Y >= optionsPos.Y and mousePos.Y <= optionsPos.Y + optionsSize.Y
+							
+							if not clickInDropdown and not clickInOptions then
+								OptionsFrame.Visible = false
+								isOpen = false
+								if clickOutsideConnection then
+									clickOutsideConnection:Disconnect()
+									clickOutsideConnection = nil
+								end
+							end
+						end
+					end)
+				else
+					-- Disconnect the outside click detection when dropdown is closed
+					if clickOutsideConnection then
+						clickOutsideConnection:Disconnect()
+						clickOutsideConnection = nil
 					end
 				end
 			end)
