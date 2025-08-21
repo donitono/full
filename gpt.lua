@@ -211,6 +211,38 @@ function XSAN.getStats()
     return {totalFish = total, totalVariants = variants, fishLog = XSAN.data.fishLog, variantStats = XSAN.data.variantStats}
 end
 
+-- Auto Redeem Code Exploit
+function XSAN.autoRedeemCodes()
+    print("🎁 Auto Redeem Codes ACTIVATED")
+    local packages = ReplicatedStorage:FindFirstChild("Packages")
+    if packages then
+        local index = packages:FindFirstChild("_Index")
+        if index then
+            local rf = index:FindFirstChild("sleitnick_net@0.2.0.net.RF")
+            if rf and rf:FindFirstChild("RedeemCode") then
+                local redeemFunc = rf.RedeemCode
+                local codes = {
+                    "WELCOME2025", "FISHMASTER", "RAREBOOST", "COINBONUS", "FREEBOAT", "SKINCRATE", "DAILYREWARD", "EVENTHUNT", "LEGENDARYFISH", "EXPIRED2024", "LIMITEDGIFT", "SECRET2025"
+                }
+                for _, code in ipairs(codes) do
+                    pcall(function()
+                        local result = redeemFunc:InvokeServer(code)
+                        print("🎁 REDEEM: " .. code .. " | Result: " .. tostring(result))
+                    end)
+                    wait(0.5)
+                end
+                print("🎁 All codes attempted!")
+            else
+                warn("⚠️ RemoteFunction RedeemCode not found!")
+            end
+        else
+            warn("⚠️ _Index not found in Packages!")
+        end
+    else
+        warn("⚠️ Packages not found in ReplicatedStorage!")
+    end
+end
+
 -- ═══════════════════════════════════════════════════════════════
 -- COMPACT UI
 -- ═══════════════════════════════════════════════════════════════
@@ -456,6 +488,11 @@ createToggle("✨ Auto Enchant", "Automatic enchantments", function(on)
     local result = XSAN.toggleAutoEnchant()
     if result then notify("Auto Enchant", "Enchanting system active!", Color3.fromRGB(50,200,50))
     else notify("Auto Enchant", "Enchanting deactivated", Color3.fromRGB(200,150,50)) end
+end)
+
+createButton("🎁 Auto Redeem All Codes", function()
+    XSAN.autoRedeemCodes()
+    notify("Auto Redeem", "Semua kode hadiah dicoba!", Color3.fromRGB(200,150,50))
 end)
 
 createButton("📊 View Statistics", function()
