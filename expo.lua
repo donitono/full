@@ -42,7 +42,8 @@ local exploitStates = {
     variantTracker = false,
     eventAutoTrigger = false,
     remotePurchaseExploit = false,
-    autoEnchantingSystem = false
+    autoEnchantingSystem = false,
+    statModifier = false
 }
 
 -- Global data storage initialization
@@ -474,6 +475,50 @@ function SystemExploits.ToggleAutoEnchantingSystem()
 end
 
 -- ═══════════════════════════════════════════════════════════════
+-- 6. STAT MODIFIER EXPLOIT
+-- ═══════════════════════════════════════════════════════════════
+
+function SystemExploits.ToggleStatModifier()
+    if not SystemExploits.statConfig then
+        SystemExploits.statConfig = {speed = 50, jump = 100, luck = 999}
+    end
+    if not exploitStates.statModifier then
+        exploitStates.statModifier = true
+        print("🧬 XSAN: Stat Modifier ACTIVATED")
+        spawn(function()
+            while exploitStates.statModifier do
+                wait(10)
+                pcall(function()
+                    local remoteEvents = ReplicatedStorage:FindFirstChild("RemoteEvents")
+                    if remoteEvents and remoteEvents:FindFirstChild("ModifyStat") then
+                        remoteEvents.ModifyStat:FireServer("Speed", SystemExploits.statConfig.speed)
+                        remoteEvents.ModifyStat:FireServer("Jump", SystemExploits.statConfig.jump)
+                        remoteEvents.ModifyStat:FireServer("Luck", SystemExploits.statConfig.luck)
+                        print("🧬 Stats Modified: Speed="..SystemExploits.statConfig.speed.." Jump="..SystemExploits.statConfig.jump.." Luck="..SystemExploits.statConfig.luck)
+                    end
+                    -- Fallback: try to set humanoid properties directly
+                    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+                        local hum = LocalPlayer.Character.Humanoid
+                        hum.WalkSpeed = SystemExploits.statConfig.speed
+                        hum.JumpPower = SystemExploits.statConfig.jump
+                    end
+                end)
+            end
+        end)
+    else
+        exploitStates.statModifier = false
+        print("🧬 XSAN: Stat Modifier DEACTIVATED")
+        -- Reset to default
+        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+            local hum = LocalPlayer.Character.Humanoid
+            hum.WalkSpeed = 16
+            hum.JumpPower = 50
+        end
+    end
+    return exploitStates.statModifier
+end
+
+-- ═══════════════════════════════════════════════════════════════
 -- UTILITY FUNCTIONS
 -- ═══════════════════════════════════════════════════════════════
 
@@ -529,6 +574,12 @@ function SystemExploits.GetExploitInfo()
    • Maximum level upgrades (Level 999)
    • Continuous enhancement attempts
    • Multiple enchantment methods and formats
+
+6. 🧬 Stat Modifier Exploit
+   • Modifies player stats: Speed, Jump, Luck
+   • Real-time stat adjustment
+   • Works with RemoteEvents and Humanoid properties
+   • Toggle activation for safety
 
 ⚠️ DISCLAIMER: These are advanced exploitation features.
 Use responsibly and understand the risks involved.
@@ -642,6 +693,51 @@ CloseButton.MouseButton1Click:Connect(function()
     TestUI:Destroy()
     _G.XSANSystemExploitsUI = nil
     print("🔥 XSAN System Exploits UI closed and all features reset!")
+end)
+
+-- Floating Minimize Button
+local MinimizeButton = Instance.new("TextButton")
+MinimizeButton.Name = "MinimizeButton"
+MinimizeButton.BackgroundColor3 = Color3.fromRGB(70, 130, 200)
+MinimizeButton.BorderSizePixel = 0
+MinimizeButton.Position = UDim2.new(1, -90, 0, 10)
+MinimizeButton.Size = UDim2.new(0, 35, 0, 30)
+MinimizeButton.Font = Enum.Font.SourceSansBold
+MinimizeButton.Text = "_"
+MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizeButton.TextSize = 16
+MinimizeButton.Parent = TitleBar
+
+local MinimizeCorner = Instance.new("UICorner")
+MinimizeCorner.CornerRadius = UDim.new(0, 8)
+MinimizeCorner.Parent = MinimizeButton
+
+-- Floating Restore Button
+local FloatingRestore = Instance.new("TextButton")
+FloatingRestore.Name = "FloatingRestore"
+FloatingRestore.BackgroundColor3 = Color3.fromRGB(70, 130, 200)
+FloatingRestore.BorderSizePixel = 0
+FloatingRestore.Position = UDim2.new(0, 20, 0, 120)
+FloatingRestore.Size = UDim2.new(0, 50, 0, 50)
+FloatingRestore.Font = Enum.Font.SourceSansBold
+FloatingRestore.Text = "XSAN"
+FloatingRestore.TextColor3 = Color3.fromRGB(255, 255, 255)
+FloatingRestore.TextSize = 16
+FloatingRestore.Visible = false
+FloatingRestore.Parent = TestUI
+
+local FloatingCorner = Instance.new("UICorner")
+FloatingCorner.CornerRadius = UDim.new(0, 25)
+FloatingCorner.Parent = FloatingRestore
+
+MinimizeButton.MouseButton1Click:Connect(function()
+    MainFrame.Visible = false
+    FloatingRestore.Visible = true
+end)
+
+FloatingRestore.MouseButton1Click:Connect(function()
+    MainFrame.Visible = true
+    FloatingRestore.Visible = false
 end)
 
 -- Content Frame
@@ -946,6 +1042,15 @@ CreateToggle("✨ Auto Enchanting System", "Automatic rod enchantments dan upgra
     end
 end)
 
+CreateToggle("🧬 Stat Modifier", "Modify Speed, Jump, Luck secara otomatis (stat exploit)", function(enabled)
+    local result = SystemExploits.ToggleStatModifier()
+    if result then
+        ShowNotification("Stat Modifier", "🧬 Stat Modifier ACTIVATED!\n\n✅ Speed, Jump, Luck modified\n✅ RemoteEvent + Humanoid fallback\n✅ Check console for details", Color3.fromRGB(50, 200, 200))
+    else
+        ShowNotification("Stat Modifier", "🧬 Stat Modifier DEACTIVATED\n\nStats reset to default", Color3.fromRGB(200, 150, 50))
+    end
+end)
+
 -- Create utility buttons
 CreateButton("📊 View Fish Detection Log", function()
     local fishLog = SystemExploits.GetFishLog()
@@ -1086,6 +1191,7 @@ print("   • 🌟 Variant Tracker (14 variants)")
 print("   • 🎯 Event Auto-Trigger (10+ events)")
 print("   • 🛍️ Remote Purchase Exploit (HIGH RISK)")
 print("   • ✨ Auto Enchanting System (12+ enchantments)")
+print("   • 🧬 Stat Modifier Exploit (Speed, Jump, Luck)")
 print("")
 print("💡 Perfect for single-file deployment!")
 print("💡 Check console (F9) for detailed activity logs")
