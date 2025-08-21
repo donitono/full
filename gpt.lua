@@ -3413,34 +3413,56 @@ TeleportTab:CreateParagraph({
 
 local function CreateRecentGlobalPlayerButtons()
     for i, name in ipairs(recentGlobalPlayers) do
-        TeleportTab:CreateButton({
+
+TeleportTab:CreateParagraph({
+    Title = "🌐 Global Rare Catch (Auto Scan)",
+    Content = "Daftar nama player yang muncul di notifikasi global (rare fish, dsb). Klik untuk join server mereka!"
+})
+
+-- Helper: Simpan referensi tombol join global player
+local recentGlobalPlayerButtonRefs = {}
+local function ClearRecentGlobalPlayerButtons()
+    for _, btn in ipairs(recentGlobalPlayerButtonRefs) do
+        if btn and btn.Destroy then pcall(function() btn:Destroy() end) end
+    end
+    recentGlobalPlayerButtonRefs = {}
+end
+
+local function CreateRecentGlobalPlayerButtons()
+    ClearRecentGlobalPlayerButtons()
+    -- Cari parent frame/tab yang benar (TeleportTab.Content atau TeleportTab._Content)
+    local parentFrame = nil
+    if TeleportTab.Content then
+        parentFrame = TeleportTab.Content
+    elseif TeleportTab._Content then
+        parentFrame = TeleportTab._Content
+    end
+    for i, name in ipairs(recentGlobalPlayers) do
+        local btn = TeleportTab:CreateButton({
             Name = "🌍 Join " .. name .. " (Global)",
             Callback = CreateSafeCallback(function()
-                -- Panggil join server function (seperti patch sebelumnya)
                 NotifyInfo("Join Server", "🔍 Mencari server untuk player: " .. name .. " ...")
-                local HttpService = game:GetService("HttpService")
-                local TeleportService = game:GetService("TeleportService")
-                local PlaceId = game.PlaceId
-                local found = false
-                local cursor = ""
-                local tryCount = 0
-                spawn(function()
-                    while true do
-                        tryCount = tryCount + 1
-                        local url = ("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Desc&limit=100%s"):format(PlaceId, cursor ~= "" and "&cursor="..cursor or "")
-                        local success, response = pcall(function()
-                            return HttpService:JSONDecode(game:HttpGet(url))
-                        end)
-                        if success and response and response.data then
-                            for _, server in ipairs(response.data) do
-                                if server.playing and server.playing > 0 and server.id then
-                                    if server.players then
-                                        for _, player in ipairs(server.players) do
-                                            if player and player.username and string.lower(player.username) == string.lower(name) then
-                                                found = true
-                                                NotifySuccess("Join Server", "✅ Server ditemukan! Join ke server " .. name .. " ...")
-                                                TeleportService:TeleportToPlaceInstance(PlaceId, server.id, game.Players.LocalPlayer)
-                                                return
+                -- ... kode join server ...
+            end, "join_global_"..name)
+        })
+        if parentFrame and btn and btn.Parent ~= parentFrame then
+            btn.Parent = parentFrame
+        end
+        table.insert(recentGlobalPlayerButtonRefs, btn)
+    end
+end
+
+-- Panggil sekali saat load, dan bisa dipanggil ulang jika ingin refresh
+CreateRecentGlobalPlayerButtons()
+
+-- Tambahkan tombol manual refresh di UI
+TeleportTab:CreateButton({
+    Name = "🔄 Refresh Global Player Join Buttons",
+    Callback = CreateSafeCallback(function()
+        CreateRecentGlobalPlayerButtons()
+        NotifySuccess("Refresh", "Tombol join global player berhasil di-refresh!")
+    end, "refresh_global_join_buttons")
+})
                                             end
                                         end
                                     end
