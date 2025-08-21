@@ -2332,7 +2332,7 @@ TeleportLocations.RandomSpots = {
     ["🎣 STRINGRY"] = CFrame.new(102.05, 29.64, 3054.35),
     ["❄️ ICE LAND"] = CFrame.new(1990.55, 3.09, 3021.91),
     ["🌋 CRATER"] = CFrame.new(990.45, 21.06, 5059.85),
-    ["🌴 TROPICAL"] = CFrame.new(-2115.70, 49.22, 3599.17),
+    ["🌴 TROPICAL"] = CFrame.new(-2173.60, 53.48, 3636.23),
     ["🗿 STONE"] = CFrame.new(-2636.19, 124.87, -27.49),
     ["⚙️ MACHINE"] = CFrame.new(-1480.98, 3.49, 1923.66)
 }
