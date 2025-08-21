@@ -44,7 +44,8 @@ local exploitStates = {
     remotePurchaseExploit = false,
     autoEnchantingSystem = false,
     statModifier = false,
-    customRemoteFiring = false
+    customRemoteFiring = false,
+    autoUpgradeRod = false
 }
 
 -- Global data storage initialization
@@ -551,6 +552,41 @@ function SystemExploits.ToggleCustomRemoteFiring()
 end
 
 -- ═══════════════════════════════════════════════════════════════
+-- 8. AUTO UPGRADE ROD + STAT MODIFIER (LUCK, SPEED, WEIGHT)
+-- ═══════════════════════════════════════════════════════════════
+
+function SystemExploits.ToggleAutoUpgradeRod()
+    if not exploitStates.autoUpgradeRod then
+        exploitStates.autoUpgradeRod = true
+        print("🏅 XSAN: Auto Upgrade Rod & Stat Modifier ACTIVATED")
+        spawn(function()
+            while exploitStates.autoUpgradeRod do
+                wait(12)
+                pcall(function()
+                    local remoteEvents = ReplicatedStorage:FindFirstChild("RemoteEvents")
+                    if remoteEvents and remoteEvents:FindFirstChild("UpgradeRod") then
+                        remoteEvents.UpgradeRod:FireServer("MaxUpgrade")
+                        remoteEvents.UpgradeRod:FireServer({upgrade = "maximum"})
+                        print("🏅 Auto Upgrade Rod: Upgrade attempt sent!")
+                    end
+                    -- Stat Modifier for Rod
+                    if remoteEvents and remoteEvents:FindFirstChild("ModifyRodStat") then
+                        remoteEvents.ModifyRodStat:FireServer("Luck", 999)
+                        remoteEvents.ModifyRodStat:FireServer("Speed", 999)
+                        remoteEvents.ModifyRodStat:FireServer("Weight", 999)
+                        print("🏅 Rod Stat Modified: Luck=999, Speed=999, Weight=999")
+                    end
+                end)
+            end
+        end)
+    else
+        exploitStates.autoUpgradeRod = false
+        print("🏅 XSAN: Auto Upgrade Rod & Stat Modifier DEACTIVATED")
+    end
+    return exploitStates.autoUpgradeRod
+end
+
+-- ═══════════════════════════════════════════════════════════════
 -- UTILITY FUNCTIONS
 -- ═══════════════════════════════════════════════════════════════
 
@@ -618,6 +654,12 @@ function SystemExploits.GetExploitInfo()
    • Useful for testing and debugging exploits
    • Can simulate various data payloads
    • Toggle activation for safety
+
+8. 🏅 Auto Upgrade Rod & Stat Modifier
+   • Automatically upgrades rod to max level
+   • Modifies rod stats: Luck, Speed, Weight
+   • Real-time stat and upgrade adjustment
+   • Works with RemoteEvents
 
 ⚠️ DISCLAIMER: These are advanced exploitation features.
 Use responsibly and understand the risks involved.
@@ -1098,6 +1140,15 @@ CreateToggle("🧙‍♂️ Custom Remote Firing", "Kirim data custom ke semua R
     end
 end)
 
+CreateToggle("🏅 Auto Upgrade Rod & Stat Modifier", "Upgrade pancing ke level maksimal dan modifikasi Luck, Speed, Weight secara otomatis", function(enabled)
+    local result = SystemExploits.ToggleAutoUpgradeRod()
+    if result then
+        ShowNotification("Auto Upgrade Rod & Stat Modifier", "🏅 Auto Upgrade Rod & Stat Modifier ACTIVATED!\n\n✅ Upgrade otomatis ke level maksimal\n✅ Luck, Speed, Weight di-set ke 999\n✅ Cek console untuk log", Color3.fromRGB(255, 200, 50))
+    else
+        ShowNotification("Auto Upgrade Rod & Stat Modifier", "🏅 Auto Upgrade Rod & Stat Modifier DEACTIVATED", Color3.fromRGB(200, 150, 50))
+    end
+end)
+
 -- Create utility buttons
 CreateButton("📊 View Fish Detection Log", function()
     local fishLog = SystemExploits.GetFishLog()
@@ -1239,6 +1290,7 @@ print("   • 🎯 Event Auto-Trigger (10+ events)")
 print("   • 🛍️ Remote Purchase Exploit (HIGH RISK)")
 print("   • ✨ Auto Enchanting System (12+ enchantments)")
 print("   • 🧬 Stat Modifier Exploit (Speed, Jump, Luck)")
+print("   • 🏅 Auto Upgrade Rod & Stat Modifier (Luck, Speed, Weight)")
 print("")
 print("💡 Perfect for single-file deployment!")
 print("💡 Check console (F9) for detailed activity logs")
