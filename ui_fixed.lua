@@ -232,7 +232,7 @@
         FloatingButton.Position = UDim2.new(1, -65, 0, 2)
         FloatingButton.Size = UDim2.new(0, 20, 0, 21)
         FloatingButton.Font = Enum.Font.SourceSansBold
-        FloatingButton.Text = "_"
+        FloatingButton.Text = "−"  -- Using proper minus symbol for minimize
         FloatingButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         FloatingButton.TextScaled = true
         FloatingButton.Parent = Topbar
@@ -280,97 +280,93 @@
         -- Button functionality
         local isFloatingMode = false
         
-        -- Floating Button Click - Toggle floating mode
+        -- Clean up any existing floating buttons from previous sessions
+        local existingFloatingGUI = Player.PlayerGui:FindFirstChild("XSAN_FloatingButton") or game.CoreGui:FindFirstChild("XSAN_FloatingButton")
+        if existingFloatingGUI then
+            existingFloatingGUI:Destroy()
+        end
+        
+        -- Floating Button Click - Minimize to floating mode
         FloatingButton.MouseButton1Click:Connect(function()
-            isFloatingMode = not isFloatingMode
+            -- Always minimize when clicked
+            isFloatingMode = true
+            Main.Visible = false
             
-            if isFloatingMode then
-                -- Switch to floating mode - hide main UI, show floating button
-                Main.Visible = false
-                
-                -- Create or show external floating button
-                local FloatingGUI = Player.PlayerGui:FindFirstChild("XSAN_FloatingButton") or game.CoreGui:FindFirstChild("XSAN_FloatingButton")
-                if FloatingGUI then
-                    FloatingGUI.Enabled = true
-                else
-                    -- Create new floating button
-                    local FloatingButtonGui = Instance.new("ScreenGui")
-                    FloatingButtonGui.Name = "XSAN_FloatingButton"
-                    FloatingButtonGui.ResetOnSpawn = false
-                    FloatingButtonGui.IgnoreGuiInset = true
-                    
-                    -- Try to parent to CoreGui first, then fallback to PlayerGui
-                    local success = pcall(function()
-                        FloatingButtonGui.Parent = game.CoreGui
-                    end)
-                    if not success then
-                        FloatingButtonGui.Parent = Player.PlayerGui
-                    end
-                    
-                    local FloatingBtn = Instance.new("TextButton")
-                    FloatingBtn.Size = UDim2.new(0, 50, 0, 50)
-                    FloatingBtn.Position = UDim2.new(0, 15, 0.5, -25)
-                    FloatingBtn.BackgroundColor3 = Color3.fromRGB(70, 130, 200)
-                    FloatingBtn.Text = "XSAN"
-                    FloatingBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-                    FloatingBtn.TextScaled = true
-                    FloatingBtn.Font = Enum.Font.SourceSansBold
-                    FloatingBtn.BorderSizePixel = 0
-                    FloatingBtn.Parent = FloatingButtonGui
-                    
-                    local Corner = Instance.new("UICorner")
-                    Corner.CornerRadius = UDim.new(0, 25)
-                    Corner.Parent = FloatingBtn
-                    
-                    -- Make floating button draggable
-                    local dragging = false
-                    local dragInput, dragStart, startPos
-                    
-                    FloatingBtn.InputBegan:Connect(function(input)
-                        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                            dragging = true
-                            dragStart = input.Position
-                            startPos = FloatingBtn.Position
-                            
-                            input.Changed:Connect(function()
-                                if input.UserInputState == Enum.UserInputState.End then
-                                    dragging = false
-                                end
-                            end)
-                        end
-                    end)
-                    
-                    FloatingBtn.InputChanged:Connect(function(input)
-                        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-                            dragInput = input
-                        end
-                    end)
-                    
-                    UserInputService.InputChanged:Connect(function(input)
-                        if input == dragInput and dragging then
-                            local delta = input.Position - dragStart
-                            FloatingBtn.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-                        end
-                    end)
-                    
-                    -- Click to restore main UI
-                    FloatingBtn.MouseButton1Click:Connect(function()
-                        -- Destroy floating button
-                        FloatingButtonGui:Destroy()
-                        -- Show main UI
-                        Main.Visible = true
-                        -- Reset floating mode state
-                        isFloatingMode = false
-                    end)
-                end
-            else
-                -- Switch back to normal mode
-                Main.Visible = true
-                local FloatingGUI = Player.PlayerGui:FindFirstChild("XSAN_FloatingButton") or game.CoreGui:FindFirstChild("XSAN_FloatingButton")
-                if FloatingGUI then
-                    FloatingGUI:Destroy()
-                end
+            -- Remove existing floating button if any
+            local existingFloatingGUI = Player.PlayerGui:FindFirstChild("XSAN_FloatingButton") or game.CoreGui:FindFirstChild("XSAN_FloatingButton")
+            if existingFloatingGUI then
+                existingFloatingGUI:Destroy()
             end
+            
+            -- Create new floating button
+            local FloatingButtonGui = Instance.new("ScreenGui")
+            FloatingButtonGui.Name = "XSAN_FloatingButton"
+            FloatingButtonGui.ResetOnSpawn = false
+            FloatingButtonGui.IgnoreGuiInset = true
+            
+            -- Try to parent to CoreGui first, then fallback to PlayerGui
+            local success = pcall(function()
+                FloatingButtonGui.Parent = game.CoreGui
+            end)
+            if not success then
+                FloatingButtonGui.Parent = Player.PlayerGui
+            end
+            
+            local FloatingBtn = Instance.new("TextButton")
+            FloatingBtn.Size = UDim2.new(0, 50, 0, 50)
+            FloatingBtn.Position = UDim2.new(0, 15, 0.5, -25)
+            FloatingBtn.BackgroundColor3 = Color3.fromRGB(70, 130, 200)
+            FloatingBtn.Text = "XSAN"
+            FloatingBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            FloatingBtn.TextScaled = true
+            FloatingBtn.Font = Enum.Font.SourceSansBold
+            FloatingBtn.BorderSizePixel = 0
+            FloatingBtn.Parent = FloatingButtonGui
+            
+            local Corner = Instance.new("UICorner")
+            Corner.CornerRadius = UDim.new(0, 25)
+            Corner.Parent = FloatingBtn
+            
+            -- Make floating button draggable
+            local dragging = false
+            local dragInput, dragStart, startPos
+            
+            FloatingBtn.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                    dragging = true
+                    dragStart = input.Position
+                    startPos = FloatingBtn.Position
+                    
+                    input.Changed:Connect(function()
+                        if input.UserInputState == Enum.UserInputState.End then
+                            dragging = false
+                        end
+                    end)
+                end
+            end)
+            
+            FloatingBtn.InputChanged:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+                    dragInput = input
+                end
+            end)
+            
+            UserInputService.InputChanged:Connect(function(input)
+                if input == dragInput and dragging then
+                    local delta = input.Position - dragStart
+                    FloatingBtn.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+                end
+            end)
+            
+            -- Click to restore main UI
+            FloatingBtn.MouseButton1Click:Connect(function()
+                -- Destroy floating button
+                FloatingButtonGui:Destroy()
+                -- Show main UI
+                Main.Visible = true
+                -- Reset floating mode state
+                isFloatingMode = false
+            end)
         end)
         
         -- Close Button Click - Close script completely
