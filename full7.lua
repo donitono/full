@@ -2843,7 +2843,7 @@ local function ApplyPreset(presetName)
         autoSellOnThreshold = globalAutoSellEnabled
         
         local message = GetNotificationMessage("preset_applied", {
-            preset = "Ultra",
+            preset = "Fast Ultra",
             purpose = presetConfig.purpose,
             autosell_status = globalAutoSellEnabled and "💰 Auto Sell: ON" or "💰 Auto Sell: OFF"
         })
@@ -3172,10 +3172,10 @@ PresetsTab:CreateButton({
 })
 
 PresetsTab:CreateButton({
-    Name = "Ultra Mode", 
+    Name = "Fast Ultra Mode", 
     Callback = CreateSafeCallback(function()
-        ApplyPreset("Ultra")
-    end, "preset_Ultra")
+        ApplyPreset("Fast Ultra")
+    end, "preset_fast_ultra")
 })
 
 PresetsTab:CreateButton({
