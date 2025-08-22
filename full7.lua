@@ -99,12 +99,12 @@ local XSAN_CONFIG = {
     
     -- Preset Configurations
     presets = {
-        Beginner = {purpose = "safe and easy fishing", autosell = 50},
-        Speed = {purpose = "maximum fishing speed", autosell = 500},
-        Ultra = {purpose = "maximum earnings", autosell = 1000},
-        AFK = {purpose = "long AFK sessions", autosell = 2000},
-        Safe = {purpose = "smart random casting (70% perfect)", autosell = 1000},
-        Hybrid = {purpose = "ultimate security with AI patterns", autosell = 1000}
+        Beginner = {purpose = "safe and easy fishing", autosell = 5000},
+        Speed = {purpose = "maximum fishing speed", autosell = 5000},
+        Ultra = {purpose = "maximum earnings", autosell = 5000},
+        AFK = {purpose = "long AFK sessions", autosell = 5000},
+        Safe = {purpose = "smart random casting (70% perfect)", autosell = 5000},
+        Hybrid = {purpose = "ultimate security with AI patterns", autosell = 5000}
     }
 }
 
@@ -1174,7 +1174,7 @@ local hybridAutoFish = nil  -- Hybrid auto fish instance
 local autoRecastDelay = 0.4
 local fishCaught = 0
 local itemsSold = 0
-local autoSellThreshold = 10
+local autoSellThreshold = 5000
 local autoSellOnThreshold = false
 local sessionStartTime = tick()
 local perfectCasts = 0
@@ -1201,14 +1201,20 @@ local randomSpotStats = {
 
 -- Initialize location stats
 for locationName, _ in pairs({
-    ["🏝️ SISYPUS"] = true,
+    ["🏝️ SISYPUS 1"] = true",
+    ["🏝️ SISYPUS 2"] = true,
     ["🦈 TREASURE"] = true,
-    ["🎣 STRINGRY"] = true,
-    ["❄️ ICE LAND"] = true,
-    ["🌋 CRATER"] = true,
-    ["🌴 TROPICAL"] = true,
+    ["❄️ ICE SPOT 1"] = true,
+    ["❄️ ICE SPOT 2"] = true,
+    ["❄️ ICE SPOT 3"] = true,
+    ["🌋 CRATER 1"] = true,
+    ["🌋 CRATER 2"] = true,
+    ["🌴 TROPICAL 1"] = true,
+    ["🌴 TROPICAL 2"] = true,
+    ["🌴 TROPICAL 3"] = true,
     ["🗿 STONE"] = true,
-    ["⚙️ MACHINE"] = true
+    ["⚙️ MACHINE 1"] = true,
+    ["⚙️ MACHINE 2"] = true   
 }) do
     randomSpotStats.fishPerLocation[locationName] = 0
     randomSpotStats.timePerLocation[locationName] = 0
@@ -1216,14 +1222,20 @@ end
 
 -- Random Spot Selection System
 local selectedSpots = {
-    ["🏝️ SISYPUS"] = true,
+    ["🏝️ SISYPUS 1"] = true",
+    ["🏝️ SISYPUS 2"] = true,
     ["🦈 TREASURE"] = true,
-    ["🎣 STRINGRY"] = true,
-    ["❄️ ICE LAND"] = true,
-    ["🌋 CRATER"] = true,
-    ["🌴 TROPICAL"] = true,
+    ["❄️ ICE SPOT 1"] = true,
+    ["❄️ ICE SPOT 2"] = true,
+    ["❄️ ICE SPOT 3"] = true,
+    ["🌋 CRATER 1"] = true,
+    ["🌋 CRATER 2"] = true,
+    ["🌴 TROPICAL 1"] = true,
+    ["🌴 TROPICAL 2"] = true,
+    ["🌴 TROPICAL 3"] = true,
     ["🗿 STONE"] = true,
-    ["⚙️ MACHINE"] = true
+    ["⚙️ MACHINE 1"] = true,
+    ["⚙️ MACHINE 2"] = true        
 }
 
 -- Feature states
@@ -3785,8 +3797,8 @@ MainTab:CreateToggle({
 
 MainTab:CreateSlider({
     Name = "Fish Threshold",
-    Range = {5, 50},
-    Increment = 1,
+    Range = {500, 8000},
+    Increment = 50,
     CurrentValue = autoSellThreshold,
     Callback = function(val)
         autoSellThreshold = val
@@ -4182,7 +4194,7 @@ RandomSpotTab:CreateButton({
             end
         end
         
-        NotifySuccess("Quick Selection", "✅ ALL SPOTS SELECTED!\n\n🎣 All 8 fishing spots are now active\n🎲 Maximum variety for random fishing\n⚡ Ready for ultimate fishing experience!")
+        NotifySuccess("Quick Selection", "✅ ALL SPOTS SELECTED!\n\n🎣 All 14 fishing spots are now active\n🎲 Maximum variety for random fishing\n⚡ Ready for ultimate fishing experience!")
     end, "select_all_spots")
 })
 
@@ -4230,7 +4242,7 @@ RandomSpotTab:CreateButton({
         end
         
         -- Select only premium spots
-        local premiumSpots = {"🏝️ SISYPUS", "🦈 TREASURE", "🌋 CRATER", "❄️ ICE LAND"}
+        local premiumSpots = {"🏝️ SISYPUS 2", "🌴 TROPICAL 2", "🌋 CRATER 1", "❄️ ICE SPOT 1"}
         for _, spotName in pairs(premiumSpots) do
             selectedSpots[spotName] = true
         end
@@ -4482,7 +4494,36 @@ SettingTab:CreateToggle({
         end
     end
 })
+-- Fitur Roll Enchant Otomatis
+local rollEnchantActive = false
+local rollEnchantThread = nil
 
+-- Pastikan fungsi ResolveRemote sudah ada di script Anda
+local activateEnchantingAltarRemote = ResolveRemote and ResolveRemote("RE/ActivateEnchantingAltar")
+
+SettingTab:CreateToggle({
+    Name = "🎲 Auto Roll Enchant",
+    CurrentValue = false,
+    Callback = function(val)
+        rollEnchantActive = val
+        if val then
+            NotifySuccess("Roll Enchant", "Auto Roll Enchant AKTIF!")
+            rollEnchantThread = task.spawn(function()
+                while rollEnchantActive do
+                    if activateEnchantingAltarRemote then
+                        pcall(function()
+                            activateEnchantingAltarRemote:FireServer()
+                        end)
+                    end
+                    task.wait(1) -- interval roll, bisa diubah
+                end
+            end)
+        else
+            NotifyInfo("Roll Enchant", "Auto Roll Enchant DIMATIKAN!")
+            rollEnchantThread = nil
+        end
+    end
+})
 -- ═══════════════════════════════════════════════════════════════
 -- UTILITY TAB - System Management & Advanced Features
 -- ═══════════════════════════════════════════════════════════════
