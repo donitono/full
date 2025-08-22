@@ -3594,20 +3594,20 @@ MainTab:CreateToggle({
                         pcall(function()
                             if autofishSession ~= mySession or not autofish then return end
                             if equipRemote then equipRemote:FireServer(1) end
-                            smartWait(0.1, mySession)
+                            smartWait(0.01, mySession)
 
                             if autofishSession ~= mySession or not autofish then return end
                             -- Safe Mode Logic: Random between perfect and normal cast
                             local usePerfectCast = perfectCast
                             if safeMode then
-                                usePerfectCast = math.random(50, 100) <= safeModeChance
+                                usePerfectCast = math.random(80, 100) <= safeModeChance
                             end
 
                             local timestamp = usePerfectCast and 9999999999 or (tick() + math.random())
                             if rodRemote and autofishSession == mySession and autofish then
                                 rodRemote:InvokeServer(timestamp)
                             end
-                            smartWait(0.1, mySession)
+                            smartWait(0.01, mySession)
 
                             if autofishSession ~= mySession or not autofish then return end
                             local x = usePerfectCast and -1.238 or (math.random(-1000, 1000) / 1000)
@@ -3656,7 +3656,7 @@ MainTab:CreateToggle({
             
             -- Small delay to ensure all auto fishing processes stop
             task.spawn(function()
-                task.wait(0.2)
+                task.wait(0.1)
                 -- Additional cleanup if needed
                 if equipRemote then
                     -- Ensure rod is properly equipped for manual use
@@ -3769,7 +3769,7 @@ MainTab:CreateSlider({
 
 MainTab:CreateSlider({
     Name = "Auto Recast Delay",
-    Range = {0.1, 3.0},
+    Range = {0.01, 3.0},
     Increment = 0.1,
     CurrentValue = autoRecastDelay,
     Callback = function(val)
@@ -5076,7 +5076,7 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
         
         -- Emergency stop all systems
         autofish = false
-        autofishSession = autofishSession + 999
+        autofishSession = autofishSession + 9999
         autofishThread = nil
         
         -- Stop hybrid mode
