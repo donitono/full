@@ -1,3 +1,43 @@
+-- Fitur Anti-Kick / Anti-Ban
+local antiKickActive = false
+local oldKickHook = nil
+local function setAntiKick(state)
+    local Players = game:GetService("Players")
+    local localPlayer = Players.LocalPlayer
+    local mt = getrawmetatable(game)
+    setreadonly(mt, false)
+    if state then
+        if not oldKickHook then
+            oldKickHook = mt.__namecall
+            mt.__namecall = function(self, ...)
+                if getnamecallmethod() == "Kick" and self == localPlayer then
+                    NotifySuccess("Anti-Kick", "🚫 Kick diblokir!")
+                    return nil
+                end
+                return oldKickHook(self, ...)
+            end
+        end
+    else
+        if oldKickHook then
+            mt.__namecall = oldKickHook
+            oldKickHook = nil
+        end
+    end
+    setreadonly(mt, true)
+end
+SettingTab:CreateToggle({
+    Name = "🚫 Anti-Kick / Anti-Ban",
+    CurrentValue = false,
+    Callback = function(val)
+        antiKickActive = val
+        setAntiKick(val)
+        if val then
+            NotifySuccess("Anti-Kick", "Proteksi Anti-Kick/Anti-Ban AKTIF!")
+        else
+            NotifyInfo("Anti-Kick", "Proteksi Anti-Kick/Anti-Ban DIMATIKAN!")
+        end
+    end
+})
 -- Fitur Reconnect Player
 local reconnectActive = false
 local reconnectThread = nil
@@ -4672,14 +4712,66 @@ UtilityTab:CreateButton({
 print("XSAN: UTILITY tab completed successfully!")
 
 -- ═══════════════════════════════════════════════════════════════
--- SETTING TAB - Game Enhancement & Performance Features
--- ═══════════════════════════════════════════════════════════════
 
 print("XSAN: Creating SETTING tab content...")
 
 SettingTab:CreateParagraph({
     Title = "🎮 Game Enhancement Settings",
     Content = "Fitur-fitur tambahan untuk meningkatkan pengalaman bermain Anda. Aktifkan sesuai kebutuhan untuk performa dan gameplay yang lebih baik."
+})
+
+-- ═══════════════════════════════════════════════════════════════
+-- SKIN ROD CHANGER SECTION
+-- ═══════════════════════════════════════════════════════════════
+
+SettingTab:CreateParagraph({
+    Title = "🎣 Skin Rod Changer",
+    Content = "Pilih skin rod yang ingin digunakan (client-side visual only)."
+})
+
+local rodList = {
+    "!!! Chrome Rod", "!!! Lucky Rod", "!!! Magma Rod", "!!! Starter Rod", "!!! Steampunk Rod", "!!! Hyper Rod", "!!! Gold Rod", "!!! Lava Rod", "!!! Carbon Rod", "!!! Gingerbread Rod", "!!! Ice Rod", "!!! Luck Rod", "!!! Midnight Rod", "!!! Toy Rod", "!!! Grass Rod", "!!! Candy Cane Rod", "!!! Christmas Tree Rod", "!!! Demascus Rod", "!!! Frozen Rod", "!!! Abyssal Chroma", "!!! Cute Rod", "!!! Angelic Rod", "!!! Astral Rod", "!!! Ares Rod", "!!! Ghoul Rod", "!!! Forsaken", "!!! Red Matter", "!!! Lightsaber", "!!! Crystalized", "!!! Earthly", "!!! Neptune's Trident", "!!! Polarized", "!!! Monochrome", "!!! Angler Rod", "!!! Ghostfinn Rod"
+}
+
+local selectedRod = rodList[1]
+
+SettingTab:CreateDropdown({
+    Name = "Pilih Skin Rod",
+    Options = rodList,
+    CurrentOption = rodList[1],
+    Callback = function(opt)
+        if type(opt)=="table" then opt=opt[1] end
+        selectedRod = opt
+        NotifyInfo("Skin Rod", "Rod dipilih: "..selectedRod)
+    end
+})
+
+SettingTab:CreateButton({
+    Name = "Ganti Skin Rod",
+    Callback = function()
+        local player = game.Players.LocalPlayer
+        local char = player.Character
+        if not char then
+            NotifyError("Skin Rod", "Karakter tidak ditemukan!")
+            return
+        end
+        local backpack = player:FindFirstChild("Backpack")
+        local rodModel = game.ReplicatedStorage.Items:FindFirstChild(selectedRod)
+        if not rodModel then
+            NotifyError("Skin Rod", "Model rod tidak ditemukan di ReplicatedStorage.Items!")
+            return
+        end
+        -- Hapus rod lama di tangan
+        for _,v in pairs(char:GetChildren()) do
+            if v:IsA("Tool") and v.Name:find("Rod") then
+                v:Destroy()
+            end
+        end
+        -- Clone rod baru ke tangan
+        local newRod = rodModel:Clone()
+        newRod.Parent = char
+        NotifySuccess("Skin Rod", "Skin rod berhasil diganti ke: "..selectedRod)
+    end
 })
 
 -- ═══════════════════════════════════════════════════════════════
