@@ -1,94 +1,4 @@
--- Fitur Anti-Kick / Anti-Ban
-local antiKickActive = false
-local oldKickHook = nil
-local function setAntiKick(state)
-    local Players = game:GetService("Players")
-    local localPlayer = Players.LocalPlayer
-    local mt = getrawmetatable(game)
-    setreadonly(mt, false)
-    if state then
-        if not oldKickHook then
-            oldKickHook = mt.__namecall
-            mt.__namecall = function(self, ...)
-                if getnamecallmethod() == "Kick" and self == localPlayer then
-                    NotifySuccess("Anti-Kick", "🚫 Kick diblokir!")
-                    return nil
-                end
-                return oldKickHook(self, ...)
-            end
-        end
-    else
-        if oldKickHook then
-            mt.__namecall = oldKickHook
-            oldKickHook = nil
-        end
-    end
-    setreadonly(mt, true)
-end
-SettingTab:CreateToggle({
-    Name = "🚫 Anti-Kick / Anti-Ban",
-    CurrentValue = false,
-    Callback = function(val)
-        antiKickActive = val
-        setAntiKick(val)
-        if val then
-            NotifySuccess("Anti-Kick", "Proteksi Anti-Kick/Anti-Ban AKTIF!")
-        else
-            NotifyInfo("Anti-Kick", "Proteksi Anti-Kick/Anti-Ban DIMATIKAN!")
-        end
-    end
-})
--- Fitur Reconnect Player
-local reconnectActive = false
-local reconnectThread = nil
-local function reconnectPlayer()
-    local rs = game:GetService("ReplicatedStorage")
-    local reconnectRemote = rs:FindFirstChild("Packages")
-    if reconnectRemote then
-        reconnectRemote = reconnectRemote:FindFirstChild("_Index")
-        if reconnectRemote then
-            reconnectRemote = reconnectRemote:FindFirstChild("sleitnick_net@0.2.0")
-            if reconnectRemote then
-                reconnectRemote = reconnectRemote:FindFirstChild("net")
-                if reconnectRemote then
-                    reconnectRemote = reconnectRemote:FindFirstChild("RE")
-                    if reconnectRemote then
-                        local remoteEvent = reconnectRemote:FindFirstChild("ReconnectPlayer")
-                        if remoteEvent and remoteEvent:IsA("RemoteEvent") then
-                            remoteEvent:FireServer()
-                            return true
-                        end
-                    end
-                end
-            end
-        end
-    end
-    return false
-end
-SettingTab:CreateToggle({
-    Name = "🔄 Auto Reconnect Player",
-    CurrentValue = false,
-    Callback = function(val)
-        reconnectActive = val
-        if val then
-            NotifySuccess("Reconnect", "🔄 Auto Reconnect aktif!")
-            reconnectThread = task.spawn(function()
-                while reconnectActive do
-                    local ok = reconnectPlayer()
-                    if ok then
-                        NotifySuccess("Reconnect", "Permintaan reconnect dikirim!")
-                    else
-                        NotifyError("Reconnect", "RemoteEvent ReconnectPlayer tidak ditemukan!")
-                    end
-                    task.wait(10) -- interval 10 detik, bisa diubah sesuai kebutuhan
-                end
-            end)
-        else
-            NotifyInfo("Reconnect", "🔄 Auto Reconnect dimatikan!")
-            reconnectThread = nil
-        end
-    end
-})
+
 --[[
     XSAN's Fish It Pro - Ultimate Edition v1.0 WORKING VERSION
     
@@ -101,8 +11,8 @@ SettingTab:CreateToggle({
     • Ultimate Teleportation System (NEW!)
     
     Developer: XSAN
-    Instagram: @_bangicoo
-    GitHub: github.com/codeico
+    Telegram: Spinnerxxx
+    Tele Groub: github.com/Spinner_xxx
     
     Premium Quality • Trusted by Thousands • Ultimate Edition
 --]]
@@ -132,8 +42,8 @@ local XSAN_CONFIG = {
         title = "XSAN Fish It Pro Ultimate v1.0",
         subtitle = "The most advanced Fish It script ever created with AI-powered features, smart analytics, and premium automation systems.",
         developer = "XSAN",
-        instagram = "@_bangicoo",
-        github = "github.com/codeico",
+        Telegram = "Spinnerxxx",
+        github = "github.com/Spinner_xxx",
         support_message = "Created by XSAN - Trusted by thousands of users worldwide!"
     },
     
@@ -189,12 +99,12 @@ local XSAN_CONFIG = {
     
     -- Preset Configurations
     presets = {
-        Beginner = {purpose = "safe and easy fishing", autosell = 50},
-        Speed = {purpose = "maximum fishing speed", autosell = 500},
-        Ultra = {purpose = "maximum earnings", autosell = 1000},
+        Beginner = {purpose = "safe and easy fishing", autosell = 2500},
+        Speed = {purpose = "maximum fishing speed", autosell = 2500},
+        Ultra = {purpose = "maximum earnings", autosell = 3000},
         AFK = {purpose = "long AFK sessions", autosell = 2000},
-        Safe = {purpose = "smart random casting (70% perfect)", autosell = 1000},
-        Hybrid = {purpose = "ultimate security with AI patterns", autosell = 1000}
+        Safe = {purpose = "smart random casting (70% perfect)", autosell = 3000},
+        Hybrid = {purpose = "ultimate security with AI patterns", autosell = 3000}
     }
 }
 
@@ -316,7 +226,7 @@ local success, error = pcall(function()
     print("XSAN: Attempting to load UI...")
     
     -- Try ui_fixed.lua first (more stable)
-    local uiContent = game:HttpGet("https://raw.githubusercontent.com/donitono/full/refs/heads/main/ui_fixed.lua", true)
+    local uiContent = game:HttpGet("https://raw.githubusercontent.com/donitono/full/refs/heads/main/ui.lua", true)
     if uiContent and #uiContent > 0 then
         print("XSAN: Loading stable UI library...")
         print("XSAN: UI content length:", #uiContent)
@@ -556,8 +466,6 @@ local UtilityTab = Window:CreateTab("UTILITY", 4483362458)
 local WeatherTab = Window:CreateTab("WEATHER", 4483362458)
 local SettingTab = Window:CreateTab("SETTING", 4483362458)
 print("XSAN: SettingTab created")
-local SystemExploitsTab = Window:CreateTab("SYSTEM EXPLOITS", 4483362458)
-print("XSAN: SystemExploitsTab created")
 local RandomSpotTab = Window:CreateTab("RANDOM SPOT", 4483362458)
 print("XSAN: RandomSpotTab created")
 local ExitTab = Window:CreateTab("EXIT", 4483362458)
@@ -574,68 +482,9 @@ local tabContentLoaded = {
     Utility = false,
     Weather = false,
     Setting = false,
-    SystemExploits = false,
     RandomSpot = false,
     Exit = false
 }
-
-print("XSAN: All tabs created successfully with lazy loading!")
-
--- ═══════════════════════════════════════════════════════════════
--- LOAD EXTERNAL SYSTEM EXPLOITS MODULE
--- ═══════════════════════════════════════════════════════════════
-
-print("XSAN: Loading System Exploits module...")
-local SystemExploits = nil
-
--- Try to load from local file first, then from remote if needed
-local function LoadSystemExploits()
-    local success, result = pcall(function()
-        -- Try loading from local file first
-        return loadfile("d:/mancing/system_exploits.lua")()
-    end)
-    
-    if success then
-        SystemExploits = result
-        print("XSAN: System Exploits module loaded from local file!")
-        return true
-    else
-        print("XSAN: Local file not found, trying remote loadstring...")
-        
-        -- Try loading from remote URL (Pastebin/GitHub Raw)
-        -- INSTRUCTIONS: Upload system_exploits_remote.lua to:
-        -- 1. Pastebin (get raw link)
-        -- 2. GitHub Gist (get raw link) 
-        -- 3. Any file hosting with direct raw access
-        -- Then uncomment and update the URL below:
-        
-        
-        local remoteSuccess, remoteResult = pcall(function()
-            local moduleLoader = loadstring(game:HttpGet("https://raw.githubusercontent.com/donitono/full/refs/heads/main/system_exploits_remote.lua"))()
-            return moduleLoader()
-        end)
-        
-        if remoteSuccess then
-            SystemExploits = remoteResult
-            print("XSAN: System Exploits loaded from remote URL!")
-            return true
-        else
-            print("XSAN: Remote loading failed:", remoteResult)
-        end
-        
-        
-        -- Example URLs you can use:
-        -- Pastebin: https://pastebin.com/raw/YOUR_PASTE_ID
-        -- GitHub Gist: https://gist.githubusercontent.com/USERNAME/GIST_ID/raw/COMMIT_ID/filename.lua
-        -- GitHub Raw: https://raw.githubusercontent.com/USERNAME/REPO/main/system_exploits_remote.lua
-        
-        print("XSAN: Please upload system_exploits_remote.lua and update the loadstring URL!")
-        return false
-    end
-end
-
--- Load the module
-local exploitsLoaded = LoadSystemExploits()
 
 print("XSAN: All tabs created successfully with lazy loading!")
 
@@ -1293,7 +1142,10 @@ local function initializeRemotes()
         -- Equipment remotes (corrected path)
         equipRemote = net:WaitForChild("RE/EquipToolFromHotbar")
         print("XSAN: ✅ EquipToolFromHotbar remote loaded")
-        
+
+        unequipRemote = net:WaitForChild("RE/UnequipToolFromHotbar")
+        print("XSAN: ✅ UnequipToolFromHotbar remote loaded")
+
         print("XSAN: 🎣 All enhanced fishing remotes loaded successfully!")
     end)
     
@@ -1325,7 +1177,7 @@ local hybridAutoFish = nil  -- Hybrid auto fish instance
 local autoRecastDelay = 0.4
 local fishCaught = 0
 local itemsSold = 0
-local autoSellThreshold = 10
+local autoSellThreshold = 1000
 local autoSellOnThreshold = false
 local sessionStartTime = tick()
 local perfectCasts = 0
@@ -2058,7 +1910,231 @@ local function toggleAntiDrown()
         NotifyInfo("Anti Drown", "🔄 Anti Drown dimatikan\n\n✅ Sistem oksigen normal")
     end
 end
+-- Fitur Anti-Kick / Anti-Ban
+local antiKickActive = false
+local oldKickHook = nil
+local function setAntiKick(state)
+    local Players = game:GetService("Players")
+    local localPlayer = Players.LocalPlayer
+    local mt = getrawmetatable(game)
+    setreadonly(mt, false)
+    if state then
+        if not oldKickHook then
+            oldKickHook = mt.__namecall
+            mt.__namecall = function(self, ...)
+                if getnamecallmethod() == "Kick" and self == localPlayer then
+                    NotifySuccess("Anti-Kick", "🚫 Kick diblokir!")
+                    return nil
+                end
+                return oldKickHook(self, ...)
+            end
+        end
+    else
+        if oldKickHook then
+            mt.__namecall = oldKickHook
+            oldKickHook = nil
+        end
+    end
+    setreadonly(mt, true)
+end
+SettingTab:CreateToggle({
+    Name = "🚫 Anti-Kick / Anti-Ban",
+    CurrentValue = false,
+    Callback = function(val)
+        antiKickActive = val
+        setAntiKick(val)
+        if val then
+            NotifySuccess("Anti-Kick", "Proteksi Anti-Kick/Anti-Ban AKTIF!")
+        else
+            NotifyInfo("Anti-Kick", "Proteksi Anti-Kick/Anti-Ban DIMATIKAN!")
+        end
+    end
+})
+-- Fitur Reconnect Player
+local reconnectActive = false
+local reconnectThread = nil
+local function reconnectPlayer()
+    local rs = game:GetService("ReplicatedStorage")
+    local reconnectRemote = rs:FindFirstChild("Packages")
+    if reconnectRemote then
+        reconnectRemote = reconnectRemote:FindFirstChild("_Index")
+        if reconnectRemote then
+            reconnectRemote = reconnectRemote:FindFirstChild("sleitnick_net@0.2.0")
+            if reconnectRemote then
+                reconnectRemote = reconnectRemote:FindFirstChild("net")
+                if reconnectRemote then
+                    reconnectRemote = reconnectRemote:FindFirstChild("RE")
+                    if reconnectRemote then
+                        local remoteEvent = reconnectRemote:FindFirstChild("ReconnectPlayer")
+                        if remoteEvent and remoteEvent:IsA("RemoteEvent") then
+                            remoteEvent:FireServer()
+                            return true
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return false
+end
+SettingTab:CreateToggle({
+    Name = "🔄 Auto Reconnect Player",
+    CurrentValue = false,
+    Callback = function(val)
+        reconnectActive = val
+        if val then
+            NotifySuccess("Reconnect", "🔄 Auto Reconnect aktif!")
+            reconnectThread = task.spawn(function()
+                while reconnectActive do
+                    local ok = reconnectPlayer()
+                    if ok then
+                        NotifySuccess("Reconnect", "Permintaan reconnect dikirim!")
+                    else
+                        NotifyError("Reconnect", "RemoteEvent ReconnectPlayer tidak ditemukan!")
+                    end
+                    task.wait(10) -- interval 10 detik, bisa diubah sesuai kebutuhan
+                end
+            end)
+        else
+            NotifyInfo("Reconnect", "🔄 Auto Reconnect dimatikan!")
+            reconnectThread = nil
+        end
+    end
+})
 
+-- Fitur Nametag Changer
+local nametagName = "" -- Variabel untuk menyimpan nama baru
+SettingTab:CreateParagraph({
+    Title = "Nametag Changer",
+    Content = "Ubah nama di atas kepala karakter (hanya client-side)."
+})
+SettingTab:CreateInput({
+    Name = "Nama Baru",
+    PlaceholderText = "Masukkan nama yang diinginkan",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(text)
+        nametagName = text
+    end
+})
+SettingTab:CreateButton({
+    Name = "Ganti Nama di Atas Kepala",
+    Callback = function()
+        local Players = game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local head = character:FindFirstChild("Head")
+        if head then
+            local nametag = head:FindFirstChildWhichIsA("BillboardGui")
+            if nametag then
+                local textLabel = nametag:FindFirstChildWhichIsA("TextLabel")
+                if textLabel and nametagName ~= "" then
+                    textLabel.Text = nametagName
+                    NotifySuccess("Nametag", "Nama di atas kepala diubah menjadi: " .. nametagName)
+                else
+                    NotifyError("Nametag", "Gagal mengubah nama. Pastikan input tidak kosong.")
+                end
+            else
+                NotifyError("Nametag", "BillboardGui tidak ditemukan di Head.")
+            end
+        else
+            NotifyError("Nametag", "Head tidak ditemukan pada karakter.")
+        end
+    end
+})
+
+-- ═══════════════════════════════════════════════════════════════
+-- SKIN ROD CHANGER SECTION
+-- ═══════════════════════════════════════════════════════════════
+
+SettingTab:CreateParagraph({
+    Title = "🎣 Skin Rod Changer",
+    Content = "Pilih skin rod yang ingin digunakan (client-side visual only)."
+})
+
+local rodList = {
+    "!!! Chrome Rod", "!!! Lucky Rod", "!!! Magma Rod", "!!! Starter Rod", "!!! Steampunk Rod", "!!! Hyper Rod", "!!! Gold Rod", "!!! Lava Rod", "!!! Carbon Rod", "!!! Gingerbread Rod", "!!! Ice Rod", "!!! Luck Rod", "!!! Midnight Rod", "!!! Toy Rod", "!!! Grass Rod", "!!! Candy Cane Rod", "!!! Christmas Tree Rod", "!!! Demascus Rod", "!!! Frozen Rod", "!!! Abyssal Chroma", "!!! Cute Rod", "!!! Angelic Rod", "!!! Astral Rod", "!!! Ares Rod", "!!! Ghoul Rod", "!!! Forsaken", "!!! Red Matter", "!!! Lightsaber", "!!! Crystalized", "!!! Earthly", "!!! Neptune's Trident", "!!! Polarized", "!!! Monochrome", "!!! Angler Rod", "!!! Ghostfinn Rod"
+}
+
+local selectedRod = rodList[1]
+
+SettingTab:CreateDropdown({
+    Name = "Pilih Skin Rod",
+    Options = rodList,
+    CurrentOption = rodList[1],
+    Callback = function(opt)
+        if type(opt)=="table" then opt=opt[1] end
+        selectedRod = opt
+        NotifyInfo("Skin Rod", "Rod dipilih: "..selectedRod)
+    end
+})
+
+SettingTab:CreateButton({
+    Name = "Ganti Skin Rod",
+    Callback = function()
+        local player = game.Players.LocalPlayer
+        local char = player.Character
+        if not char then
+            NotifyError("Skin Rod", "Karakter tidak ditemukan!")
+            return
+        end
+        local backpack = player:FindFirstChild("Backpack")
+        local rodModel = game.ReplicatedStorage.Items:FindFirstChild(selectedRod)
+        if not rodModel then
+            NotifyError("Skin Rod", "Model rod tidak ditemukan di ReplicatedStorage.Items!")
+            return
+        end
+        -- Hapus rod lama di tangan
+        for _,v in pairs(char:GetChildren()) do
+            if v:IsA("Tool") and v.Name:find("Rod") then
+                v:Destroy()
+            end
+        end
+        -- Clone rod baru ke tangan
+        local newRod = rodModel:Clone()
+        newRod.Parent = char
+        NotifySuccess("Skin Rod", "Skin rod berhasil diganti ke: "..selectedRod)
+    end
+})
+
+-- Fitur Nametag Changer
+local nametagName = "" -- Variabel untuk menyimpan nama baru
+SettingTab:CreateParagraph({
+    Title = "Nametag Changer",
+    Content = "Ubah nama di atas kepala karakter (hanya client-side)."
+})
+SettingTab:CreateInput({
+    Name = "Nama Baru",
+    PlaceholderText = "Masukkan nama yang diinginkan",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(text)
+        nametagName = text
+    end
+})
+SettingTab:CreateButton({
+    Name = "Ganti Nama di Atas Kepala",
+    Callback = function()
+        local Players = game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local head = character:FindFirstChild("Head")
+        if head then
+            local nametag = head:FindFirstChildWhichIsA("BillboardGui")
+            if nametag then
+                local textLabel = nametag:FindFirstChildWhichIsA("TextLabel")
+                if textLabel and nametagName ~= "" then
+                    textLabel.Text = nametagName
+                    NotifySuccess("Nametag", "Nama di atas kepala diubah menjadi: " .. nametagName)
+                else
+                    NotifyError("Nametag", "Gagal mengubah nama. Pastikan input tidak kosong.")
+                end
+            else
+                NotifyError("Nametag", "BillboardGui tidak ditemukan di Head.")
+            end
+        else
+            NotifyError("Nametag", "Head tidak ditemukan pada karakter.")
+        end
+    end
+})
 -- ═══════════════════════════════════════════════════════════════
 -- UI PERFORMANCE MONITORING SYSTEM
 -- ═══════════════════════════════════════════════════════════════
@@ -2446,6 +2522,7 @@ else
         ["Weather Machine"] = CFrame.new(-1488.51196, 83.1732635, 1876.30298),
         ["Tropical Grove"] = CFrame.new(-2095.34106, 197.199997, 3718.08008),
         ["Coral Reefs"] = CFrame.new(-3023.97119, 337.812927, 2195.60913),
+        ["Ice Island"] = CFrame.new(1990.55, 3.09, 3021.91),
         -- Legacy coordinates (backup)
         ["Moosewood"] = CFrame.new(389, 137, 264),
         ["Ocean"] = CFrame.new(1082, 124, -924),
@@ -2467,25 +2544,38 @@ end
 
 -- Event Locations (Moved above NPCs for better organization)
 TeleportLocations.Events = {
-    ["🦈 Ice Spot"] = CFrame.new(1990.55, 3.09, 3021.91),
-    ["🦈 Crater Spot"] = CFrame.new(990.45, 21.06, 5059.85),
-    ["🦈 Stone Spot"] = CFrame.new(-2636.19, 124.87, -27.49),
-    ["🦈 Tropical Spot"] = CFrame.new(-2093.80, 6.26, 3654.30),
-	["🦈 Sisypus Statue"] = CFrame.new(-3710.66, -96.84, -951.95),
-    ["🦈 Treasure Hall"] = CFrame.new(-3599.90, -275.96, -1640.84),
-    ["🦈 Enchant Stone"] = CFrame.new(3237.61, -1302.33, 1398.04)
+    ["🏝️ SISYPUS 1"] = CFrame.new(-3659.55, -135.08, -971.61),
+    ["🏝️ SISYPUS 2"] = CFrame.new(-3767.29, -135.08, -990.03),
+    ["🦈 TREASURE"] = CFrame.new(-3628.77, -283.35, -1638.54),
+    ["❄️ ICE SPOT 1"] = CFrame.new(1990.55, 3.09, 3021.91),
+    ["❄️ ICE SPOT 2"] = CFrame.new(2069.57, 8.42, 3387.88),
+    ["❄️ ICE SPOT 3"] = CFrame.new(1795.95, 4.05, 3379.74),
+    ["🌋 CRATER 1"] = CFrame.new(990.45, 21.06, 5059.85),
+    ["🌋 CRATER 2"] = CFrame.new(1049.76, 48.62, 5129.69),
+    ["🌴 TROPICAL 1"] = CFrame.new(-2173.60, 53.48, 3636.23),
+    ["🌴 TROPICAL 2"] = CFrame.new(-2165.30, 7.79, 3677.91),
+    ["🌴 TROPICAL 3"] =  CFrame.new(-2141.51, 54.65, 3583.64),
+    ["🗿 STONE"] = CFrame.new(-2636.19, 124.87, -27.49),
+    ["⚙️ MACHINE 1"] = CFrame.new(-1480.98, 3.49, 1923.66),
+    ["⚙️ MACHINE 2"] = CFrame.new(-1613.32, 8.13, 1903.20)
 }
 
 -- Random Spot Fishing Locations for Auto Random Fishing
 TeleportLocations.RandomSpots = {
-    ["🏝️ SISYPUS"] = CFrame.new(-3659.55, -135.08, -971.61),
-    ["🦈 TREASURE"] = CFrame.new(-3599.90, -275.96, -1640.84),
-    ["🎣 STRINGRY"] = CFrame.new(102.05, 29.64, 3054.35),
-    ["❄️ ICE LAND"] = CFrame.new(1990.55, 3.09, 3021.91),
-    ["🌋 CRATER"] = CFrame.new(990.45, 21.06, 5059.85),
-    ["🌴 TROPICAL"] = CFrame.new(-2128.23, 58.52, 3595.68),
+    ["🏝️ SISYPUS 1"] = CFrame.new(-3659.55, -135.08, -971.61),
+    ["🏝️ SISYPUS 2"] = CFrame.new(-3767.29, -135.08, -990.03),
+    ["🦈 TREASURE"] = CFrame.new(-3628.77, -283.35, -1638.54),
+    ["❄️ ICE SPOT 1"] = CFrame.new(1990.55, 3.09, 3021.91),
+    ["❄️ ICE SPOT 2"] = CFrame.new(2069.57, 8.42, 3387.88),
+    ["❄️ ICE SPOT 3"] = CFrame.new(1795.95, 4.05, 3379.74),
+    ["🌋 CRATER 1"] = CFrame.new(990.45, 21.06, 5059.85),
+    ["🌋 CRATER 2"] = CFrame.new(1049.76, 48.62, 5129.69),
+    ["🌴 TROPICAL 1"] = CFrame.new(-2173.60, 53.48, 3636.23),
+    ["🌴 TROPICAL 2"] = CFrame.new(-2165.30, 7.79, 3677.91),
+    ["🌴 TROPICAL 3"] =  CFrame.new(-2141.51, 54.65, 3583.64),
     ["🗿 STONE"] = CFrame.new(-2636.19, 124.87, -27.49),
-    ["⚙️ MACHINE"] = CFrame.new(-1480.98, 3.49, 1923.66)
+    ["⚙️ MACHINE 1"] = CFrame.new(-1480.98, 3.49, 1923.66),
+    ["⚙️ MACHINE 2"] = CFrame.new(-1613.32, 8.13, 1903.20)
 }
 
 -- Player Teleportation Function (improved like main16.lua)
@@ -2657,16 +2747,10 @@ local fallbackNPCs = {
     ["🛒 Shop (Alex)"] = CFrame.new(-31.10, 4.84, 2899.03),
     ["🎣 Rod Shop (Marc)"] = CFrame.new(454, 150, 229),
     ["📦 Storage (Henry)"] = CFrame.new(491, 150, 272),
-    ["🏆 Angler"] = CFrame.new(484, 150, 331),
-    
+
     -- Secondary NPCs (Backup only)
-    ["🛒 Shop (Joe)"] = CFrame.new(114.39, 4.75, 2882.38),
-    ["🛒 Shop (Seth)"] = CFrame.new(70.96, 4.84, 2895.36),
-    ["⚓ Boat Expert"] = CFrame.new(23.39, 4.70, 2804.16),
-    ["🔬 Scientist"] = CFrame.new(-8.64, 4.50, 2849.57),
-    ["🐟 Billy Bob"] = CFrame.new(72.05, 29.00, 2950.63),
-    ["🎣 Silly Fisherman"] = CFrame.new(93.53, 27.24, 3009.08),
-    ["🐧 Scott"] = CFrame.new(-81.94, 4.80, 2866.59)
+    ["RESPAWN"] = CFrame.new(56.81, 4.74, 2834.46),
+    
 }
 
 -- Smart NPC Selection: Use detected NPCs first, fallback if needed
@@ -2963,7 +3047,7 @@ local function ApplyPreset(presetName)
         NotifySuccess("Preset Applied", message)
         
     elseif presetName == "Speed" then
-        autoRecastDelay = 0.5
+        autoRecastDelay = 0.1
         perfectCast = true
         safeMode = false
         autoSellThreshold = presetConfig.autosell
@@ -2976,22 +3060,22 @@ local function ApplyPreset(presetName)
         })
         NotifySuccess("Preset Applied", message)
         
-    elseif presetName == "Ultra" then
-        autoRecastDelay = 0.1
+    elseif presetName == "fast" then
+        autoRecastDelay = 0.01
         perfectCast = true
         safeMode = false
         autoSellThreshold = presetConfig.autosell
         autoSellOnThreshold = globalAutoSellEnabled
         
         local message = GetNotificationMessage("preset_applied", {
-            preset = "Ultra",
+            preset = "fast",
             purpose = presetConfig.purpose,
             autosell_status = globalAutoSellEnabled and "💰 Auto Sell: ON" or "💰 Auto Sell: OFF"
         })
         NotifySuccess("Preset Applied", message)
         
     elseif presetName == "AFK" then
-        autoRecastDelay = 0.5
+        autoRecastDelay = 0.4
         perfectCast = true
         safeMode = false
         autoSellThreshold = presetConfig.autosell
@@ -3005,10 +3089,10 @@ local function ApplyPreset(presetName)
         NotifySuccess("Preset Applied", message)
         
     elseif presetName == "Safe" then
-        autoRecastDelay = 1.2
+        autoRecastDelay = math.random() * (0.1 - 0.4) + 0.1 -- random antara 0.1 dan 0.4
         perfectCast = false
         safeMode = true
-        safeModeChance = 70
+        safeModeChance = 80
         autoSellThreshold = presetConfig.autosell
         autoSellOnThreshold = globalAutoSellEnabled
         
@@ -3025,8 +3109,8 @@ local function ApplyPreset(presetName)
         safeMode = false
         hybridMode = true
         hybridPerfectChance = 75
-        hybridMinDelay = 1.0
-        hybridMaxDelay = 2.8
+        hybridMinDelay = 0.01
+        hybridMaxDelay = 1
         autoSellThreshold = presetConfig.autosell
         autoSellOnThreshold = globalAutoSellEnabled
         
@@ -3150,27 +3234,27 @@ InfoTab:CreateParagraph({
 })
 
 InfoTab:CreateButton({ 
-    Name = "Copy Instagram Link", 
+    Name = "Copy Telegram Group", 
     Callback = CreateSafeCallback(function() 
         if setclipboard then
-            setclipboard("https://instagram.com/_bangicoo") 
-            NotifySuccess("Social Media", "Instagram link copied! Follow for updates and support!")
+            setclipboard("https://t.me/Spinner_xxx") 
+            NotifySuccess("Social Media", "Telegram link copied! Join for updates and support!")
         else
-            NotifyInfo("Social Media", "Instagram: " .. XSAN_CONFIG.branding.instagram)
+            NotifyInfo("Social Media", "Telegram: " .. XSAN_CONFIG.branding.telegram)
         end
-    end, "instagram")
+    end, "telegram")
 })
 
 InfoTab:CreateButton({ 
-    Name = "Copy GitHub Link", 
+    Name = "Copy Telegram Link", 
     Callback = CreateSafeCallback(function() 
         if setclipboard then
-            setclipboard("https://github.com/codeico") 
-            NotifySuccess("Social Media", "GitHub link copied! Check out more premium scripts!")
+            setclipboard("https://t.me/Spinnerxxx") 
+            NotifySuccess("Social Media", "Telegram link copied! Join for updates and support!")
         else
-            NotifyInfo("Social Media", "GitHub: " .. XSAN_CONFIG.branding.github)
+            NotifyInfo("Social Media", "Tele Groub: " .. XSAN_CONFIG.branding.github)
         end
-    end, "github")
+    end, "Telegram")
 })
 
 InfoTab:CreateButton({ 
@@ -3313,10 +3397,10 @@ PresetsTab:CreateButton({
 })
 
 PresetsTab:CreateButton({
-    Name = "Ultra Mode", 
+    Name = "fast Mode", 
     Callback = CreateSafeCallback(function()
-        ApplyPreset("Ultra")
-    end, "preset_Ultra")
+        ApplyPreset("fast")
+    end, "preset_fast")
 })
 
 PresetsTab:CreateButton({
@@ -3744,7 +3828,7 @@ MainTab:CreateToggle({
                             -- Safe Mode Logic: Random between perfect and normal cast
                             local usePerfectCast = perfectCast
                             if safeMode then
-                                usePerfectCast = math.random(50, 100) <= safeModeChance
+                                usePerfectCast = math.random(80, 100) <= safeModeChance
                             end
 
                             local timestamp = usePerfectCast and 9999999999 or (tick() + math.random())
@@ -3802,10 +3886,10 @@ MainTab:CreateToggle({
             task.spawn(function()
                 task.wait(0.1)
                 -- Additional cleanup if needed
-                if equipRemote then
+                if unequipRemote then
                     -- Ensure rod is properly equipped for manual use
                     pcall(function()
-                        equipRemote:FireServer(1)
+                        unequipRemote:FireServer(1)
                     end)
                 end
             end)
@@ -3913,7 +3997,7 @@ MainTab:CreateSlider({
 
 MainTab:CreateSlider({
     Name = "Auto Recast Delay",
-    Range = {0.1, 3.0},
+    Range = {0.01, 3.0},
     Increment = 0.1,
     CurrentValue = autoRecastDelay,
     Callback = function(val)
@@ -3936,8 +4020,8 @@ MainTab:CreateToggle({
 
 MainTab:CreateSlider({
     Name = "Fish Threshold",
-    Range = {5, 50},
-    Increment = 1,
+    Range = {500, 8000},
+    Increment = 50,
     CurrentValue = autoSellThreshold,
     Callback = function(val)
         autoSellThreshold = val
@@ -4146,93 +4230,37 @@ RandomSpotTab:CreateParagraph({
 })
 
 -- Create toggles for each spot
-RandomSpotTab:CreateToggle({
-    Name = "🏝️ SISYPUS Statue",
-    CurrentValue = selectedSpots["🏝️ SISYPUS"],
-    Flag = "SpotSisypus",
-    Callback = function(value)
-        selectedSpots["🏝️ SISYPUS"] = value
-        local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "🏝️ SISYPUS: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
-    end
-})
 
-RandomSpotTab:CreateToggle({
-    Name = "🦈 TREASURE Hall",
-    CurrentValue = selectedSpots["🦈 TREASURE"],
-    Flag = "SpotTreasure",
-    Callback = function(value)
-        selectedSpots["🦈 TREASURE"] = value
-        local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "🦈 TREASURE: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
-    end
-})
+-- Update: UI spot selection sesuai data spot baru
+local spotList = {
+    {name = "🏝️ SISYPUS 1", flag = "SpotSisypus1"},
+    {name = "🏝️ SISYPUS 2", flag = "SpotSisypus2"},
+    {name = "🦈 TREASURE", flag = "SpotTreasure"},
+    {name = "❄️ ICE SPOT 1", flag = "SpotIce1"},
+    {name = "❄️ ICE SPOT 2", flag = "SpotIce2"},
+    {name = "❄️ ICE SPOT 3", flag = "SpotIce3"},
+    {name = "🌋 CRATER 1", flag = "SpotCrater1"},
+    {name = "🌋 CRATER 2", flag = "SpotCrater2"},
+    {name = "🌴 TROPICAL 1", flag = "SpotTropical1"},
+    {name = "🌴 TROPICAL 2", flag = "SpotTropical2"},
+    {name = "🌴 TROPICAL 3", flag = "SpotTropical3"},
+    {name = "🗿 STONE", flag = "SpotStone"},
+    {name = "⚙️ MACHINE 1", flag = "SpotMachine1"},
+    {name = "⚙️ MACHINE 2", flag = "SpotMachine2"}
+}
 
-RandomSpotTab:CreateToggle({
-    Name = "🎣 STRINGRY Area",
-    CurrentValue = selectedSpots["🎣 STRINGRY"],
-    Flag = "SpotStringry",
-    Callback = function(value)
-        selectedSpots["🎣 STRINGRY"] = value
-        local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "🎣 STRINGRY: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
-    end
-})
-
-RandomSpotTab:CreateToggle({
-    Name = "❄️ ICE LAND",
-    CurrentValue = selectedSpots["❄️ ICE LAND"],
-    Flag = "SpotIceLand",
-    Callback = function(value)
-        selectedSpots["❄️ ICE LAND"] = value
-        local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "❄️ ICE LAND: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
-    end
-})
-
-RandomSpotTab:CreateToggle({
-    Name = "🌋 CRATER Zone",
-    CurrentValue = selectedSpots["🌋 CRATER"],
-    Flag = "SpotCrater",
-    Callback = function(value)
-        selectedSpots["🌋 CRATER"] = value
-        local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "🌋 CRATER: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
-    end
-})
-
-RandomSpotTab:CreateToggle({
-    Name = "🌴 TROPICAL Island",
-    CurrentValue = selectedSpots["🌴 TROPICAL"],
-    Flag = "SpotTropical",
-    Callback = function(value)
-        selectedSpots["🌴 TROPICAL"] = value
-        local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "🌴 TROPICAL: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
-    end
-})
-
-RandomSpotTab:CreateToggle({
-    Name = "🗿 STONE Monument",
-    CurrentValue = selectedSpots["🗿 STONE"],
-    Flag = "SpotStone",
-    Callback = function(value)
-        selectedSpots["🗿 STONE"] = value
-        local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "🗿 STONE: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
-    end
-})
-
-RandomSpotTab:CreateToggle({
-    Name = "⚙️ MACHINE Station",
-    CurrentValue = selectedSpots["⚙️ MACHINE"],
-    Flag = "SpotMachine",
-    Callback = function(value)
-        selectedSpots["⚙️ MACHINE"] = value
-        local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "⚙️ MACHINE: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
-    end
-})
+for _, spot in ipairs(spotList) do
+    RandomSpotTab:CreateToggle({
+        Name = spot.name,
+        CurrentValue = selectedSpots[spot.name],
+        Flag = spot.flag,
+        Callback = function(value)
+            selectedSpots[spot.name] = value
+            local selectedCount = GetSelectedSpotsCount()
+            NotifyInfo("Spot Selection", spot.name .. ": " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
+        end
+    })
+end
 
 -- Quick Selection Buttons
 RandomSpotTab:CreateButton({
@@ -4242,17 +4270,12 @@ RandomSpotTab:CreateButton({
             selectedSpots[spotName] = true
         end
         
-        -- Update all UI toggles
-        local flagMapping = {
-            ["🏝️ SISYPUS"] = "SpotSisypus",
-            ["🦈 TREASURE"] = "SpotTreasure", 
-            ["🎣 STRINGRY"] = "SpotStringry",
-            ["❄️ ICE LAND"] = "SpotIceLand",
-            ["🌋 CRATER"] = "SpotCrater",
-            ["🌴 TROPICAL"] = "SpotTropical",
-            ["🗿 STONE"] = "SpotStone",
-            ["⚙️ MACHINE"] = "SpotMachine"
-        }
+                -- Update all UI toggles menggunakan spotList terbaru
+                for _, spot in ipairs(spotList) do
+                    if Rayfield.Flags[spot.flag] then
+                        Rayfield.Flags[spot.flag]:Set(false)
+                    end
+                end
         
         for spotName, flagName in pairs(flagMapping) do
             if Rayfield.Flags[flagName] then
@@ -4307,17 +4330,12 @@ RandomSpotTab:CreateButton({
             selectedSpots[spotName] = true
         end
         
-        -- Update UI toggles
-        local flagMapping = {
-            ["🏝️ SISYPUS"] = "SpotSisypus",
-            ["🦈 TREASURE"] = "SpotTreasure",
-            ["🎣 STRINGRY"] = "SpotStringry",
-            ["❄️ ICE LAND"] = "SpotIceLand", 
-            ["🌋 CRATER"] = "SpotCrater",
-            ["🌴 TROPICAL"] = "SpotTropical",
-            ["🗿 STONE"] = "SpotStone",
-            ["⚙️ MACHINE"] = "SpotMachine"
-        }
+                -- Update UI toggles menggunakan spotList terbaru
+                for _, spot in ipairs(spotList) do
+                    if Rayfield.Flags[spot.flag] then
+                        Rayfield.Flags[spot.flag]:Set(true)
+                    end
+                end
         
         for spotName, flagName in pairs(flagMapping) do
             if Rayfield.Flags[flagName] then
@@ -4712,66 +4730,14 @@ UtilityTab:CreateButton({
 print("XSAN: UTILITY tab completed successfully!")
 
 -- ═══════════════════════════════════════════════════════════════
+-- SETTING TAB - Game Enhancement & Performance Features
+-- ═══════════════════════════════════════════════════════════════
 
 print("XSAN: Creating SETTING tab content...")
 
 SettingTab:CreateParagraph({
     Title = "🎮 Game Enhancement Settings",
     Content = "Fitur-fitur tambahan untuk meningkatkan pengalaman bermain Anda. Aktifkan sesuai kebutuhan untuk performa dan gameplay yang lebih baik."
-})
-
--- ═══════════════════════════════════════════════════════════════
--- SKIN ROD CHANGER SECTION
--- ═══════════════════════════════════════════════════════════════
-
-SettingTab:CreateParagraph({
-    Title = "🎣 Skin Rod Changer",
-    Content = "Pilih skin rod yang ingin digunakan (client-side visual only)."
-})
-
-local rodList = {
-    "!!! Chrome Rod", "!!! Lucky Rod", "!!! Magma Rod", "!!! Starter Rod", "!!! Steampunk Rod", "!!! Hyper Rod", "!!! Gold Rod", "!!! Lava Rod", "!!! Carbon Rod", "!!! Gingerbread Rod", "!!! Ice Rod", "!!! Luck Rod", "!!! Midnight Rod", "!!! Toy Rod", "!!! Grass Rod", "!!! Candy Cane Rod", "!!! Christmas Tree Rod", "!!! Demascus Rod", "!!! Frozen Rod", "!!! Abyssal Chroma", "!!! Cute Rod", "!!! Angelic Rod", "!!! Astral Rod", "!!! Ares Rod", "!!! Ghoul Rod", "!!! Forsaken", "!!! Red Matter", "!!! Lightsaber", "!!! Crystalized", "!!! Earthly", "!!! Neptune's Trident", "!!! Polarized", "!!! Monochrome", "!!! Angler Rod", "!!! Ghostfinn Rod"
-}
-
-local selectedRod = rodList[1]
-
-SettingTab:CreateDropdown({
-    Name = "Pilih Skin Rod",
-    Options = rodList,
-    CurrentOption = rodList[1],
-    Callback = function(opt)
-        if type(opt)=="table" then opt=opt[1] end
-        selectedRod = opt
-        NotifyInfo("Skin Rod", "Rod dipilih: "..selectedRod)
-    end
-})
-
-SettingTab:CreateButton({
-    Name = "Ganti Skin Rod",
-    Callback = function()
-        local player = game.Players.LocalPlayer
-        local char = player.Character
-        if not char then
-            NotifyError("Skin Rod", "Karakter tidak ditemukan!")
-            return
-        end
-        local backpack = player:FindFirstChild("Backpack")
-        local rodModel = game.ReplicatedStorage.Items:FindFirstChild(selectedRod)
-        if not rodModel then
-            NotifyError("Skin Rod", "Model rod tidak ditemukan di ReplicatedStorage.Items!")
-            return
-        end
-        -- Hapus rod lama di tangan
-        for _,v in pairs(char:GetChildren()) do
-            if v:IsA("Tool") and v.Name:find("Rod") then
-                v:Destroy()
-            end
-        end
-        -- Clone rod baru ke tangan
-        local newRod = rodModel:Clone()
-        newRod.Parent = char
-        NotifySuccess("Skin Rod", "Skin rod berhasil diganti ke: "..selectedRod)
-    end
 })
 
 -- ═══════════════════════════════════════════════════════════════
@@ -4931,265 +4897,6 @@ SettingTab:CreateParagraph({
 })
 
 print("XSAN: SETTING tab completed successfully!")
-
--- ═══════════════════════════════════════════════════════════════
--- SYSTEM EXPLOITS TAB - Advanced Exploitation Features
--- ═══════════════════════════════════════════════════════════════
-
-print("XSAN: Creating SYSTEM EXPLOITS tab content...")
-
-SystemExploitsTab:CreateParagraph({
-    Title = "🔥 SYSTEM EXPLOITS",
-    Content = "Fitur exploit tingkat lanjut berdasarkan analisis mendalam terhadap game data. Gunakan dengan bijak dan tanggung jawab!"
-})
-
--- Check if SystemExploits module is loaded
-if SystemExploits then
-    -- 1. Enhanced Fish Detection System
-    SystemExploitsTab:CreateToggle({
-        Name = "🐟 Enhanced Fish Detection",
-        Default = false,
-        Callback = function(Value)
-            local success, result = pcall(function()
-                return SystemExploits.ToggleEnhancedFishDetection()
-            end)
-            
-            if success then
-                if result then
-                    NotifySuccess("Fish Detection", "🐟 Enhanced Fish Detection ACTIVATED!\n\n✅ Real-time fish analysis\n✅ 160+ fish database\n✅ Variant detection\n✅ Value estimation")
-                else
-                    NotifyInfo("Fish Detection", "🐟 Enhanced Fish Detection DEACTIVATED")
-                end
-            else
-                NotifyError("Fish Detection", "❌ Failed to toggle fish detection: " .. tostring(result))
-            end
-        end,
-        Flag = "enhanced_fish_detection"
-    })
-
-    -- 2. Variant Tracking System
-    SystemExploitsTab:CreateToggle({
-        Name = "🌟 Variant Tracker",
-        Default = false,
-        Callback = function(Value)
-            local success, result = pcall(function()
-                return SystemExploits.ToggleVariantTracker()
-            end)
-            
-            if success then
-                if result then
-                    NotifySuccess("Variant Tracker", "🌟 Variant Tracker ACTIVATED!\n\n✅ Track 14 fish variants\n✅ Statistics logging\n✅ Real-time counting\n✅ Historical data")
-                else
-                    NotifyInfo("Variant Tracker", "🌟 Variant Tracker DEACTIVATED")
-                end
-            else
-                NotifyError("Variant Tracker", "❌ Failed to toggle variant tracker: " .. tostring(result))
-            end
-        end,
-        Flag = "variant_tracker"
-    })
-
-    -- 3. Event Auto-Trigger System
-    SystemExploitsTab:CreateToggle({
-        Name = "🎯 Event Auto-Trigger",
-        Default = false,
-        Callback = function(Value)
-            local success, result = pcall(function()
-                return SystemExploits.ToggleEventAutoTrigger()
-            end)
-            
-            if success then
-                if result then
-                    NotifySuccess("Event Auto-Trigger", "🎯 Event Auto-Trigger ACTIVATED!\n\n✅ Auto-join events\n✅ 10+ event types\n✅ Smart detection\n✅ Automatic participation")
-                else
-                    NotifyInfo("Event Auto-Trigger", "🎯 Event Auto-Trigger DEACTIVATED")
-                end
-            else
-                NotifyError("Event Auto-Trigger", "❌ Failed to toggle event auto-trigger: " .. tostring(result))
-            end
-        end,
-        Flag = "event_auto_trigger"
-    })
-
-    -- 4. Remote Purchase Exploit (WARNING)
-    SystemExploitsTab:CreateToggle({
-        Name = "🛍️ Remote Purchase Exploit ⚠️",
-        Default = false,
-        Callback = function(Value)
-            if Value then
-                -- Show warning dialog first
-                NotifyInfo("WARNING", "⚠️ REMOTE PURCHASE EXPLOIT\n\n🚨 HIGH RISK FEATURE!\n🚨 Use at your own risk!\n🚨 May result in account action!\n\n💡 Proceed only if you understand the risks!")
-                
-                wait(3)
-                
-                local success, result = pcall(function()
-                    return SystemExploits.ToggleRemotePurchaseExploit()
-                end)
-                
-                if success and result then
-                    NotifySuccess("Purchase Exploit", "🛍️ Remote Purchase Exploit ACTIVATED!\n\n⚠️ HIGH RISK ACTIVE\n✅ Free purchase attempts\n✅ Gamepass exploits\n✅ Multiple methods\n\n🚨 USE WITH EXTREME CAUTION!")
-                else
-                    NotifyError("Purchase Exploit", "❌ Failed to activate purchase exploit")
-                end
-            else
-                local success, result = pcall(function()
-                    return SystemExploits.ToggleRemotePurchaseExploit()
-                end)
-                
-                if success then
-                    NotifyInfo("Purchase Exploit", "🛍️ Remote Purchase Exploit DEACTIVATED")
-                end
-            end
-        end,
-        Flag = "remote_purchase_exploit"
-    })
-
-    -- 5. Auto Enchanting System
-    SystemExploitsTab:CreateToggle({
-        Name = "✨ Auto Enchanting System",
-        Default = false,
-        Callback = function(Value)
-            local success, result = pcall(function()
-                return SystemExploits.ToggleAutoEnchantingSystem()
-            end)
-            
-            if success then
-                if result then
-                    NotifySuccess("Auto Enchanting", "✨ Auto Enchanting System ACTIVATED!\n\n✅ Automatic rod enchants\n✅ Max level upgrades\n✅ 8+ enchantment types\n✅ Continuous enhancement")
-                else
-                    NotifyInfo("Auto Enchanting", "✨ Auto Enchanting System DEACTIVATED")
-                end
-            else
-                NotifyError("Auto Enchanting", "❌ Failed to toggle auto enchanting: " .. tostring(result))
-            end
-        end,
-        Flag = "auto_enchanting_system"
-    })
-
-    -- Utility Buttons
-    SystemExploitsTab:CreateButton({
-        Name = "📊 View Fish Detection Log",
-        Callback = function()
-            local fishLog = SystemExploits.GetFishLog()
-            local logCount = #fishLog
-            
-            if logCount > 0 then
-                local recentFish = {}
-                local maxShow = math.min(5, logCount)
-                
-                for i = logCount, logCount - maxShow + 1, -1 do
-                    local fish = fishLog[i]
-                    local timeStr = os.date("%H:%M:%S", fish.timestamp)
-                    table.insert(recentFish, timeStr .. " - " .. fish.name .. " (" .. fish.rarity .. ")" .. (fish.variant and " [" .. fish.variant .. "]" or ""))
-                end
-                
-                NotifyInfo("Fish Detection Log", "🐟 RECENT FISH CAUGHT (" .. logCount .. " total):\n\n" .. table.concat(recentFish, "\n") .. "\n\n💡 Full log available in console")
-                
-                -- Print full log to console
-                print("=== XSAN FISH DETECTION LOG ===")
-                for i, fish in ipairs(fishLog) do
-                    print(i .. ". " .. os.date("%H:%M:%S", fish.timestamp) .. " - " .. fish.name .. " (" .. fish.rarity .. ") " .. (fish.variant and "[" .. fish.variant .. "] " or "") .. "~" .. fish.value .. " coins")
-                end
-                print("=== END LOG ===")
-            else
-                NotifyInfo("Fish Detection Log", "📝 No fish detected yet.\n\n💡 Enable Enhanced Fish Detection and start fishing to see logs!")
-            end
-        end,
-        Flag = "view_fish_log"
-    })
-
-    SystemExploitsTab:CreateButton({
-        Name = "📈 View Variant Statistics",
-        Callback = function()
-            local variantStats = SystemExploits.GetVariantStats()
-            
-            if next(variantStats) then
-                local statsText = {}
-                local totalVariants = 0
-                
-                for variant, data in pairs(variantStats) do
-                    if data.count > 0 then
-                        table.insert(statsText, variant .. ": " .. data.count .. "x" .. (data.lastCaught and " (Last: " .. data.lastCaught .. ")" or ""))
-                        totalVariants = totalVariants + data.count
-                    end
-                end
-                
-                if #statsText > 0 then
-                    NotifyInfo("Variant Statistics", "🌟 VARIANT STATISTICS:\n\nTotal Variants: " .. totalVariants .. "\n\n" .. table.concat(statsText, "\n"))
-                else
-                    NotifyInfo("Variant Statistics", "📊 No variants caught yet.\n\n💡 Enable Variant Tracker and catch some fish!")
-                end
-            else
-                NotifyInfo("Variant Statistics", "📊 Variant tracking not initialized.\n\n💡 Enable Variant Tracker first!")
-            end
-        end,
-        Flag = "view_variant_stats"
-    })
-
-    SystemExploitsTab:CreateButton({
-        Name = "🔧 Reset All Exploits",
-        Callback = function()
-            local success, error = pcall(function()
-                SystemExploits.ResetAllExploits()
-            end)
-            
-            if success then
-                NotifySuccess("Reset Complete", "🔧 All exploits have been reset!\n\n✅ All features disabled\n✅ Safe state restored\n✅ Ready for fresh start")
-            else
-                NotifyError("Reset Failed", "❌ Failed to reset exploits: " .. tostring(error))
-            end
-        end,
-        Flag = "reset_all_exploits"
-    })
-
-    SystemExploitsTab:CreateButton({
-        Name = "ℹ️ Exploit Information",
-        Callback = function()
-            local success, info = pcall(function()
-                return SystemExploits.GetExploitInfo()
-            end)
-            
-            if success then
-                print("=== XSAN SYSTEM EXPLOITS INFO ===")
-                print(info)
-                print("=== END INFO ===")
-                
-                NotifyInfo("Exploit Info", "ℹ️ Detailed exploit information printed to console!\n\n💡 Check your console (F9) for complete feature descriptions and usage guides.")
-            else
-                NotifyError("Info Error", "❌ Failed to get exploit information")
-            end
-        end,
-        Flag = "exploit_information"
-    })
-
-else
-    -- Module not loaded - show error message
-    SystemExploitsTab:CreateParagraph({
-        Title = "❌ MODULE NOT LOADED",
-        Content = "System Exploits module failed to load. Please check if system_exploits.lua exists or update the loadstring URL."
-    })
-    
-    SystemExploitsTab:CreateButton({
-        Name = "🔄 Retry Loading Module",
-        Callback = function()
-            LoadSystemExploits()
-            if SystemExploits then
-                NotifySuccess("Module Loaded", "✅ System Exploits module loaded successfully! Please refresh the tab.")
-            else
-                NotifyError("Module Failed", "❌ Failed to load System Exploits module. Check console for details.")
-            end
-        end,
-        Flag = "retry_load_module"
-    })
-end
-
--- Warning and disclaimer
-SystemExploitsTab:CreateParagraph({
-    Title = "⚠️ IMPORTANT DISCLAIMER",
-    Content = "Advanced exploitation features are provided for educational purposes. Use responsibly and understand the risks involved. XSAN is not responsible for any consequences of using these features."
-})
-
-print("XSAN: SYSTEM EXPLOITS tab completed successfully!")
 
 -- ═══════════════════════════════════════════════════════════════
 -- EXIT TAB - Script Management & Exit Options
@@ -5531,7 +5238,7 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
         
         -- Emergency stop all systems
         autofish = false
-        autofishSession = autofishSession + 999
+        autofishSession = autofishSession + 9999
         autofishThread = nil
         
         -- Stop hybrid mode
@@ -5603,7 +5310,7 @@ spawn(function()
     NotifySuccess("🎲 NEW FEATURE!", "RANDOM SPOT FISHING ADDED!\n\n✨ Auto teleport to 8 premium fishing spots\n⏰ Customizable interval (1-60 minutes)\n🎯 Smart location rotation\n🎣 Perfect for AFK fishing\n\n💡 Check RANDOM SPOT tab or press F11!")
     
     wait(3)
-    NotifyInfo("Follow XSAN!", "Instagram: @_bangicoo\nGitHub: codeico\n\nThe most advanced Fish It script ever created! Follow us for more premium scripts and exclusive updates!")
+    NotifyInfo("Follow XSAN!", "Telegram: Spinnerxxx\nTele Groub: Spinner_xxx\n\nThe most advanced Fish It script ever created! Follow us for more premium scripts and exclusive updates!")
 end)
 
 -- Console Branding
@@ -5611,7 +5318,7 @@ print("━━━━━━━━━━━━━━━━━━━━━━━━�
 print("XSAN FISH IT PRO ULTIMATE v1.0")
 print("THE MOST ADVANCED FISH IT SCRIPT EVER CREATED")
 print("Premium Script with AI-Powered Features & Ultimate Automation")
-print("Instagram: @_bangicoo | GitHub: codeico")
+print("Telegram: Spinnerxxx | Tele Groub: Spinner_xxx")
 print("Professional Quality • Trusted by Thousands • Ultimate Edition")
 print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 print("XSAN: Script loaded successfully! All systems operational!")
