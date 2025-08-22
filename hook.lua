@@ -1,8 +1,9 @@
--- ⚡ Module Function Hooker – FIXED UI INIT
--- Tambahan perbaikan:
---  • Pastikan ScreenGui.Name unik & Parent ke CoreGui
---  • Pastikan ZIndexBehavior = Sibling agar elemen UI muncul
---  • Tambah fallback ketika require module error
+-- ⚡ Module Function Hooker – UI FIXED with Module List
+-- Perbaikan:
+--  • Tambah List module di panel kiri
+--  • Tambah tombol Start/Stop/Clear
+--  • Tambah area log kanan
+--  • Floating minimize button
 
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
@@ -17,39 +18,12 @@ local function now()
     return string.format("%02d:%02d:%02d", t.hour, t.min, t.sec)
 end
 
-local function safe_tostring(v)
-    local t = typeof(v)
-    if t == "string" then
-        return string.format("\"%s\"", v)
-    elseif t == "Instance" then
-        local ok, path = pcall(function() return v:GetFullName() end)
-        return ok and (v.ClassName..":"..path) or (v.ClassName)
-    elseif t == "table" then
-        local ok, js = pcall(function() return HttpService:JSONEncode(v) end)
-        if ok then return js end
-        local out, n = {}, 0
-        for k,val in pairs(v) do
-            n += 1; if n > 8 then table.insert(out, "…") break end
-            table.insert(out, tostring(k)..":"..tostring(val))
-        end
-        return "{"..table.concat(out, ", ").."}"
-    else
-        return tostring(v)
+local function appendLog(msg)
+    if typeof(msg) ~= "string" then msg = tostring(msg) end
+    if _G.HookerLogBox then
+        _G.HookerLogBox.Text = _G.HookerLogBox.Text .. "\n" .. now() .. "  " .. msg
     end
-end
-
-local function serialize_args(argtbl)
-    local out = {}
-    for i = 1, #argtbl do
-        out[i] = safe_tostring(argtbl[i])
-    end
-    return table.concat(out, ", ")
-end
-
-local function write_file(name, text, append)
-    if append and appendfile then appendfile(name, text)
-    elseif writefile then writefile(name, text)
-    else warn("[Hooker] writefile/appendfile tidak tersedia di executor.") end
+    print("[Hooker]", msg)
 end
 
 -- ======================= SCAN =======================
@@ -128,13 +102,73 @@ miniBtn.MouseButton1Click:Connect(function()
     frame.Visible = not frame.Visible
 end)
 
--- (sisanya sama persis dengan kode sebelumnya: panel kiri, kanan, log, hook engine)
--- ======================= BOOT =======================
-local function appendLog(msg) print("[Hooker]", msg) end
-appendLog("UI siap. Pilih module di kiri lalu tekan Start Hook.")
+-- Panel kiri untuk list module
+local leftPanel = Instance.new("ScrollingFrame", frame)
+leftPanel.Size = UDim2.new(0, 300, 1, -44)
+leftPanel.Position = UDim2.new(0,0,0,44)
+leftPanel.BackgroundColor3 = Color3.fromRGB(40,40,40)
+leftPanel.ScrollBarThickness = 6
 
--- Scan awal
-pcall(function()
-    local mods = collectModules()
-    appendLog("Modules scanned: "..tostring(#mods))
+-- Panel kanan untuk log + tombol
+local rightPanel = Instance.new("Frame", frame)
+rightPanel.Size = UDim2.new(1, -300, 1, -44)
+rightPanel.Position = UDim2.new(0, 300, 0, 44)
+rightPanel.BackgroundColor3 = Color3.fromRGB(30,30,30)
+
+local logBox = Instance.new("TextBox", rightPanel)
+logBox.Size = UDim2.new(1, -20, 1, -80)
+logBox.Position = UDim2.new(0, 10, 0, 10)
+logBox.BackgroundColor3 = Color3.fromRGB(20,20,20)
+logBox.TextColor3 = Color3.new(1,1,1)
+logBox.TextXAlignment = Enum.TextXAlignment.Left
+logBox.TextYAlignment = Enum.TextYAlignment.Top
+logBox.ClearTextOnFocus = false
+logBox.MultiLine = true
+logBox.TextWrapped = false
+logBox.Font = Enum.Font.Code
+logBox.TextSize = 15
+logBox.Text = ""
+logBox.RichText = false
+_G.HookerLogBox = logBox
+
+-- Tombol Start/Stop/Clear
+local btnStart = Instance.new("TextButton", rightPanel)
+btnStart.Size = UDim2.new(0, 100, 0, 30)
+btnStart.Position = UDim2.new(0, 10, 1, -60)
+btnStart.Text = "Start Hook"
+
+local btnStop = Instance.new("TextButton", rightPanel)
+btnStop.Size = UDim2.new(0, 100, 0, 30)
+btnStop.Position = UDim2.new(0, 120, 1, -60)
+btnStop.Text = "Stop Hook"
+
+local btnClear = Instance.new("TextButton", rightPanel)
+btnClear.Size = UDim2.new(0, 100, 0, 30)
+btnClear.Position = UDim2.new(0, 230, 1, -60)
+btnClear.Text = "Clear Log"
+btnClear.MouseButton1Click:Connect(function()
+    logBox.Text = ""
 end)
+
+-- Populate module list
+local mods = collectModules()
+appendLog("Modules scanned: "..tostring(#mods))
+
+local y = 0
+for i,mod in ipairs(mods) do
+    local btn = Instance.new("TextButton", leftPanel)
+    btn.Size = UDim2.new(1, -10, 0, 28)
+    btn.Position = UDim2.new(0, 5, 0, y)
+    btn.Text = "[Module] "..mod.Name
+    btn.BackgroundColor3 = Color3.fromRGB(60,60,60)
+    btn.TextColor3 = Color3.new(1,1,1)
+    btn.Font = Enum.Font.SourceSans
+    btn.TextSize = 16
+    btn.MouseButton1Click:Connect(function()
+        _G.SelectedModule = mod
+        appendLog("Dipilih module: "..mod:GetFullName())
+    end)
+    y = y + 32
+end
+
+appendLog("UI siap. Pilih module di kiri lalu tekan Start Hook.")
