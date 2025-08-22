@@ -11,8 +11,8 @@
     • Ultimate Teleportation System (NEW!)
     
     Developer: XSAN
-    Instagram: @_bangicoo
-    GitHub: github.com/codeico
+    Telegram: Spinnerxxx
+    Tele Groub: github.com/Spinner_xxx
     
     Premium Quality • Trusted by Thousands • Ultimate Edition
 --]]
@@ -42,8 +42,8 @@ local XSAN_CONFIG = {
         title = "XSAN Fish It Pro Ultimate v1.0",
         subtitle = "The most advanced Fish It script ever created with AI-powered features, smart analytics, and premium automation systems.",
         developer = "XSAN",
-        instagram = "@_bangicoo",
-        github = "github.com/codeico",
+        Telegram = "Spinnerxxx",
+        github = "github.com/Spinner_xxx",
         support_message = "Created by XSAN - Trusted by thousands of users worldwide!"
     },
     
@@ -3024,7 +3024,7 @@ InfoTab:CreateButton({
             setclipboard("https://t.me/Spinnerxxx") 
             NotifySuccess("Social Media", "Telegram link copied! Join for updates and support!")
         else
-            NotifyInfo("Social Media", "GitHub: " .. XSAN_CONFIG.branding.github)
+            NotifyInfo("Social Media", "Tele Groub: " .. XSAN_CONFIG.branding.github)
         end
     end, "Telegram")
 })
@@ -5148,7 +5148,7 @@ spawn(function()
     NotifySuccess("🎲 NEW FEATURE!", "RANDOM SPOT FISHING ADDED!\n\n✨ Auto teleport to 8 premium fishing spots\n⏰ Customizable interval (1-60 minutes)\n🎯 Smart location rotation\n🎣 Perfect for AFK fishing\n\n💡 Check RANDOM SPOT tab or press F11!")
     
     wait(3)
-    NotifyInfo("Follow XSAN!", "Instagram: @_bangicoo\nGitHub: codeico\n\nThe most advanced Fish It script ever created! Follow us for more premium scripts and exclusive updates!")
+    NotifyInfo("Follow XSAN!", "Telegram: Spinnerxxx\nTele Groub: Spinner_xxx\n\nThe most advanced Fish It script ever created! Follow us for more premium scripts and exclusive updates!")
 end)
 
 -- Console Branding
@@ -5156,7 +5156,7 @@ print("━━━━━━━━━━━━━━━━━━━━━━━━�
 print("XSAN FISH IT PRO ULTIMATE v1.0")
 print("THE MOST ADVANCED FISH IT SCRIPT EVER CREATED")
 print("Premium Script with AI-Powered Features & Ultimate Automation")
-print("Instagram: @_bangicoo | GitHub: codeico")
+print("Telegram: Spinnerxxx | Tele Groub: Spinner_xxx")
 print("Professional Quality • Trusted by Thousands • Ultimate Edition")
 print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 print("XSAN: Script loaded successfully! All systems operational!")
