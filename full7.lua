@@ -2815,60 +2815,60 @@ local function ApplyPreset(presetName)
         autoSellOnThreshold = globalAutoSellEnabled
         
         local message = GetNotificationMessage("preset_applied", {
-            currentPreset = presetName
-            local presetConfig = XSAN_CONFIG.presets[presetName] or XSAN_CONFIG.presets["Fast Ultra Mode"]
-
-            if presetName == "Beginner" then
-                autoRecastDelay = 2.0
-                perfectCast = false
-                safeMode = false
-                autoSellThreshold = presetConfig and presetConfig.autosell or 1000
-                autoSellOnThreshold = globalAutoSellEnabled
-                local message = GetNotificationMessage("preset_applied", {
-                    preset = "Beginner",
-                    purpose = presetConfig and presetConfig.purpose or "Beginner mode for safe fishing.",
-                    autosell_status = globalAutoSellEnabled and "💰 Auto Sell: ON" or "💰 Auto Sell: OFF"
-                })
-                NotifySuccess("Preset Applied", message)
-
-            elseif presetName == "Speed" then
-                autoRecastDelay = 0.1
-                perfectCast = true
-                safeMode = false
-                autoSellThreshold = presetConfig and presetConfig.autosell or 1000
-                autoSellOnThreshold = globalAutoSellEnabled
-                local message = GetNotificationMessage("preset_applied", {
-                    preset = "Speed",
-                    purpose = presetConfig and presetConfig.purpose or "Speed mode for fast fishing.",
-                    autosell_status = globalAutoSellEnabled and "💰 Auto Sell: ON" or "💰 Auto Sell: OFF"
-                })
-                NotifySuccess("Preset Applied", message)
-
-            elseif presetName == "Fast Ultra" or presetName == "Fast Ultra Mode" then
-                autoRecastDelay = 0.01
-                perfectCast = true
-                safeMode = false
-                autoSellThreshold = presetConfig and presetConfig.autosell or 1000
-                autoSellOnThreshold = globalAutoSellEnabled
-                local message = GetNotificationMessage("preset_applied", {
-                    preset = "Fast Ultra Mode",
-                    purpose = presetConfig and presetConfig.purpose or "Ultra fast mode for maximum speed.",
-                    autosell_status = globalAutoSellEnabled and "💰 Auto Sell: ON" or "💰 Auto Sell: OFF"
-                })
-                NotifySuccess("Preset Applied", message)
-
-            elseif presetName == "AFK" then
-                autoRecastDelay = 0.4
-                perfectCast = true
-                safeMode = false
-                autoSellThreshold = presetConfig and presetConfig.autosell or 1000
-                autoSellOnThreshold = globalAutoSellEnabled
-                local message = GetNotificationMessage("preset_applied", {
-                    preset = "AFK",
-                    purpose = presetConfig and presetConfig.purpose or "AFK mode for idle fishing.",
-                    autosell_status = globalAutoSellEnabled and "💰 Auto Sell: ON" or "💰 Auto Sell: OFF"
-                })
-                NotifySuccess("Preset Applied", message)
+            preset = "Beginner",
+            purpose = presetConfig.purpose,
+            autosell_status = globalAutoSellEnabled and "💰 Auto Sell: ON" or "💰 Auto Sell: OFF"
+        })
+        NotifySuccess("Preset Applied", message)
+        
+    elseif presetName == "Speed" then
+        autoRecastDelay = 0.1
+        perfectCast = true
+        safeMode = false
+        autoSellThreshold = presetConfig.autosell
+        autoSellOnThreshold = globalAutoSellEnabled
+        
+        local message = GetNotificationMessage("preset_applied", {
+            preset = "Speed",
+            purpose = presetConfig.purpose,
+            autosell_status = globalAutoSellEnabled and "💰 Auto Sell: ON" or "💰 Auto Sell: OFF"
+        })
+        NotifySuccess("Preset Applied", message)
+        
+    elseif presetName == "Fast" then
+        autoRecastDelay = 0.01
+        perfectCast = true
+        safeMode = false
+        autoSellThreshold = presetConfig.autosell
+        autoSellOnThreshold = globalAutoSellEnabled
+        
+        local message = GetNotificationMessage("preset_applied", {
+            preset = "Fast",
+            purpose = presetConfig.purpose,
+            autosell_status = globalAutoSellEnabled and "💰 Auto Sell: ON" or "💰 Auto Sell: OFF"
+        })
+        NotifySuccess("Preset Applied", message)
+        
+    elseif presetName == "AFK" then
+        autoRecastDelay = 0.4
+        perfectCast = true
+        safeMode = false
+        autoSellThreshold = presetConfig.autosell
+        autoSellOnThreshold = globalAutoSellEnabled
+        
+        local message = GetNotificationMessage("preset_applied", {
+            preset = "AFK",
+            purpose = presetConfig.purpose,
+            autosell_status = globalAutoSellEnabled and "💰 Auto Sell: ON" or "💰 Auto Sell: OFF"
+        })
+        NotifySuccess("Preset Applied", message)
+        
+    elseif presetName == "Safe" then
+        autoRecastDelay = math.random() * (0.1 - 0.4) + 0.1 -- random antara 0.1 dan 0.4
+        perfectCast = false
+        safeMode = true
+        safeModeChance = 80
+        autoSellThreshold = presetConfig.autosell
         autoSellOnThreshold = globalAutoSellEnabled
         
         local message = GetNotificationMessage("preset_applied", {
@@ -3172,10 +3172,10 @@ PresetsTab:CreateButton({
 })
 
 PresetsTab:CreateButton({
-    Name = "Fast Ultra Mode", 
+    Name = "Fast Mode", 
     Callback = CreateSafeCallback(function()
-        ApplyPreset("Fast Ultra")
-    end, "preset_fast_ultra")
+        ApplyPreset("Fast")
+    end, "preset_fast")
 })
 
 PresetsTab:CreateButton({
