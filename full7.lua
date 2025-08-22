@@ -2822,7 +2822,7 @@ local function ApplyPreset(presetName)
         NotifySuccess("Preset Applied", message)
         
     elseif presetName == "Speed" then
-        autoRecastDelay = 0.5
+        autoRecastDelay = 0.1
         perfectCast = true
         safeMode = false
         autoSellThreshold = presetConfig.autosell
@@ -2835,8 +2835,8 @@ local function ApplyPreset(presetName)
         })
         NotifySuccess("Preset Applied", message)
         
-    elseif presetName == "Ultra" then
-        autoRecastDelay = 0.1
+    elseif presetName == "Fast Ultra" then
+        autoRecastDelay = 0.01
         perfectCast = true
         safeMode = false
         autoSellThreshold = presetConfig.autosell
