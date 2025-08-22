@@ -4002,93 +4002,36 @@ RandomSpotTab:CreateParagraph({
 })
 
 -- Create toggles for each spot
-RandomSpotTab:CreateToggle({
-    Name = "🏝️ SISYPUS Statue",
-    CurrentValue = selectedSpots["🏝️ SISYPUS"],
-    Flag = "SpotSisypus",
-    Callback = function(value)
-        selectedSpots["🏝️ SISYPUS"] = value
-        local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "🏝️ SISYPUS: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
-    end
-})
 
-RandomSpotTab:CreateToggle({
-    Name = "🦈 TREASURE Hall",
-    CurrentValue = selectedSpots["🦈 TREASURE"],
-    Flag = "SpotTreasure",
-    Callback = function(value)
-        selectedSpots["🦈 TREASURE"] = value
-        local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "🦈 TREASURE: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
-    end
-})
+-- Update: UI spot selection sesuai data spot baru
+local spotList = {
+    {name = "🏝️ SISYPUS 1", flag = "SpotSisypus1"},
+    {name = "🏝️ SISYPUS 2", flag = "SpotSisypus2"},
+    {name = "🦈 TREASURE", flag = "SpotTreasure"},
+    {name = "❄️ ICE SPOT 1", flag = "SpotIce1"},
+    {name = "❄️ ICE SPOT 2", flag = "SpotIce2"},
+    {name = "❄️ ICE SPOT 3", flag = "SpotIce3"},
+    {name = "🌋 CRATER", flag = "SpotCrater"},
+    {name = "🌴 TROPICAL 1", flag = "SpotTropical1"},
+    {name = "🌴 TROPICAL 2", flag = "SpotTropical2"},
+    {name = "🌴 TROPICAL 3", flag = "SpotTropical3"},
+    {name = "🗿 STONE", flag = "SpotStone"},
+    {name = "⚙️ MACHINE 1", flag = "SpotMachine1"},
+    {name = "⚙️ MACHINE 2", flag = "SpotMachine2"}
+}
 
-RandomSpotTab:CreateToggle({
-    Name = "🎣 STRINGRY Area",
-    CurrentValue = selectedSpots["🎣 STRINGRY"],
-    Flag = "SpotStringry",
-    Callback = function(value)
-        selectedSpots["🎣 STRINGRY"] = value
-        local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "🎣 STRINGRY: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
-    end
-})
-
-RandomSpotTab:CreateToggle({
-    Name = "❄️ ICE LAND",
-    CurrentValue = selectedSpots["❄️ ICE LAND"],
-    Flag = "SpotIceLand",
-    Callback = function(value)
-        selectedSpots["❄️ ICE LAND"] = value
-        local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "❄️ ICE LAND: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
-    end
-})
-
-RandomSpotTab:CreateToggle({
-    Name = "🌋 CRATER Zone",
-    CurrentValue = selectedSpots["🌋 CRATER"],
-    Flag = "SpotCrater",
-    Callback = function(value)
-        selectedSpots["🌋 CRATER"] = value
-        local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "🌋 CRATER: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
-    end
-})
-
-RandomSpotTab:CreateToggle({
-    Name = "🌴 TROPICAL Island",
-    CurrentValue = selectedSpots["🌴 TROPICAL"],
-    Flag = "SpotTropical",
-    Callback = function(value)
-        selectedSpots["🌴 TROPICAL"] = value
-        local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "🌴 TROPICAL: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
-    end
-})
-
-RandomSpotTab:CreateToggle({
-    Name = "🗿 STONE Monument",
-    CurrentValue = selectedSpots["🗿 STONE"],
-    Flag = "SpotStone",
-    Callback = function(value)
-        selectedSpots["🗿 STONE"] = value
-        local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "🗿 STONE: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
-    end
-})
-
-RandomSpotTab:CreateToggle({
-    Name = "⚙️ MACHINE Station",
-    CurrentValue = selectedSpots["⚙️ MACHINE"],
-    Flag = "SpotMachine",
-    Callback = function(value)
-        selectedSpots["⚙️ MACHINE"] = value
-        local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "⚙️ MACHINE: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
-    end
-})
+for _, spot in ipairs(spotList) do
+    RandomSpotTab:CreateToggle({
+        Name = spot.name,
+        CurrentValue = selectedSpots[spot.name],
+        Flag = spot.flag,
+        Callback = function(value)
+            selectedSpots[spot.name] = value
+            local selectedCount = GetSelectedSpotsCount()
+            NotifyInfo("Spot Selection", spot.name .. ": " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
+        end
+    })
+end
 
 -- Quick Selection Buttons
 RandomSpotTab:CreateButton({
@@ -4098,17 +4041,12 @@ RandomSpotTab:CreateButton({
             selectedSpots[spotName] = true
         end
         
-        -- Update all UI toggles
-        local flagMapping = {
-            ["🏝️ SISYPUS"] = "SpotSisypus",
-            ["🦈 TREASURE"] = "SpotTreasure", 
-            ["🎣 STRINGRY"] = "SpotStringry",
-            ["❄️ ICE LAND"] = "SpotIceLand",
-            ["🌋 CRATER"] = "SpotCrater",
-            ["🌴 TROPICAL"] = "SpotTropical",
-            ["🗿 STONE"] = "SpotStone",
-            ["⚙️ MACHINE"] = "SpotMachine"
-        }
+                -- Update all UI toggles menggunakan spotList terbaru
+                for _, spot in ipairs(spotList) do
+                    if Rayfield.Flags[spot.flag] then
+                        Rayfield.Flags[spot.flag]:Set(false)
+                    end
+                end
         
         for spotName, flagName in pairs(flagMapping) do
             if Rayfield.Flags[flagName] then
@@ -4163,17 +4101,12 @@ RandomSpotTab:CreateButton({
             selectedSpots[spotName] = true
         end
         
-        -- Update UI toggles
-        local flagMapping = {
-            ["🏝️ SISYPUS"] = "SpotSisypus",
-            ["🦈 TREASURE"] = "SpotTreasure",
-            ["🎣 STRINGRY"] = "SpotStringry",
-            ["❄️ ICE LAND"] = "SpotIceLand", 
-            ["🌋 CRATER"] = "SpotCrater",
-            ["🌴 TROPICAL"] = "SpotTropical",
-            ["🗿 STONE"] = "SpotStone",
-            ["⚙️ MACHINE"] = "SpotMachine"
-        }
+                -- Update UI toggles menggunakan spotList terbaru
+                for _, spot in ipairs(spotList) do
+                    if Rayfield.Flags[spot.flag] then
+                        Rayfield.Flags[spot.flag]:Set(true)
+                    end
+                end
         
         for spotName, flagName in pairs(flagMapping) do
             if Rayfield.Flags[flagName] then
