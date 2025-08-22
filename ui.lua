@@ -749,8 +749,8 @@
             -- Create Tab Content as ScrollingFrame for better mobile scrolling
             local TabContent = Instance.new("ScrollingFrame")
             TabContent.Name = Name .. "_Content"
-            TabContent.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
-            TabContent.BackgroundTransparency = 0.12
+            TabContent.BackgroundColor3 = Color3.fromRGB(20, 30, 60) -- Biru gelap
+            TabContent.BackgroundTransparency = 0.18
             TabContent.Size = UDim2.new(1, 0, 1, 0)
             TabContent.Visible = false
             TabContent.ScrollBarThickness = 6
