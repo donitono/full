@@ -1142,7 +1142,10 @@ local function initializeRemotes()
         -- Equipment remotes (corrected path)
         equipRemote = net:WaitForChild("RE/EquipToolFromHotbar")
         print("XSAN: ✅ EquipToolFromHotbar remote loaded")
-        
+
+        unequipRemote = net:WaitForChild("RE/UnequipToolFromHotbar")
+        print("XSAN: ✅ UnequipToolFromHotbar remote loaded")
+
         print("XSAN: 🎣 All enhanced fishing remotes loaded successfully!")
     end)
     
@@ -3658,10 +3661,10 @@ MainTab:CreateToggle({
             task.spawn(function()
                 task.wait(0.1)
                 -- Additional cleanup if needed
-                if equipRemote then
+                if unequipRemote then
                     -- Ensure rod is properly equipped for manual use
                     pcall(function()
-                        equipRemote:FireServer(1)
+                        unequipRemote:FireServer(1)
                     end)
                 end
             end)
