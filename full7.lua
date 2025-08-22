@@ -3594,7 +3594,7 @@ MainTab:CreateToggle({
                         pcall(function()
                             if autofishSession ~= mySession or not autofish then return end
                             if equipRemote then equipRemote:FireServer(1) end
-                            smartWait(0.01, mySession)
+                            smartWait(0.1, mySession)
 
                             if autofishSession ~= mySession or not autofish then return end
                             -- Safe Mode Logic: Random between perfect and normal cast
@@ -3607,7 +3607,7 @@ MainTab:CreateToggle({
                             if rodRemote and autofishSession == mySession and autofish then
                                 rodRemote:InvokeServer(timestamp)
                             end
-                            smartWait(0.01, mySession)
+                            smartWait(0.1, mySession)
 
                             if autofishSession ~= mySession or not autofish then return end
                             local x = usePerfectCast and -1.238 or (math.random(-1000, 1000) / 1000)
