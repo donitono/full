@@ -2835,7 +2835,7 @@ local function ApplyPreset(presetName)
         })
         NotifySuccess("Preset Applied", message)
         
-    elseif presetName == "Fast" then
+    elseif presetName == "fast" then
         autoRecastDelay = 0.01
         perfectCast = true
         safeMode = false
@@ -2843,7 +2843,7 @@ local function ApplyPreset(presetName)
         autoSellOnThreshold = globalAutoSellEnabled
         
         local message = GetNotificationMessage("preset_applied", {
-            preset = "Fast",
+            preset = "fast",
             purpose = presetConfig.purpose,
             autosell_status = globalAutoSellEnabled and "💰 Auto Sell: ON" or "💰 Auto Sell: OFF"
         })
@@ -3172,9 +3172,9 @@ PresetsTab:CreateButton({
 })
 
 PresetsTab:CreateButton({
-    Name = "Fast Mode", 
+    Name = "fast Mode", 
     Callback = CreateSafeCallback(function()
-        ApplyPreset("Fast")
+        ApplyPreset("fast")
     end, "preset_fast")
 })
 
