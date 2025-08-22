@@ -2519,16 +2519,10 @@ local fallbackNPCs = {
     ["🛒 Shop (Alex)"] = CFrame.new(-31.10, 4.84, 2899.03),
     ["🎣 Rod Shop (Marc)"] = CFrame.new(454, 150, 229),
     ["📦 Storage (Henry)"] = CFrame.new(491, 150, 272),
-    ["🏆 Angler"] = CFrame.new(484, 150, 331),
-    
+
     -- Secondary NPCs (Backup only)
-    ["🛒 Shop (Joe)"] = CFrame.new(114.39, 4.75, 2882.38),
-    ["🛒 Shop (Seth)"] = CFrame.new(70.96, 4.84, 2895.36),
-    ["⚓ Boat Expert"] = CFrame.new(23.39, 4.70, 2804.16),
-    ["🔬 Scientist"] = CFrame.new(-8.64, 4.50, 2849.57),
-    ["🐟 Billy Bob"] = CFrame.new(72.05, 29.00, 2950.63),
-    ["🎣 Silly Fisherman"] = CFrame.new(93.53, 27.24, 3009.08),
-    ["🐧 Scott"] = CFrame.new(-81.94, 4.80, 2866.59)
+    ["RESPAWN"] = CFrame.new(56.81, 4.74, 2834.46),
+    
 }
 
 -- Smart NPC Selection: Use detected NPCs first, fallback if needed
