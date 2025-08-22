@@ -485,12 +485,13 @@
         end)
 
         -- Create Tabs Container - ADJUSTED FOR SMALLER TOPBAR
-        local TabContainer = Instance.new("Frame")
-        TabContainer.Name = "TabContainer"
-        TabContainer.BackgroundTransparency = 1
-        TabContainer.Position = UDim2.new(0, 0, 0, 22)   -- Adjusted for smaller topbar (22)
-        TabContainer.Size = UDim2.new(0, 120, 1, -22)    -- Reduced width from 130 to 120
-        TabContainer.Parent = Main
+    local TabContainer = Instance.new("Frame")
+    TabContainer.Name = "TabContainer"
+    TabContainer.BackgroundColor3 = Color3.fromRGB(20, 30, 60) -- Biru gelap
+    TabContainer.BackgroundTransparency = 0.22
+    TabContainer.Position = UDim2.new(0, 0, 0, 22)
+    TabContainer.Size = UDim2.new(0, 120, 1, -22)
+    TabContainer.Parent = Main
 
         -- Create Tab List with scrolling
     local TabList = Instance.new("ScrollingFrame")
@@ -545,12 +546,13 @@
         end
 
         -- Create Content Container - ADJUSTED SIZE AND POSITION
-        local ContentContainer = Instance.new("Frame")
-        ContentContainer.Name = "ContentContainer"
-        ContentContainer.BackgroundTransparency = 1
-        ContentContainer.Position = UDim2.new(0, 120, 0, 22)  -- Adjusted for smaller tab width (120) and topbar (22)
-        ContentContainer.Size = UDim2.new(1, -125, 1, -22)   -- Increased space by reducing offset from -120 to -125
-        ContentContainer.Parent = Main
+    local ContentContainer = Instance.new("Frame")
+    ContentContainer.Name = "ContentContainer"
+    ContentContainer.BackgroundColor3 = Color3.fromRGB(20, 30, 60) -- Biru gelap
+    ContentContainer.BackgroundTransparency = 0.18
+    ContentContainer.Position = UDim2.new(0, 120, 0, 22)
+    ContentContainer.Size = UDim2.new(1, -125, 1, -22)
+    ContentContainer.Parent = Main
 
         -- Create Content with scrolling
         local Content = Instance.new("ScrollingFrame")
