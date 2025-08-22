@@ -1,9 +1,8 @@
--- ⚡ Module Function Hooker – UI FIXED with Module List
--- Perbaikan:
---  • Tambah List module di panel kiri
---  • Tambah tombol Start/Stop/Clear
---  • Tambah area log kanan
---  • Floating minimize button
+-- ⚡ Module Function Hooker – FIXED (Full Version)
+-- Perbaikan kali ini:
+--  • Pastikan list module tampil sesuai jumlah scan
+--  • Hook log muncul saat Start Hook ditekan
+--  • Tambah handler Start/Stop agar tidak blank
 
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
@@ -148,6 +147,36 @@ btnClear.Position = UDim2.new(0, 230, 1, -60)
 btnClear.Text = "Clear Log"
 btnClear.MouseButton1Click:Connect(function()
     logBox.Text = ""
+end)
+
+-- Hooking logic
+btnStart.MouseButton1Click:Connect(function()
+    if not _G.SelectedModule then
+        appendLog("❌ Belum memilih module.")
+        return
+    end
+    appendLog("✅ Start hook: ".._G.SelectedModule:GetFullName())
+    -- contoh hook function
+    local src = require(_G.SelectedModule)
+    if type(src) == "table" then
+        for k,v in pairs(src) do
+            if type(v) == "function" then
+                local old = v
+                src[k] = function(...)
+                    appendLog("Dipanggil function: "..tostring(k))
+                    return old(...)
+                end
+            end
+        end
+    end
+end)
+
+btnStop.MouseButton1Click:Connect(function()
+    if _G.SelectedModule then
+        appendLog("⏹️ Stop hook: ".._G.SelectedModule:GetFullName())
+    else
+        appendLog("❌ Belum ada module yang dihook.")
+    end
 end)
 
 -- Populate module list
