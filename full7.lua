@@ -11,7 +11,7 @@
     • Ultimate Teleportation System (NEW!)
     
     Developer: XSAN
-    Instagram: @_bangicoo
+    Telegram: @_bangicoo
     GitHub: github.com/codeico
     
     Premium Quality • Trusted by Thousands • Ultimate Edition
@@ -42,7 +42,7 @@ local XSAN_CONFIG = {
         title = "XSAN Fish It Pro Ultimate v1.0",
         subtitle = "The most advanced Fish It script ever created with AI-powered features, smart analytics, and premium automation systems.",
         developer = "XSAN",
-        instagram = "@_bangicoo",
+        Telegram = "@_bangicoo",
         github = "github.com/codeico",
         support_message = "Created by XSAN - Trusted by thousands of users worldwide!"
     },
@@ -149,12 +149,12 @@ local UIConfig = {
         useImage = false,
 
         -- Emoji icons (used when useImage = false)
-        emojiVisible = "🎣", -- when UI is visible
-        emojiHidden = "👁", -- when UI is hidden
+        emojiVisible = "🪝", -- when UI is visible
+        emojiHidden = "⚓", -- when UI is hidden
 
         -- Image icons (used when useImage = true). Replace with your asset IDs
-        imageVisible = "rbxassetid://88814246774578",
-        imageHidden = "rbxassetid://88814246774578"
+        imageVisible = "🪝",
+        imageHidden = "⚓"
     }
 }
 
@@ -166,7 +166,7 @@ local function Notify(title, text, duration)
             Title = title or "XSAN Fish It Pro",
             Text = text or "Notification", 
             Duration = duration,
-            Icon = "rbxassetid://6023426923"
+            Icon = "🪝"
         })
     end)
     -- Comment out print to reduce debug spam
@@ -2798,7 +2798,7 @@ local function ApplyPreset(presetName)
     local presetConfig = XSAN_CONFIG.presets[presetName]
     
     if presetName == "Beginner" then
-        autoRecastDelay = 2.0
+        autoRecastDelay = 0.5
         perfectCast = false
         safeMode = false
         autoSellThreshold = presetConfig.autosell
@@ -2812,7 +2812,7 @@ local function ApplyPreset(presetName)
         NotifySuccess("Preset Applied", message)
         
     elseif presetName == "Speed" then
-        autoRecastDelay = 0.5
+        autoRecastDelay = 0.4
         perfectCast = true
         safeMode = false
         autoSellThreshold = presetConfig.autosell
@@ -2826,7 +2826,7 @@ local function ApplyPreset(presetName)
         NotifySuccess("Preset Applied", message)
         
     elseif presetName == "Ultra" then
-        autoRecastDelay = 0.1
+        autoRecastDelay = 0.01
         perfectCast = true
         safeMode = false
         autoSellThreshold = presetConfig.autosell
@@ -2873,8 +2873,8 @@ local function ApplyPreset(presetName)
         perfectCast = false
         safeMode = false
         hybridMode = true
-        hybridPerfectChance = 75
-        hybridMinDelay = 1.0
+        hybridPerfectChance = 80
+        hybridMinDelay = 0.1
         hybridMaxDelay = 2.8
         autoSellThreshold = presetConfig.autosell
         autoSellOnThreshold = globalAutoSellEnabled
@@ -2999,22 +2999,22 @@ InfoTab:CreateParagraph({
 })
 
 InfoTab:CreateButton({ 
-    Name = "Copy Instagram Link", 
+    Name = "Copy Telegram Link", 
     Callback = CreateSafeCallback(function() 
         if setclipboard then
-            setclipboard("https://instagram.com/_bangicoo") 
-            NotifySuccess("Social Media", "Instagram link copied! Follow for updates and support!")
+            setclipboard("https://t.me/spinnerxxx") 
+            NotifySuccess("Social Media", "Telegram link copied! Follow for updates and support!")
         else
-            NotifyInfo("Social Media", "Instagram: " .. XSAN_CONFIG.branding.instagram)
+            NotifyInfo("Social Media", "Telegram: " .. XSAN_CONFIG.branding.Telegram)
         end
-    end, "instagram")
+    end, "Telegram")
 })
 
 InfoTab:CreateButton({ 
     Name = "Copy GitHub Link", 
     Callback = CreateSafeCallback(function() 
         if setclipboard then
-            setclipboard("https://github.com/codeico") 
+            setclipboard("https://t.me/Spinner_xxx") 
             NotifySuccess("Social Media", "GitHub link copied! Check out more premium scripts!")
         else
             NotifyInfo("Social Media", "GitHub: " .. XSAN_CONFIG.branding.github)
@@ -3593,7 +3593,7 @@ MainTab:CreateToggle({
                             -- Safe Mode Logic: Random between perfect and normal cast
                             local usePerfectCast = perfectCast
                             if safeMode then
-                                usePerfectCast = math.random(50, 100) <= safeModeChance
+                                usePerfectCast = math.random(85, 100) <= safeModeChance
                             end
 
                             local timestamp = usePerfectCast and 9999999999 or (tick() + math.random())
@@ -4390,6 +4390,98 @@ RandomSpotTab:CreateButton({
 })
 
 print("XSAN: RANDOM SPOT tab completed successfully!")
+
+-- Fitur Anti-Kick / Anti-Ban
+local antiKickActive = false
+local oldKickHook = nil
+local function setAntiKick(state)
+    local Players = game:GetService("Players")
+    local localPlayer = Players.LocalPlayer
+    local mt = getrawmetatable(game)
+    setreadonly(mt, false)
+    if state then
+        if not oldKickHook then
+            oldKickHook = mt.__namecall
+            mt.__namecall = function(self, ...)
+                if getnamecallmethod() == "Kick" and self == localPlayer then
+                    NotifySuccess("Anti-Kick", "🚫 Kick diblokir!")
+                    return nil
+                end
+                return oldKickHook(self, ...)
+            end
+        end
+    else
+        if oldKickHook then
+            mt.__namecall = oldKickHook
+            oldKickHook = nil
+        end
+    end
+    setreadonly(mt, true)
+end
+SettingTab:CreateToggle({
+    Name = "🚫 Anti-Kick / Anti-Ban",
+    CurrentValue = false,
+    Callback = function(val)
+        antiKickActive = val
+        setAntiKick(val)
+        if val then
+            NotifySuccess("Anti-Kick", "Proteksi Anti-Kick/Anti-Ban AKTIF!")
+        else
+            NotifyInfo("Anti-Kick", "Proteksi Anti-Kick/Anti-Ban DIMATIKAN!")
+        end
+    end
+})
+-- Fitur Reconnect Player
+local reconnectActive = false
+local reconnectThread = nil
+local function reconnectPlayer()
+    local rs = game:GetService("ReplicatedStorage")
+    local reconnectRemote = rs:FindFirstChild("Packages")
+    if reconnectRemote then
+        reconnectRemote = reconnectRemote:FindFirstChild("_Index")
+        if reconnectRemote then
+            reconnectRemote = reconnectRemote:FindFirstChild("sleitnick_net@0.2.0")
+            if reconnectRemote then
+                reconnectRemote = reconnectRemote:FindFirstChild("net")
+                if reconnectRemote then
+                    reconnectRemote = reconnectRemote:FindFirstChild("RE")
+                    if reconnectRemote then
+                        local remoteEvent = reconnectRemote:FindFirstChild("ReconnectPlayer")
+                        if remoteEvent and remoteEvent:IsA("RemoteEvent") then
+                            remoteEvent:FireServer()
+                            return true
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return false
+end
+SettingTab:CreateToggle({
+    Name = "🔄 Auto Reconnect Player",
+    CurrentValue = false,
+    Callback = function(val)
+        reconnectActive = val
+        if val then
+            NotifySuccess("Reconnect", "🔄 Auto Reconnect aktif!")
+            reconnectThread = task.spawn(function()
+                while reconnectActive do
+                    local ok = reconnectPlayer()
+                    if ok then
+                        NotifySuccess("Reconnect", "Permintaan reconnect dikirim!")
+                    else
+                        NotifyError("Reconnect", "RemoteEvent ReconnectPlayer tidak ditemukan!")
+                    end
+                    task.wait(10) -- interval 10 detik, bisa diubah sesuai kebutuhan
+                end
+            end)
+        else
+            NotifyInfo("Reconnect", "🔄 Auto Reconnect dimatikan!")
+            reconnectThread = nil
+        end
+    end
+})
 
 -- ═══════════════════════════════════════════════════════════════
 -- UTILITY TAB - System Management & Advanced Features
@@ -5226,7 +5318,7 @@ spawn(function()
     NotifySuccess("🎲 NEW FEATURE!", "RANDOM SPOT FISHING ADDED!\n\n✨ Auto teleport to 8 premium fishing spots\n⏰ Customizable interval (1-60 minutes)\n🎯 Smart location rotation\n🎣 Perfect for AFK fishing\n\n💡 Check RANDOM SPOT tab or press F11!")
     
     wait(3)
-    NotifyInfo("Follow XSAN!", "Instagram: @_bangicoo\nGitHub: codeico\n\nThe most advanced Fish It script ever created! Follow us for more premium scripts and exclusive updates!")
+    NotifyInfo("Follow XSAN!", "Telegram: @_bangicoo\nGitHub: codeico\n\nThe most advanced Fish It script ever created! Follow us for more premium scripts and exclusive updates!")
 end)
 
 -- Console Branding
@@ -5234,7 +5326,7 @@ print("━━━━━━━━━━━━━━━━━━━━━━━━�
 print("XSAN FISH IT PRO ULTIMATE v1.0")
 print("THE MOST ADVANCED FISH IT SCRIPT EVER CREATED")
 print("Premium Script with AI-Powered Features & Ultimate Automation")
-print("Instagram: @_bangicoo | GitHub: codeico")
+print("Telegram: @_bangicoo | GitHub: codeico")
 print("Professional Quality • Trusted by Thousands • Ultimate Edition")
 print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 print("XSAN: Script loaded successfully! All systems operational!")
