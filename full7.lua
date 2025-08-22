@@ -99,12 +99,12 @@ local XSAN_CONFIG = {
     
     -- Preset Configurations
     presets = {
-        Beginner = {purpose = "safe and easy fishing", autosell = 50},
-        Speed = {purpose = "maximum fishing speed", autosell = 500},
-        Ultra = {purpose = "maximum earnings", autosell = 1000},
+        Beginner = {purpose = "safe and easy fishing", autosell = 2500},
+        Speed = {purpose = "maximum fishing speed", autosell = 2500},
+        Ultra = {purpose = "maximum earnings", autosell = 3000},
         AFK = {purpose = "long AFK sessions", autosell = 2000},
-        Safe = {purpose = "smart random casting (70% perfect)", autosell = 1000},
-        Hybrid = {purpose = "ultimate security with AI patterns", autosell = 1000}
+        Safe = {purpose = "smart random casting (70% perfect)", autosell = 3000},
+        Hybrid = {purpose = "ultimate security with AI patterns", autosell = 3000}
     }
 }
 
@@ -1174,7 +1174,7 @@ local hybridAutoFish = nil  -- Hybrid auto fish instance
 local autoRecastDelay = 0.4
 local fishCaught = 0
 local itemsSold = 0
-local autoSellThreshold = 10
+local autoSellThreshold = 1000
 local autoSellOnThreshold = false
 local sessionStartTime = tick()
 local perfectCasts = 0
@@ -3792,8 +3792,8 @@ MainTab:CreateToggle({
 
 MainTab:CreateSlider({
     Name = "Fish Threshold",
-    Range = {5, 50},
-    Increment = 1,
+    Range = {500, 8000},
+    Increment = 50,
     CurrentValue = autoSellThreshold,
     Callback = function(val)
         autoSellThreshold = val
