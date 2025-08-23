@@ -2356,82 +2356,17 @@ local function BuildUI()
     local dashboardTabPadding = Instance.new("UIPadding", dashboardTabBtn)
     dashboardTabPadding.PaddingLeft = UDim.new(0, 10)
 
-    -- Setting Tab Button
-    local settingTabBtn = Instance.new("TextButton", sidebar)
-    settingTabBtn.Size = UDim2.new(1, -10, 0, 40)
-    settingTabBtn.Position = UDim2.new(0, 5, 0, 260)
-    settingTabBtn.Text = "⚙️ Setting"
-    settingTabBtn.Font = Enum.Font.GothamSemibold
-    settingTabBtn.TextSize = 14
-    settingTabBtn.BackgroundColor3 = Color3.fromRGB(40,40,46)
-    settingTabBtn.TextColor3 = Color3.fromRGB(200,200,200)
-    settingTabBtn.TextXAlignment = Enum.TextXAlignment.Left
-    local settingTabCorner = Instance.new("UICorner", settingTabBtn)
-    settingTabCorner.CornerRadius = UDim.new(0, 6)
-    local settingTabPadding = Instance.new("UIPadding", settingTabBtn)
-    settingTabPadding.PaddingLeft = UDim.new(0, 10)
-
     -- Content area on the right
     local contentContainer = Instance.new("Frame", panel)
     contentContainer.Size = UDim2.new(1, -145, 1, -50)
     contentContainer.Position = UDim2.new(0, 140, 0, 45)
     contentContainer.BackgroundTransparency = 1
 
-    -- Setting Tab Content (dynamically loaded)
-    local settingTabFrame = Instance.new("Frame", contentContainer)
-    settingTabFrame.Size = UDim2.new(1, 0, 1, 0)
-    settingTabFrame.Position = UDim2.new(0, 0, 0, 0)
-    settingTabFrame.BackgroundTransparency = 1
-    settingTabFrame.Visible = false
-
-    -- Load SettingTabFeature from raw link
-    local SettingTabFeature = nil
-    local success, result = pcall(function()
-        local url = "https://raw.githubusercontent.com/donitono/full/refs/heads/main/SettingTabFeature.lua"
-        local src = game:HttpGet(url)
-        SettingTabFeature = loadstring(src)()
-    end)
-    if success and SettingTabFeature and SettingTabFeature.CreateUI then
-        SettingTabFeature.CreateUI(settingTabFrame)
-    else
-        local errLabel = Instance.new("TextLabel", settingTabFrame)
-        errLabel.Size = UDim2.new(1, 0, 0, 40)
-        errLabel.Position = UDim2.new(0, 0, 0, 10)
-        errLabel.Text = "Failed to load SettingTabFeature"
-        errLabel.Font = Enum.Font.GothamBold
-        errLabel.TextSize = 14
-        errLabel.TextColor3 = Color3.fromRGB(255,100,100)
-        errLabel.BackgroundTransparency = 1
-    end
-
     -- Fishing AI Tab Content (Now the main content)
     local fishingAIFrame = Instance.new("Frame", contentContainer)
     fishingAIFrame.Size = UDim2.new(1, 0, 1, -85)
     fishingAIFrame.Position = UDim2.new(0, 0, 0, 0)
     fishingAIFrame.BackgroundTransparency = 1
-
-    -- Dashboard Tab Content (assume ada dashboardFrame)
-    -- ...existing code...
-    local function hideAllTabs()
-        fishingAIFrame.Visible = false
-        -- ...tambahkan frame lain jika ada...
-        settingTabFrame.Visible = false
-        -- dashboardFrame.Visible = false (jika ada)
-    end
-
-    fishingAITabBtn.MouseButton1Click:Connect(function()
-        hideAllTabs()
-        fishingAIFrame.Visible = true
-    end)
-    -- ...tab lain...
-    dashboardTabBtn.MouseButton1Click:Connect(function()
-        hideAllTabs()
-        -- dashboardFrame.Visible = true (jika ada)
-    end)
-    settingTabBtn.MouseButton1Click:Connect(function()
-        hideAllTabs()
-        settingTabFrame.Visible = true
-    end)
 
     -- Title for current tab
     local contentTitle = Instance.new("TextLabel", fishingAIFrame)
@@ -3143,6 +3078,7 @@ local function BuildUI()
     featureTitle.TextXAlignment = Enum.TextXAlignment.Left
 
     -- Create scrollable frame for features
+
     local featureScrollFrame = Instance.new("ScrollingFrame", featureFrame)
     featureScrollFrame.Size = UDim2.new(1, 0, 1, -30)
     featureScrollFrame.Position = UDim2.new(0, 0, 0, 30)
@@ -3151,6 +3087,15 @@ local function BuildUI()
     featureScrollFrame.ScrollBarThickness = 6
     featureScrollFrame.ScrollBarImageColor3 = Color3.fromRGB(80,80,80)
     Instance.new("UICorner", featureScrollFrame)
+
+    -- SettingTabFeature (raw loader)
+    local success, SettingTabFeature = pcall(function()
+        return loadstring(game:HttpGet("https://raw.githubusercontent.com/donitono/full/refs/heads/main/SettingTabFeature.lua"))()
+    end)
+    if success and SettingTabFeature and SettingTabFeature.CreateUI then
+        local settingSection = SettingTabFeature.CreateUI(featureScrollFrame)
+        settingSection.Position = UDim2.new(0, 5, 0, 5)
+    end
 
     -- Speed Control Section
     local speedSection = Instance.new("Frame", featureScrollFrame)
