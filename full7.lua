@@ -11,7 +11,7 @@
     • Ultimate Teleportation System (NEW!)
     
     Developer: XSAN
-    Telegram: @_bangicoo
+    Instagram: @_bangicoo
     GitHub: github.com/codeico
     
     Premium Quality • Trusted by Thousands • Ultimate Edition
@@ -42,7 +42,7 @@ local XSAN_CONFIG = {
         title = "XSAN Fish It Pro Ultimate v1.0",
         subtitle = "The most advanced Fish It script ever created with AI-powered features, smart analytics, and premium automation systems.",
         developer = "XSAN",
-        Telegram = "@_bangicoo",
+        instagram = "@_bangicoo",
         github = "github.com/codeico",
         support_message = "Created by XSAN - Trusted by thousands of users worldwide!"
     },
@@ -99,12 +99,12 @@ local XSAN_CONFIG = {
     
     -- Preset Configurations
     presets = {
-        Beginner = {purpose = "safe and easy fishing", autosell = 5000},
-        Speed = {purpose = "maximum fishing speed", autosell = 5000},
-        Ultra = {purpose = "maximum earnings", autosell = 5000},
-        AFK = {purpose = "long AFK sessions", autosell = 5000},
-        Safe = {purpose = "smart random casting (70% perfect)", autosell = 5000},
-        Hybrid = {purpose = "ultimate security with AI patterns", autosell = 5000}
+        Beginner = {purpose = "safe and easy fishing", autosell = 50},
+        Speed = {purpose = "maximum fishing speed", autosell = 500},
+        Ultra = {purpose = "maximum earnings", autosell = 1000},
+        AFK = {purpose = "long AFK sessions", autosell = 2000},
+        Safe = {purpose = "smart random casting (70% perfect)", autosell = 1000},
+        Hybrid = {purpose = "ultimate security with AI patterns", autosell = 1000}
     }
 }
 
@@ -149,12 +149,12 @@ local UIConfig = {
         useImage = false,
 
         -- Emoji icons (used when useImage = false)
-        emojiVisible = "🪝", -- when UI is visible
-        emojiHidden = "⚓", -- when UI is hidden
+        emojiVisible = "🎣", -- when UI is visible
+        emojiHidden = "👁", -- when UI is hidden
 
         -- Image icons (used when useImage = true). Replace with your asset IDs
-        imageVisible = "🪝",
-        imageHidden = "⚓"
+        imageVisible = "rbxassetid://88814246774578",
+        imageHidden = "rbxassetid://88814246774578"
     }
 }
 
@@ -166,7 +166,7 @@ local function Notify(title, text, duration)
             Title = title or "XSAN Fish It Pro",
             Text = text or "Notification", 
             Duration = duration,
-            Icon = "🪝"
+            Icon = "rbxassetid://6023426923"
         })
     end)
     -- Comment out print to reduce debug spam
@@ -1174,7 +1174,7 @@ local hybridAutoFish = nil  -- Hybrid auto fish instance
 local autoRecastDelay = 0.4
 local fishCaught = 0
 local itemsSold = 0
-local autoSellThreshold = 5000
+local autoSellThreshold = 2500
 local autoSellOnThreshold = false
 local sessionStartTime = tick()
 local perfectCasts = 0
@@ -1201,20 +1201,14 @@ local randomSpotStats = {
 
 -- Initialize location stats
 for locationName, _ in pairs({
-    ["🏝️ SISYPUS 1"] = true",
-    ["🏝️ SISYPUS 2"] = true,
+    ["🏝️ SISYPUS"] = true,
     ["🦈 TREASURE"] = true,
-    ["❄️ ICE SPOT 1"] = true,
-    ["❄️ ICE SPOT 2"] = true,
-    ["❄️ ICE SPOT 3"] = true,
-    ["🌋 CRATER 1"] = true,
-    ["🌋 CRATER 2"] = true,
-    ["🌴 TROPICAL 1"] = true,
-    ["🌴 TROPICAL 2"] = true,
-    ["🌴 TROPICAL 3"] = true,
+    ["🎣 STRINGRY"] = true,
+    ["❄️ ICE LAND"] = true,
+    ["🌋 CRATER"] = true,
+    ["🌴 TROPICAL"] = true,
     ["🗿 STONE"] = true,
-    ["⚙️ MACHINE 1"] = true,
-    ["⚙️ MACHINE 2"] = true   
+    ["⚙️ MACHINE"] = true
 }) do
     randomSpotStats.fishPerLocation[locationName] = 0
     randomSpotStats.timePerLocation[locationName] = 0
@@ -1222,20 +1216,14 @@ end
 
 -- Random Spot Selection System
 local selectedSpots = {
-    ["🏝️ SISYPUS 1"] = true",
-    ["🏝️ SISYPUS 2"] = true,
+    ["🏝️ SISYPUS"] = true,
     ["🦈 TREASURE"] = true,
-    ["❄️ ICE SPOT 1"] = true,
-    ["❄️ ICE SPOT 2"] = true,
-    ["❄️ ICE SPOT 3"] = true,
-    ["🌋 CRATER 1"] = true,
-    ["🌋 CRATER 2"] = true,
-    ["🌴 TROPICAL 1"] = true,
-    ["🌴 TROPICAL 2"] = true,
-    ["🌴 TROPICAL 3"] = true,
+    ["🎣 STRINGRY"] = true,
+    ["❄️ ICE LAND"] = true,
+    ["🌋 CRATER"] = true,
+    ["🌴 TROPICAL"] = true,
     ["🗿 STONE"] = true,
-    ["⚙️ MACHINE 1"] = true,
-    ["⚙️ MACHINE 2"] = true        
+    ["⚙️ MACHINE"] = true
 }
 
 -- Feature states
@@ -2328,17 +2316,6 @@ end
 
 -- Event Locations (Moved above NPCs for better organization)
 TeleportLocations.Events = {
-    ["🦈 Ice Spot"] = CFrame.new(1990.55, 3.09, 3021.91),
-    ["🦈 Crater Spot"] = CFrame.new(990.45, 21.06, 5059.85),
-    ["🦈 Stone Spot"] = CFrame.new(-2636.19, 124.87, -27.49),
-    ["🦈 Tropical Spot"] = CFrame.new(-2093.80, 6.26, 3654.30),
-	["🦈 Sisypus Statue"] = CFrame.new(-3710.66, -96.84, -951.95),
-    ["🦈 Treasure Hall"] = CFrame.new(-3599.90, -275.96, -1640.84),
-    ["🦈 Enchant Stone"] = CFrame.new(3237.61, -1302.33, 1398.04)
-}
-
--- Random Spot Fishing Locations for Auto Random Fishing
-TeleportLocations.RandomSpots = {
     ["🏝️ SISYPUS 1"] = CFrame.new(-3659.55, -135.08, -971.61),
     ["🏝️ SISYPUS 2"] = CFrame.new(-3767.29, -135.08, -990.03),
     ["🦈 TREASURE"] = CFrame.new(-3628.77, -283.35, -1638.54),
@@ -2353,6 +2330,18 @@ TeleportLocations.RandomSpots = {
     ["🗿 STONE"] = CFrame.new(-2636.19, 124.87, -27.49),
     ["⚙️ MACHINE 1"] = CFrame.new(-1480.98, 3.49, 1923.66),
     ["⚙️ MACHINE 2"] = CFrame.new(-1613.32, 8.13, 1903.20)
+}
+
+-- Random Spot Fishing Locations for Auto Random Fishing
+TeleportLocations.RandomSpots = {
+    ["🏝️ SISYPUS"] = CFrame.new(-3659.55, -135.08, -971.61),
+    ["🦈 TREASURE"] = CFrame.new(-3628.77, -283.35, -1638.54),
+    ["🎣 STRINGRY"] = CFrame.new(102.05, 29.64, 3054.35),
+    ["❄️ ICE LAND"] = CFrame.new(1990.55, 3.09, 3021.91),
+    ["🌋 CRATER"] = CFrame.new(990.45, 21.06, 5059.85),
+    ["🌴 TROPICAL"] = CFrame.new(-2173.60, 53.48, 3636.23),
+    ["🗿 STONE"] = CFrame.new(-2636.19, 124.87, -27.49),
+    ["⚙️ MACHINE"] = CFrame.new(-1480.98, 3.49, 1923.66)
 }
 
 -- Player Teleportation Function (improved like main16.lua)
@@ -2525,10 +2514,7 @@ local fallbackNPCs = {
     ["🎣 Rod Shop (Marc)"] = CFrame.new(454, 150, 229),
     ["📦 Storage (Henry)"] = CFrame.new(491, 150, 272),
     ["🏆 Angler"] = CFrame.new(484, 150, 331),
-    
-    -- Secondary NPCs (Backup only)
-   
-}
+    }
 
 -- Smart NPC Selection: Use detected NPCs first, fallback if needed
 if next(detectedNPCs) then
@@ -2810,7 +2796,7 @@ local function ApplyPreset(presetName)
     local presetConfig = XSAN_CONFIG.presets[presetName]
     
     if presetName == "Beginner" then
-        autoRecastDelay = 0.5
+        autoRecastDelay = 1.0
         perfectCast = false
         safeMode = false
         autoSellThreshold = presetConfig.autosell
@@ -2824,7 +2810,7 @@ local function ApplyPreset(presetName)
         NotifySuccess("Preset Applied", message)
         
     elseif presetName == "Speed" then
-        autoRecastDelay = 0.4
+        autoRecastDelay = 0.1
         perfectCast = true
         safeMode = false
         autoSellThreshold = presetConfig.autosell
@@ -2852,7 +2838,7 @@ local function ApplyPreset(presetName)
         NotifySuccess("Preset Applied", message)
         
     elseif presetName == "AFK" then
-        autoRecastDelay = 0.5
+        autoRecastDelay = 0.4
         perfectCast = true
         safeMode = false
         autoSellThreshold = presetConfig.autosell
@@ -2866,7 +2852,7 @@ local function ApplyPreset(presetName)
         NotifySuccess("Preset Applied", message)
         
     elseif presetName == "Safe" then
-        autoRecastDelay = 1.2
+        autoRecastDelay = 0.5
         perfectCast = false
         safeMode = true
         safeModeChance = 70
@@ -2885,8 +2871,8 @@ local function ApplyPreset(presetName)
         perfectCast = false
         safeMode = false
         hybridMode = true
-        hybridPerfectChance = 80
-        hybridMinDelay = 0.1
+        hybridPerfectChance = 75
+        hybridMinDelay = 1.0
         hybridMaxDelay = 2.8
         autoSellThreshold = presetConfig.autosell
         autoSellOnThreshold = globalAutoSellEnabled
@@ -3011,27 +2997,27 @@ InfoTab:CreateParagraph({
 })
 
 InfoTab:CreateButton({ 
-    Name = "Copy Telegram Link", 
+    Name = "Copy Instagram Link", 
     Callback = CreateSafeCallback(function() 
         if setclipboard then
             setclipboard("https://t.me/spinnerxxx") 
             NotifySuccess("Social Media", "Telegram link copied! Follow for updates and support!")
         else
-            NotifyInfo("Social Media", "Telegram: " .. XSAN_CONFIG.branding.Telegram)
+            NotifyInfo("Social Media", "Telegram: " .. XSAN_CONFIG.branding.telegram)
         end
-    end, "Telegram")
+    end, "telegram")
 })
 
 InfoTab:CreateButton({ 
-    Name = "Copy GitHub Link", 
+    Name = "Copy atelegram Groub", 
     Callback = CreateSafeCallback(function() 
         if setclipboard then
             setclipboard("https://t.me/Spinner_xxx") 
-            NotifySuccess("Social Media", "GitHub link copied! Check out more premium scripts!")
+            NotifySuccess("Social Media", "Telegram group link copied! Join for updates and support!")
         else
-            NotifyInfo("Social Media", "GitHub: " .. XSAN_CONFIG.branding.github)
+            NotifyInfo("Social Media", "Telegram: " .. XSAN_CONFIG.branding.telegram)
         end
-    end, "github")
+    end, "telegram")
 })
 
 InfoTab:CreateButton({ 
@@ -3605,7 +3591,7 @@ MainTab:CreateToggle({
                             -- Safe Mode Logic: Random between perfect and normal cast
                             local usePerfectCast = perfectCast
                             if safeMode then
-                                usePerfectCast = math.random(85, 100) <= safeModeChance
+                                usePerfectCast = math.random(80, 100) <= safeModeChance
                             end
 
                             local timestamp = usePerfectCast and 9999999999 or (tick() + math.random())
@@ -3661,7 +3647,7 @@ MainTab:CreateToggle({
             
             -- Small delay to ensure all auto fishing processes stop
             task.spawn(function()
-                task.wait(0.2)
+                task.wait(0.1)
                 -- Additional cleanup if needed
                 if equipRemote then
                     -- Ensure rod is properly equipped for manual use
@@ -3774,8 +3760,8 @@ MainTab:CreateSlider({
 
 MainTab:CreateSlider({
     Name = "Auto Recast Delay",
-    Range = {0.1, 3.0},
-    Increment = 0.1,
+    Range = {0.01, 3.0},
+    Increment = 0.01,
     CurrentValue = autoRecastDelay,
     Callback = function(val)
         autoRecastDelay = val
@@ -3798,7 +3784,7 @@ MainTab:CreateToggle({
 MainTab:CreateSlider({
     Name = "Fish Threshold",
     Range = {500, 8000},
-    Increment = 50,
+    Increment = 1,
     CurrentValue = autoSellThreshold,
     Callback = function(val)
         autoSellThreshold = val
@@ -4008,24 +3994,13 @@ RandomSpotTab:CreateParagraph({
 
 -- Create toggles for each spot
 RandomSpotTab:CreateToggle({
-    Name = "🏝️ SISYPUS 1",
-    CurrentValue = selectedSpots["🏝️ SISYPUS 1"],
-    Flag = "SpotSisypus1",
+    Name = "🏝️ SISYPUS Statue",
+    CurrentValue = selectedSpots["🏝️ SISYPUS"],
+    Flag = "SpotSisypus",
     Callback = function(value)
-        selectedSpots["🏝️ SISYPUS 1"] = value
+        selectedSpots["🏝️ SISYPUS"] = value
         local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "🏝️ SISYPUS 1: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
-    end
-})
-
-RandomSpotTab:CreateToggle({
-    Name = "🏝️ SISYPUS 2",
-    CurrentValue = selectedSpots["🏝️ SISYPUS 2"],
-    Flag = "SpotSisypus2",
-    Callback = function(value)
-        selectedSpots["🏝️ SISYPUS 2"] = value
-        local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "🏝️ SISYPUS 2: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
+        NotifyInfo("Spot Selection", "🏝️ SISYPUS: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
     end
 })
 
@@ -4052,85 +4027,38 @@ RandomSpotTab:CreateToggle({
 })
 
 RandomSpotTab:CreateToggle({
-    Name = "❄️ ICE SPOT 1",
-    CurrentValue = selectedSpots["❄️ ICE SPOT 1"],
-    Flag = "SpotIceSpot1",
+    Name = "❄️ ICE LAND",
+    CurrentValue = selectedSpots["❄️ ICE LAND"],
+    Flag = "SpotIceLand",
     Callback = function(value)
-        selectedSpots["❄️ ICE SPOT 1"] = value
+        selectedSpots["❄️ ICE LAND"] = value
         local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "❄️ ICE SPOT 1: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
+        NotifyInfo("Spot Selection", "❄️ ICE LAND: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
     end
 })
+
 RandomSpotTab:CreateToggle({
-    Name = "❄️ ICE SPOT 2",
-    CurrentValue = selectedSpots["❄️ ICE SPOT 2"],
-    Flag = "SpotIceSpot2",
+    Name = "🌋 CRATER Zone",
+    CurrentValue = selectedSpots["🌋 CRATER"],
+    Flag = "SpotCrater",
     Callback = function(value)
-        selectedSpots["❄️ ICE SPOT 2"] = value
+        selectedSpots["🌋 CRATER"] = value
         local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "❄️ ICE SPOT 2: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
+        NotifyInfo("Spot Selection", "🌋 CRATER: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
     end
 })
+
 RandomSpotTab:CreateToggle({
-    Name = "❄️ ICE SPOT 3",
-    CurrentValue = selectedSpots["❄️ ICE SPOT 3"],
-    Flag = "SpotIceSpot3",
+    Name = "🌴 TROPICAL Island",
+    CurrentValue = selectedSpots["🌴 TROPICAL"],
+    Flag = "SpotTropical",
     Callback = function(value)
-        selectedSpots["❄️ ICE SPOT 3"] = value
-        local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "❄️ ICE SPOT 3: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
-    end
-})
-RandomSpotTab:CreateToggle({
-    Name = "🌋 CRATER 2",
-    CurrentValue = selectedSpots["🌋 CRATER 2"],
-    Flag = "SpotCrater2",
-    Callback = function(value)
-        selectedSpots["🌋 CRATER 2"] = value
-        local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "🌋 CRATER 2: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
-    end
-})
-RandomSpotTab:CreateToggle({
-    Name = "🌋 CRATER 1",
-    CurrentValue = selectedSpots["🌋 CRATER 1"],
-    Flag = "SpotCrater1",
-    Callback = function(value)
-        selectedSpots["🌋 CRATER 1"] = value
-        local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "🌋 CRATER 1: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
-    end
-})
-RandomSpotTab:CreateToggle({
-    Name = "🌴 TROPICAL 1",
-    CurrentValue = selectedSpots["🌴 TROPICAL 1"],
-    Flag = "SpotTropical1",
-    Callback = function(value)
-        selectedSpots["🌴 TROPICAL 1"] = value
+        selectedSpots["🌴 TROPICAL"] = value
         local selectedCount = GetSelectedSpotsCount()
         NotifyInfo("Spot Selection", "🌴 TROPICAL: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
     end
 })
-RandomSpotTab:CreateToggle({
-    Name = "🌴 TROPICAL 2",
-    CurrentValue = selectedSpots["🌴 TROPICAL 2"],
-    Flag = "SpotTropical2",
-    Callback = function(value)
-        selectedSpots["🌴 TROPICAL 2"] = value
-        local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "🌴 TROPICAL 2: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
-    end
-})
-RandomSpotTab:CreateToggle({
-    Name = "🌴 TROPICAL 3",
-    CurrentValue = selectedSpots["🌴 TROPICAL 3"],
-    Flag = "SpotTropical3",
-    Callback = function(value)
-        selectedSpots["🌴 TROPICAL 3"] = value
-        local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "🌴 TROPICAL 3: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
-    end
-})
+
 RandomSpotTab:CreateToggle({
     Name = "🗿 STONE Monument",
     CurrentValue = selectedSpots["🗿 STONE"],
@@ -4143,25 +4071,16 @@ RandomSpotTab:CreateToggle({
 })
 
 RandomSpotTab:CreateToggle({
-    Name = "⚙️ MACHINE 1",
-    CurrentValue = selectedSpots["⚙️ MACHINE 1"],
-    Flag = "SpotMachine1",
+    Name = "⚙️ MACHINE Station",
+    CurrentValue = selectedSpots["⚙️ MACHINE"],
+    Flag = "SpotMachine",
     Callback = function(value)
-        selectedSpots["⚙️ MACHINE 1"] = value
+        selectedSpots["⚙️ MACHINE"] = value
         local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "⚙️ MACHINE 1: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
+        NotifyInfo("Spot Selection", "⚙️ MACHINE: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
     end
 })
-RandomSpotTab:CreateToggle({
-    Name = "⚙️ MACHINE 2",
-    CurrentValue = selectedSpots["⚙️ MACHINE 2"],
-    Flag = "SpotMachine2",
-    Callback = function(value)
-        selectedSpots["⚙️ MACHINE 2"] = value
-        local selectedCount = GetSelectedSpotsCount()
-        NotifyInfo("Spot Selection", "⚙️ MACHINE 2: " .. (value and "✅ Selected" or "❌ Deselected") .. "\n\n📊 Total selected: " .. selectedCount .. " spots")
-    end
-})
+
 -- Quick Selection Buttons
 RandomSpotTab:CreateButton({
     Name = "✅ Select All Spots",
@@ -4172,20 +4091,14 @@ RandomSpotTab:CreateButton({
         
         -- Update all UI toggles
         local flagMapping = {
-            ["🏝️ SISYPUS 1"] = "SpotSisypus1",
-            ["🏝️ SISYPUS 2"] = "SpotSisypus2",
-            ["🦈 TREASURE"] = "SpotTreasure",
-            ["❄️ ICE SPOT 1"] = "SpotIceSpot1",
-            ["❄️ ICE SPOT 2"] = "SpotIceSpot2",
-            ["❄️ ICE SPOT 3"] = "SpotIceSpot3",
-            ["🌋 CRATER 1"] = "SpotCrater1",
-            ["🌋 CRATER 2"] = "SpotCrater2",
-            ["🌴 TROPICAL 1"] = "SpotTropical1",
-            ["🌴 TROPICAL 2"] = "SpotTropical2",
-            ["🌴 TROPICAL 3"] = "SpotTropical3",
+            ["🏝️ SISYPUS"] = "SpotSisypus",
+            ["🦈 TREASURE"] = "SpotTreasure", 
+            ["🎣 STRINGRY"] = "SpotStringry",
+            ["❄️ ICE LAND"] = "SpotIceLand",
+            ["🌋 CRATER"] = "SpotCrater",
+            ["🌴 TROPICAL"] = "SpotTropical",
             ["🗿 STONE"] = "SpotStone",
-            ["⚙️ MACHINE 1"] = "SpotMachine1",
-            ["⚙️ MACHINE 2"] = "SpotMachine2"
+            ["⚙️ MACHINE"] = "SpotMachine"
         }
         
         for spotName, flagName in pairs(flagMapping) do
@@ -4194,7 +4107,7 @@ RandomSpotTab:CreateButton({
             end
         end
         
-        NotifySuccess("Quick Selection", "✅ ALL SPOTS SELECTED!\n\n🎣 All 14 fishing spots are now active\n🎲 Maximum variety for random fishing\n⚡ Ready for ultimate fishing experience!")
+        NotifySuccess("Quick Selection", "✅ ALL SPOTS SELECTED!\n\n🎣 All 8 fishing spots are now active\n🎲 Maximum variety for random fishing\n⚡ Ready for ultimate fishing experience!")
     end, "select_all_spots")
 })
 
@@ -4207,20 +4120,14 @@ RandomSpotTab:CreateButton({
         
         -- Update all UI toggles
         local flagMapping = {
-                ["🏝️ SISYPUS 1"] = "SpotSisypus1",
-            ["🏝️ SISYPUS 2"] = "SpotSisypus2",
+            ["🏝️ SISYPUS"] = "SpotSisypus",
             ["🦈 TREASURE"] = "SpotTreasure",
-            ["❄️ ICE SPOT 1"] = "SpotIceSpot1",
-            ["❄️ ICE SPOT 2"] = "SpotIceSpot2",
-            ["❄️ ICE SPOT 3"] = "SpotIceSpot3",
-            ["🌋 CRATER 1"] = "SpotCrater1",
-            ["🌋 CRATER 2"] = "SpotCrater2",
-            ["🌴 TROPICAL 1"] = "SpotTropical1",
-            ["🌴 TROPICAL 2"] = "SpotTropical2",
-            ["🌴 TROPICAL 3"] = "SpotTropical3",
+            ["🎣 STRINGRY"] = "SpotStringry", 
+            ["❄️ ICE LAND"] = "SpotIceLand",
+            ["🌋 CRATER"] = "SpotCrater",
+            ["🌴 TROPICAL"] = "SpotTropical",
             ["🗿 STONE"] = "SpotStone",
-            ["⚙️ MACHINE 1"] = "SpotMachine1",
-            ["⚙️ MACHINE 2"] = "SpotMachine2"
+            ["⚙️ MACHINE"] = "SpotMachine"
         }
         
         for spotName, flagName in pairs(flagMapping) do
@@ -4242,27 +4149,21 @@ RandomSpotTab:CreateButton({
         end
         
         -- Select only premium spots
-        local premiumSpots = {"🏝️ SISYPUS 2", "🌴 TROPICAL 2", "🌋 CRATER 1", "❄️ ICE SPOT 1"}
+        local premiumSpots = {"🏝️ SISYPUS", "🦈 TREASURE", "🌋 CRATER", "❄️ ICE LAND"}
         for _, spotName in pairs(premiumSpots) do
             selectedSpots[spotName] = true
         end
         
         -- Update UI toggles
         local flagMapping = {
-            ["🏝️ SISYPUS 1"] = "SpotSisypus1",
-            ["🏝️ SISYPUS 2"] = "SpotSisypus2",
+            ["🏝️ SISYPUS"] = "SpotSisypus",
             ["🦈 TREASURE"] = "SpotTreasure",
-            ["❄️ ICE SPOT 1"] = "SpotIceSpot1",
-            ["❄️ ICE SPOT 2"] = "SpotIceSpot2",
-            ["❄️ ICE SPOT 3"] = "SpotIceSpot3",
-            ["🌋 CRATER 1"] = "SpotCrater1",
-            ["🌋 CRATER 2"] = "SpotCrater2",
-            ["🌴 TROPICAL 1"] = "SpotTropical1",
-            ["🌴 TROPICAL 2"] = "SpotTropical2",
-            ["🌴 TROPICAL 3"] = "SpotTropical3",
+            ["🎣 STRINGRY"] = "SpotStringry",
+            ["❄️ ICE LAND"] = "SpotIceLand", 
+            ["🌋 CRATER"] = "SpotCrater",
+            ["🌴 TROPICAL"] = "SpotTropical",
             ["🗿 STONE"] = "SpotStone",
-            ["⚙️ MACHINE 1"] = "SpotMachine1",
-            ["⚙️ MACHINE 2"] = "SpotMachine2"
+            ["⚙️ MACHINE"] = "SpotMachine"
         }
         
         for spotName, flagName in pairs(flagMapping) do
@@ -4402,98 +4303,6 @@ RandomSpotTab:CreateButton({
 })
 
 print("XSAN: RANDOM SPOT tab completed successfully!")
-
--- Fitur Anti-Kick / Anti-Ban
-local antiKickActive = false
-local oldKickHook = nil
-local function setAntiKick(state)
-    local Players = game:GetService("Players")
-    local localPlayer = Players.LocalPlayer
-    local mt = getrawmetatable(game)
-    setreadonly(mt, false)
-    if state then
-        if not oldKickHook then
-            oldKickHook = mt.__namecall
-            mt.__namecall = function(self, ...)
-                if getnamecallmethod() == "Kick" and self == localPlayer then
-                    NotifySuccess("Anti-Kick", "🚫 Kick diblokir!")
-                    return nil
-                end
-                return oldKickHook(self, ...)
-            end
-        end
-    else
-        if oldKickHook then
-            mt.__namecall = oldKickHook
-            oldKickHook = nil
-        end
-    end
-    setreadonly(mt, true)
-end
-SettingTab:CreateToggle({
-    Name = "🚫 Anti-Kick / Anti-Ban",
-    CurrentValue = false,
-    Callback = function(val)
-        antiKickActive = val
-        setAntiKick(val)
-        if val then
-            NotifySuccess("Anti-Kick", "Proteksi Anti-Kick/Anti-Ban AKTIF!")
-        else
-            NotifyInfo("Anti-Kick", "Proteksi Anti-Kick/Anti-Ban DIMATIKAN!")
-        end
-    end
-})
--- Fitur Reconnect Player
-local reconnectActive = false
-local reconnectThread = nil
-local function reconnectPlayer()
-    local rs = game:GetService("ReplicatedStorage")
-    local reconnectRemote = rs:FindFirstChild("Packages")
-    if reconnectRemote then
-        reconnectRemote = reconnectRemote:FindFirstChild("_Index")
-        if reconnectRemote then
-            reconnectRemote = reconnectRemote:FindFirstChild("sleitnick_net@0.2.0")
-            if reconnectRemote then
-                reconnectRemote = reconnectRemote:FindFirstChild("net")
-                if reconnectRemote then
-                    reconnectRemote = reconnectRemote:FindFirstChild("RE")
-                    if reconnectRemote then
-                        local remoteEvent = reconnectRemote:FindFirstChild("ReconnectPlayer")
-                        if remoteEvent and remoteEvent:IsA("RemoteEvent") then
-                            remoteEvent:FireServer()
-                            return true
-                        end
-                    end
-                end
-            end
-        end
-    end
-    return false
-end
-SettingTab:CreateToggle({
-    Name = "🔄 Auto Reconnect Player",
-    CurrentValue = false,
-    Callback = function(val)
-        reconnectActive = val
-        if val then
-            NotifySuccess("Reconnect", "🔄 Auto Reconnect aktif!")
-            reconnectThread = task.spawn(function()
-                while reconnectActive do
-                    local ok = reconnectPlayer()
-                    if ok then
-                        NotifySuccess("Reconnect", "Permintaan reconnect dikirim!")
-                    else
-                        NotifyError("Reconnect", "RemoteEvent ReconnectPlayer tidak ditemukan!")
-                    end
-                    task.wait(10) -- interval 10 detik, bisa diubah sesuai kebutuhan
-                end
-            end)
-        else
-            NotifyInfo("Reconnect", "🔄 Auto Reconnect dimatikan!")
-            reconnectThread = nil
-        end
-    end
-})
 
 -- ═══════════════════════════════════════════════════════════════
 -- UTILITY TAB - System Management & Advanced Features
@@ -4760,6 +4569,127 @@ SettingTab:CreateParagraph({
     Content = "Fitur-fitur tambahan untuk meningkatkan pengalaman bermain Anda. Aktifkan sesuai kebutuhan untuk performa dan gameplay yang lebih baik."
 })
 
+-- Fitur Roll Enchant Otomatis
+local rollEnchantActive = false
+local rollEnchantThread = nil
+
+-- Pastikan fungsi ResolveRemote sudah ada di script Anda
+local activateEnchantingAltarRemote = ResolveRemote and ResolveRemote("RE/ActivateEnchantingAltar")
+
+SettingTab:CreateToggle({
+    Name = "🎲 Auto Roll Enchant",
+    CurrentValue = false,
+    Callback = function(val)
+        rollEnchantActive = val
+        if val then
+            NotifySuccess("Roll Enchant", "Auto Roll Enchant AKTIF!")
+            rollEnchantThread = task.spawn(function()
+                while rollEnchantActive do
+                    if activateEnchantingAltarRemote then
+                        pcall(function()
+                            activateEnchantingAltarRemote:FireServer()
+                        end)
+                    end
+                    task.wait(1) -- interval roll, bisa diubah
+                end
+            end)
+        else
+            NotifyInfo("Roll Enchant", "Auto Roll Enchant DIMATIKAN!")
+            rollEnchantThread = nil
+        end
+    end
+})
+-- Fitur Anti-Kick / Anti-Ban
+local antiKickActive = false
+local oldKickHook = nil
+local function setAntiKick(state)
+    local Players = game:GetService("Players")
+    local localPlayer = Players.LocalPlayer
+    local mt = getrawmetatable(game)
+    setreadonly(mt, false)
+    if state then
+        if not oldKickHook then
+            oldKickHook = mt.__namecall
+            mt.__namecall = function(self, ...)
+                if getnamecallmethod() == "Kick" and self == localPlayer then
+                    NotifySuccess("Anti-Kick", "🚫 Kick diblokir!")
+                    return nil
+                end
+                return oldKickHook(self, ...)
+            end
+        end
+    else
+        if oldKickHook then
+            mt.__namecall = oldKickHook
+            oldKickHook = nil
+        end
+    end
+    setreadonly(mt, true)
+end
+SettingTab:CreateToggle({
+    Name = "🚫 Anti-Kick / Anti-Ban",
+    CurrentValue = false,
+    Callback = function(val)
+        antiKickActive = val
+        setAntiKick(val)
+        if val then
+            NotifySuccess("Anti-Kick", "Proteksi Anti-Kick/Anti-Ban AKTIF!")
+        else
+            NotifyInfo("Anti-Kick", "Proteksi Anti-Kick/Anti-Ban DIMATIKAN!")
+        end
+    end
+})
+-- Fitur Reconnect Player
+local reconnectActive = false
+local reconnectThread = nil
+local function reconnectPlayer()
+    local rs = game:GetService("ReplicatedStorage")
+    local reconnectRemote = rs:FindFirstChild("Packages")
+    if reconnectRemote then
+        reconnectRemote = reconnectRemote:FindFirstChild("_Index")
+        if reconnectRemote then
+            reconnectRemote = reconnectRemote:FindFirstChild("sleitnick_net@0.2.0")
+            if reconnectRemote then
+                reconnectRemote = reconnectRemote:FindFirstChild("net")
+                if reconnectRemote then
+                    reconnectRemote = reconnectRemote:FindFirstChild("RE")
+                    if reconnectRemote then
+                        local remoteEvent = reconnectRemote:FindFirstChild("ReconnectPlayer")
+                        if remoteEvent and remoteEvent:IsA("RemoteEvent") then
+                            remoteEvent:FireServer()
+                            return true
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return false
+end
+SettingTab:CreateToggle({
+    Name = "🔄 Auto Reconnect Player",
+    CurrentValue = false,
+    Callback = function(val)
+        reconnectActive = val
+        if val then
+            NotifySuccess("Reconnect", "🔄 Auto Reconnect aktif!")
+            reconnectThread = task.spawn(function()
+                while reconnectActive do
+                    local ok = reconnectPlayer()
+                    if ok then
+                        NotifySuccess("Reconnect", "Permintaan reconnect dikirim!")
+                    else
+                        NotifyError("Reconnect", "RemoteEvent ReconnectPlayer tidak ditemukan!")
+                    end
+                    task.wait(10) -- interval 10 detik, bisa diubah sesuai kebutuhan
+                end
+            end)
+        else
+            NotifyInfo("Reconnect", "🔄 Auto Reconnect dimatikan!")
+            reconnectThread = nil
+        end
+    end
+})
 -- ═══════════════════════════════════════════════════════════════
 -- PERFORMANCE & VISUAL SECTION
 -- ═══════════════════════════════════════════════════════════════
@@ -5330,7 +5260,7 @@ spawn(function()
     NotifySuccess("🎲 NEW FEATURE!", "RANDOM SPOT FISHING ADDED!\n\n✨ Auto teleport to 8 premium fishing spots\n⏰ Customizable interval (1-60 minutes)\n🎯 Smart location rotation\n🎣 Perfect for AFK fishing\n\n💡 Check RANDOM SPOT tab or press F11!")
     
     wait(3)
-    NotifyInfo("Follow XSAN!", "Telegram: @_bangicoo\nGitHub: codeico\n\nThe most advanced Fish It script ever created! Follow us for more premium scripts and exclusive updates!")
+    NotifyInfo("Follow XSAN!", "Instagram: @_bangicoo\nGitHub: codeico\n\nThe most advanced Fish It script ever created! Follow us for more premium scripts and exclusive updates!")
 end)
 
 -- Console Branding
@@ -5338,7 +5268,7 @@ print("━━━━━━━━━━━━━━━━━━━━━━━━�
 print("XSAN FISH IT PRO ULTIMATE v1.0")
 print("THE MOST ADVANCED FISH IT SCRIPT EVER CREATED")
 print("Premium Script with AI-Powered Features & Ultimate Automation")
-print("Telegram: @_bangicoo | GitHub: codeico")
+print("Instagram: @_bangicoo | GitHub: codeico")
 print("Professional Quality • Trusted by Thousands • Ultimate Edition")
 print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 print("XSAN: Script loaded successfully! All systems operational!")
