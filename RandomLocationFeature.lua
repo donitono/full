@@ -37,7 +37,7 @@ RandomLocationFeature.cframes = DefaultLocations
 function RandomLocationFeature.CreateUI(parent)
     local section = Instance.new("Frame", parent)
     section.Size = UDim2.new(1, -10, 0, 320)
-    section.Position = UDim2.new(0, 5, 0, 10)
+    section.Position = UDim2.new(0, 5, 0, 30) -- Tambah jarak vertikal agar tidak menempel
     section.BackgroundColor3 = Color3.fromRGB(45,45,52)
     section.BorderSizePixel = 0
     Instance.new("UICorner", section)
