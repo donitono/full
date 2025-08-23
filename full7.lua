@@ -2294,14 +2294,15 @@ else
         ["🏝️Esoteric Depths"] = CFrame.new(1944.77881, 393.562927, 1371.35913),
         ["🏝️Weather Machine"] = CFrame.new(-1488.51196, 83.1732635, 1876.30298),
         ["🏝️Tropical Grove"] = CFrame.new(-2095.34106, 197.199997, 3718.08008),
-        ["🏝️Coral Reefs"] = CFrame.new(-3023.97119, 337.812927, 2195.60913),
-        ["🎲 ENCHANT STONE"] = CFrame.new(3237.61, -1302.33, 1398.04)
+        ["🏝️Coral Reefs"] = CFrame.new(-3023.97119, 337.812927, 2195.60913)
+     
         
     }
 end
 
 -- Event Locations (Moved above NPCs for better organization)
 TeleportLocations.Events = {
+	["🎲 ENCHANT STONE"] = CFrame.new(3237.61, -1302.33, 1398.04),
     ["🏝️ SISYPUS 1"] = CFrame.new(-3659.55, -135.08, -971.61),
     ["🏝️ SISYPUS 2"] = CFrame.new(-3767.29, -135.08, -990.03),
     ["🦈 TREASURE"] = CFrame.new(-3628.77, -283.35, -1638.54),
