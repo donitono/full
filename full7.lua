@@ -4494,36 +4494,7 @@ SettingTab:CreateToggle({
         end
     end
 })
--- Fitur Roll Enchant Otomatis
-local rollEnchantActive = false
-local rollEnchantThread = nil
 
--- Pastikan fungsi ResolveRemote sudah ada di script Anda
-local activateEnchantingAltarRemote = ResolveRemote and ResolveRemote("RE/ActivateEnchantingAltar")
-
-SettingTab:CreateToggle({
-    Name = "🎲 Auto Roll Enchant",
-    CurrentValue = false,
-    Callback = function(val)
-        rollEnchantActive = val
-        if val then
-            NotifySuccess("Roll Enchant", "Auto Roll Enchant AKTIF!")
-            rollEnchantThread = task.spawn(function()
-                while rollEnchantActive do
-                    if activateEnchantingAltarRemote then
-                        pcall(function()
-                            activateEnchantingAltarRemote:FireServer()
-                        end)
-                    end
-                    task.wait(1) -- interval roll, bisa diubah
-                end
-            end)
-        else
-            NotifyInfo("Roll Enchant", "Auto Roll Enchant DIMATIKAN!")
-            rollEnchantThread = nil
-        end
-    end
-})
 -- ═══════════════════════════════════════════════════════════════
 -- UTILITY TAB - System Management & Advanced Features
 -- ═══════════════════════════════════════════════════════════════
