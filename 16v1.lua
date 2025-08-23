@@ -941,9 +941,10 @@ local LocationMap = {
 
 -- Statistics Functions
 local function GetFishRarity(fishName)
+    local nameLower = string.lower(fishName)
     for rarity, fishList in pairs(FishRarity) do
         for _, fish in pairs(fishList) do
-            if string.find(string.lower(fishName), string.lower(fish)) then
+            if nameLower == string.lower(fish) then
                 return rarity
             end
         end
