@@ -183,8 +183,35 @@ function CreateFishDataSection(parent)
     scroll.ScrollBarImageColor3 = Color3.fromRGB(80,80,80)
     Instance.new("UICorner", scroll)
 
-    local y = 0
+
+    -- Urutkan berdasarkan rarity
+    local rarityOrder = {
+        MYTHIC = 1,
+        SECRET = 2,
+        LEGENDARY = 3,
+        EPIC = 4,
+        RARE = 5,
+        UNCOMMON = 6,
+        COMMON = 7
+    }
+    local fishList = {}
     for name, data in pairs(FishData) do
+        table.insert(fishList, {name = name, data = data})
+    end
+    table.sort(fishList, function(a, b)
+        local ra = rarityOrder[a.data.rarity] or 99
+        local rb = rarityOrder[b.data.rarity] or 99
+        if ra ~= rb then
+            return ra < rb
+        else
+            return a.name < b.name
+        end
+    end)
+
+    local y = 0
+    for _, fish in ipairs(fishList) do
+        local name = fish.name
+        local data = fish.data
         local row = Instance.new("Frame", scroll)
         row.Size = UDim2.new(1, 0, 0, 22)
         row.Position = UDim2.new(0, 0, 0, y)
@@ -229,9 +256,9 @@ function CreateFishDataSection(parent)
         local probLbl = Instance.new("TextLabel", row)
         probLbl.Size = UDim2.new(0.2, -4, 1, 0)
         probLbl.Position = UDim2.new(0.8, 0, 0, 0)
-    -- Tampilkan probability dalam persen
-    local percent = tonumber(data.probability) and (data.probability * 100) or 0
-    probLbl.Text = string.format("%.2f%%", percent)
+        -- Tampilkan probability dalam persen
+        local percent = tonumber(data.probability) and (data.probability * 100) or 0
+        probLbl.Text = string.format("%.2f%%", percent)
         probLbl.Font = Enum.Font.Gotham
         probLbl.TextSize = 11
         probLbl.TextColor3 = Color3.fromRGB(255,255,255)
