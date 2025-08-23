@@ -3007,7 +3007,7 @@ local function BuildUI()
                     playerBtn.MouseButton1Click:Connect(function()
                         if player.Character and player.Character:FindFirstChild("HumanoidRootPart") and 
                            LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                            LocalPlayer.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -3)
+                            LocalPlayer.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame
                             Notify("Player Teleport", "Teleported to " .. player.DisplayName)
                         else
                             Notify("Player Teleport", "Cannot teleport to " .. player.DisplayName .. " - Character not found")
