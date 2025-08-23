@@ -2286,31 +2286,17 @@ else
     print("XSAN: Island folder not found, using updated fallback coordinates")
     TeleportLocations.Islands = {
         -- Updated island coordinates from detector (Latest 2025)
-        ["Kohana Volcano"] = CFrame.new(-594.971252, 396.65213, 149.10907),
-        ["Crater Island"] = CFrame.new(1010.01001, 252, 5078.45117),
-        ["Kohana"] = CFrame.new(-650.971191, 208.693695, 711.10907),
-        ["Lost Isle"] = CFrame.new(-3618.15698, 240.836655, -1317.45801),
-        ["Stingray Shores"] = CFrame.new(45.2788086, 252.562927, 2987.10913),
-        ["Esoteric Depths"] = CFrame.new(1944.77881, 393.562927, 1371.35913),
-        ["Weather Machine"] = CFrame.new(-1488.51196, 83.1732635, 1876.30298),
-        ["Tropical Grove"] = CFrame.new(-2095.34106, 197.199997, 3718.08008),
-        ["Coral Reefs"] = CFrame.new(-3023.97119, 337.812927, 2195.60913),
-        -- Legacy coordinates (backup)
-        ["Moosewood"] = CFrame.new(389, 137, 264),
-        ["Ocean"] = CFrame.new(1082, 124, -924),
-        ["Snowcap Island"] = CFrame.new(2648, 140, 2522),
-        ["Mushgrove Swamp"] = CFrame.new(-1817, 138, 1808),
-        ["Roslit Bay"] = CFrame.new(-1442, 135, 1006),
-        ["Sunstone Island"] = CFrame.new(-934, 135, -1122),
-        ["Statue Of Sovereignty"] = CFrame.new(1, 140, -918),
-        ["Moonstone Island"] = CFrame.new(-3004, 135, -1157),
-        ["Forsaken Shores"] = CFrame.new(-2853, 135, 1627),
-        ["Ancient Isle"] = CFrame.new(5896, 137, 4516),
-        ["Keepers Altar"] = CFrame.new(1296, 135, -808),
-        ["Brine Pool"] = CFrame.new(-1804, 135, 3265),
-        ["The Depths"] = CFrame.new(994, -715, 1226),
-        ["Vertigo"] = CFrame.new(-111, -515, 1049),
-        ["Volcano"] = CFrame.new(-1888, 164, 330)
+        ["🏝️Kohana Volcano"] = CFrame.new(-594.971252, 396.65213, 149.10907),
+        ["🏝️Crater Island"] = CFrame.new(1010.01001, 252, 5078.45117),
+        ["🏝️Kohana"] = CFrame.new(-650.971191, 208.693695, 711.10907),
+        ["🏝️Lost Isle"] = CFrame.new(-3618.15698, 240.836655, -1317.45801),
+        ["🏝️Stingray Shores"] = CFrame.new(45.2788086, 252.562927, 2987.10913),
+        ["🏝️Esoteric Depths"] = CFrame.new(1944.77881, 393.562927, 1371.35913),
+        ["🏝️Weather Machine"] = CFrame.new(-1488.51196, 83.1732635, 1876.30298),
+        ["🏝️Tropical Grove"] = CFrame.new(-2095.34106, 197.199997, 3718.08008),
+        ["🏝️Coral Reefs"] = CFrame.new(-3023.97119, 337.812927, 2195.60913),
+        ["🎲 ENCHANT STONE"] = CFrame.new(3237.61, -1302.33, 1398.04),
+        
     }
 end
 
