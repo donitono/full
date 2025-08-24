@@ -1012,7 +1012,8 @@ local function LoadFishIdMapping()
                 print("[FishIdMapping][DEBUG] HTTP failed! resp:", resp and resp.StatusCode)
             end
         else
-            print("[FishIdMapping][DEBUG] syn or syn.request not available!")
+            print("[FishIdMapping][DEBUG] syn or syn.request not available!\nJika Anda menggunakan executor/script runner, pastikan mendukung syn.request (misal: Synapse X, Script-Ware, Fluxus, dll).\nCoba jalankan manual di console Roblox:")
+            print([[local resp = syn and syn.request and syn.request({Url="https://raw.githubusercontent.com/donitono/full/refs/heads/main/fishid_map.lua", Method="GET"}) print(resp and resp.StatusCode, resp and #resp.Body)]])
         end
     end
     if not success then
