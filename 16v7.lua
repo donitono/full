@@ -407,7 +407,7 @@ local Config = {
     autoRecastDelay = 0.4,
     safeModeChance = 85,
     secure_max_actions_per_minute = 12000000,
-    secure_detection_cooldown = 5,
+    secure_detection_cooldown = 1,
     enabled = false,
     antiAfkEnabled = false,
     enhancementEnabled = false,
@@ -1486,7 +1486,7 @@ local function AutoModeRunner(mySessionId)
             Config.autoModeEnabled = false -- Stop if remote is missing
             break
         end
-        task.wait(2.3) -- Wait for 1 second
+        task.wait(math.random(5, 15) / 10) -- random antara 0.5 sampai 2 detik
     end
     if autoModeSessionId == mySessionId then -- Only notify if it's the same session stopping
         Notify("Auto Mode", "🔥 Auto Mode Stopped.")
