@@ -1147,7 +1147,8 @@ local LocationMap = {
     ["Esoteric Depths"] = {x = 1944, z = 1371},
     ["Weather Machine"] = {x = -1488, z = 1876},
     ["Tropical Grove"] = {x = -2095, z = 3718},
-    ["Coral Reefs"] = {x = -3023, z = 2195}
+    ["Coral Reefs"] = {x = -3023, z = 2195},
+    ["Ocean"] = {x = 0, z = 7000} -- Contoh: Ocean di luar area lain, ganti x/z sesuai koordinat Ocean di game
 }
 
 -- Statistics Functions
@@ -1276,7 +1277,7 @@ local function DetectCurrentLocation()
     elseif pos.Z < 500 and pos.X < -500 then
         return "Kohana Volcano"
     else
-        return "Unknown Area"
+        return "Ocean"
     end
 end
 
