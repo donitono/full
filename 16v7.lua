@@ -1486,7 +1486,7 @@ local function AutoModeRunner(mySessionId)
             Config.autoModeEnabled = false -- Stop if remote is missing
             break
         end
-        task.wait(1) -- Wait for 1 second
+        task.wait(2.3) -- Wait for 1 second
     end
     if autoModeSessionId == mySessionId then -- Only notify if it's the same session stopping
         Notify("Auto Mode", "🔥 Auto Mode Stopped.")
