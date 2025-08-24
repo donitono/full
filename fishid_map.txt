@@ -1,4 +1,4 @@
-local fishIdToName = {
+fishIdToName = {
     [1] = "!!! Chrome Rod",
     [2] = "!!! Lucky Rod",
     [3] = "!!! Magma Rod",
