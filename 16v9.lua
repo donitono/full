@@ -828,49 +828,6 @@ local FishRarity = {
         "Yello Damselfish",
     },
     EPIC = {
-
-local fishIdToName = {}
-
--- Loader: from local file (fishid_map.lua) or HTTP (GitHub raw)
-local function LoadFishIdMapping()
-    local success = false
-    -- Try local file first
-    local ok, result = pcall(function()
-        if isfile and isfile("fishid_map.lua") then
-            for line in io.lines("fishid_map.lua") do
-                local id, name = line:match("^(%d+)%s*=%s*(.+)$")
-                if id and name then
-                    fishIdToName[tonumber(id)] = name
-                    success = true
-                end
-            end
-        end
-    end)
-    -- If not found, try HTTP (GitHub raw)
-    if not success and (syn and syn.request) then
-        local url = "https://raw.githubusercontent.com/donitono/full/refs/heads/main/fishid_map.txt"
-        local resp = syn.request({Url=url, Method="GET"})
-        if resp and resp.StatusCode == 200 and resp.Body then
-            for line in resp.Body:gmatch("[^
-\n]+") do
-                local id, name = line:match("^(%d+)%s*=%s*(.+)$")
-                if id and name then
-                    fishIdToName[tonumber(id)] = name
-                    success = true
-                end
-            end
-        end
-    end
-    if not success then
-        print("[FishIdMapping] Failed to load fishId mapping!")
-    else
-        local count = 0
-        for _ in pairs(fishIdToName) do count = count + 1 end
-        print("[FishIdMapping] Loaded fishId mapping, total:", count)
-    end
-end
-
-LoadFishIdMapping()
         "Angler Fish",
         "Astra Damsel",
         "Axolotl",
