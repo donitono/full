@@ -12,20 +12,24 @@ local RandomLocationFeature = {
 
 -- Daftar lokasi dari random spot selection.txt
 local DefaultLocations = {
-    ["🏝️ SISYPUS 1"] = CFrame.new(-3659.55, -135.08, -971.61),
-    ["🏝️ SISYPUS 2"] = CFrame.new(-3767.29, -135.08, -990.03),
+    ["🏝️ SISYPUS 1"] = CFrame.new(-3659.31, -134.14, -960.28),
+    ["🏝️ SISYPUS 2"] = CFrame.new(-3741.80, -135.08, -1011.23),
+    ["🏝️ SISYPUS 3"] = CFrame.new(-3661.10, -135.08, -979.27),
+    ["🏝️ SISYPUS 4"] = CFrame.new(-3655.97, -135.08, -930.08),
+    ["🏝️ SISYPUS 5"] = CFrame.new(-3780.20, -135.08, -929.31),
     ["🦈 TREASURE"] = CFrame.new(-3628.77, -283.35, -1638.54),
     ["❄️ ICE SPOT 1"] = CFrame.new(1990.55, 3.09, 3021.91),
-    ["❄️ ICE SPOT 2"] = CFrame.new(2069.57, 8.42, 3387.88),
-    ["❄️ ICE SPOT 3"] = CFrame.new(1795.95, 4.05, 3379.74),
+    ["❄️ ICE SPOT 2"] = CFrame.new(1757.98, 2.29, 3356.70),
+    ["❄️ ICE SPOT 3"] = CFrame.new(2158.48, 6.54, 3291.71),
+    ["❄️ ICE SPOT 4"] = CFrame.new(1820.28, 5.78, 3306.92)
     ["🌋 CRATER 1"] = CFrame.new(990.45, 21.06, 5059.85),
     ["🌋 CRATER 2"] = CFrame.new(1049.76, 48.62, 5129.69),
-    ["🌴 TROPICAL 1"] = CFrame.new(-2173.60, 53.48, 3636.23),
-    ["🌴 TROPICAL 2"] = CFrame.new(-2165.30, 7.79, 3677.91),
-    ["🌴 TROPICAL 3"] = CFrame.new(-2141.51, 54.65, 3583.64),
+    ["🌴 TROPICAL 1"] = CFrame.new(-2133.32, 53.48, 3633.69),
+    ["🌴 TROPICAL 2"] = CFrame.new(-2093.25, 6.26, 3653.81),
+    ["🌴 TROPICAL 3"] = CFrame.new(-2102.45, 4.63, 3653.77),
     ["🗿 STONE"] = CFrame.new(-2636.19, 124.87, -27.49),
-    ["⚙️ MACHINE 1"] = CFrame.new(-1480.98, 3.49, 1923.66),
-    ["⚙️ MACHINE 2"] = CFrame.new(-1613.32, 8.13, 1903.20)
+    ["⚙️ MACHINE 1"] = CFrame.new(-1518.62, 2.87, 1911.20),
+    ["⚙️ MACHINE 2"] = CFrame.new(-1532.30, 2.87, 1917.95)
 }
 
 for loc, cframe in pairs(DefaultLocations) do
