@@ -946,41 +946,57 @@ fishIdToName = {}
 local function LoadFishIdMapping()
     local success = false
     local function tryLoadFromString(src)
+        print("[FishIdMapping][DEBUG] Source preview:", (src or ""):sub(1, 120))
         local chunk, err = loadstring(src)
-        if not chunk then return false end
+        if not chunk then print("[FishIdMapping][DEBUG] loadstring error:", err) return false end
         local env = {}
         setfenv(chunk, env)
         local ok, res = pcall(chunk)
+        if not ok then print("[FishIdMapping][DEBUG] pcall error:", res) end
         if ok then
             if type(res) == "table" then
+                print("[FishIdMapping][DEBUG] Loaded as return value table.")
                 fishIdToName = res
                 return true
             end
             if type(env.fishIdToName) == "table" then
+                print("[FishIdMapping][DEBUG] Loaded as env.fishIdToName table.")
                 fishIdToName = env.fishIdToName
                 return true
             end
+            print("[FishIdMapping][DEBUG] No table found in result or env.")
         end
         return false
     end
 
     -- Try local file first (only .lua, ignore .txt)
+    print("[FishIdMapping][DEBUG] Checking isfile:", isfile and isfile("fishid_map.lua"))
     local ok, result = pcall(function()
         if isfile and isfile("fishid_map.lua") then
+            print("[FishIdMapping][DEBUG] fishid_map.lua found, opening...")
             local f = io.open("fishid_map.lua", "r")
             if f then
                 local src = f:read("*a")
                 f:close()
+                print("[FishIdMapping][DEBUG] File read, length:", #src)
                 success = tryLoadFromString(src)
+            else
+                print("[FishIdMapping][DEBUG] io.open failed!")
             end
+        else
+            print("[FishIdMapping][DEBUG] fishid_map.lua not found!")
         end
     end)
     -- If not found, try HTTP (GitHub raw)
     if not success and (syn and syn.request) then
         local url = "https://raw.githubusercontent.com/donitono/full/refs/heads/main/fishid_map.lua"
+        print("[FishIdMapping][DEBUG] Trying HTTP:", url)
         local resp = syn.request({Url=url, Method="GET"})
         if resp and resp.StatusCode == 200 and resp.Body then
+            print("[FishIdMapping][DEBUG] HTTP success, length:", #resp.Body)
             success = tryLoadFromString(resp.Body)
+        else
+            print("[FishIdMapping][DEBUG] HTTP failed! resp:", resp and resp.StatusCode)
         end
     end
     if not success then
