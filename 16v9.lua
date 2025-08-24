@@ -984,7 +984,7 @@ local function LoadFishIdMapping()
     end)
     -- If not found, try HTTP (GitHub raw)
     if not success and (syn and syn.request) then
-        local url = "https://raw.githubusercontent.com/donitono/full/refs/heads/main/fishid_map.txt"
+        local url = "https://raw.githubusercontent.com/donitono/full/refs/heads/main/fishid_map.lua"
         local resp = syn.request({Url=url, Method="GET"})
         if resp and resp.StatusCode == 200 and resp.Body then
             success = tryLoadFromString(resp.Body)
