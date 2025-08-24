@@ -3150,17 +3150,10 @@ local function BuildUI()
 
     }
 
-    -- Create island buttons (sorted by name)
-    local sortedIslandNames = {}
-    for name, _ in pairs(islandLocations) do
-        table.insert(sortedIslandNames, name)
-    end
-    table.sort(sortedIslandNames)
-
+    -- Create island buttons
     local yOffset = 5
     local buttons = {}
-    for _, islandName in ipairs(sortedIslandNames) do
-        local cframe = islandLocations[islandName]
+    for islandName, cframe in pairs(islandLocations) do
         local btn = Instance.new("TextButton", scrollFrame)
         btn.Size = UDim2.new(1, -10, 0, 28)
         btn.Position = UDim2.new(0, 5, 0, yOffset)
@@ -3170,7 +3163,7 @@ local function BuildUI()
         btn.BackgroundColor3 = Color3.fromRGB(60,120,180)
         btn.TextColor3 = Color3.fromRGB(255,255,255)
         Instance.new("UICorner", btn)
-
+        
         -- Store the CFrame for teleportation
         btn.MouseButton1Click:Connect(function()
             if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
@@ -3180,7 +3173,7 @@ local function BuildUI()
                 Notify("Teleport", "Character not found")
             end
         end)
-
+        
         table.insert(buttons, btn)
         yOffset = yOffset + 33
     end
