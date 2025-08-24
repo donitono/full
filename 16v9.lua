@@ -990,17 +990,22 @@ local function LoadFishIdMapping()
         end
     end)
     print("[FishIdMapping][DEBUG] pcall for file block:", ok, result)
-    -- If not found, try HTTP (GitHub raw)
+    -- Always try HTTP (GitHub raw) if not loaded from file
     if not success and (syn and syn.request) then
         local url = "https://raw.githubusercontent.com/donitono/full/refs/heads/main/fishid_map.lua"
         print("[FishIdMapping][DEBUG] Trying HTTP:", url)
         local resp = syn.request({Url=url, Method="GET"})
+        if resp then
+            print("[FishIdMapping][DEBUG] HTTP status:", resp.StatusCode, "body length:", resp.Body and #resp.Body)
+        end
         if resp and resp.StatusCode == 200 and resp.Body then
             print("[FishIdMapping][DEBUG] HTTP success, length:", #resp.Body)
             success = tryLoadFromString(resp.Body)
         else
             print("[FishIdMapping][DEBUG] HTTP failed! resp:", resp and resp.StatusCode)
         end
+    elseif not success then
+        print("[FishIdMapping][DEBUG] syn.request not available or failed!")
     end
     if not success then
         print("[FishIdMapping] Failed to load fishId mapping!")
