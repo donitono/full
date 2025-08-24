@@ -200,12 +200,22 @@ local FishDetection = {
 -- Event listeners untuk enhanced detection (setelah AnimationMonitor didefinisikan)
 if newFishNotificationRemote then
     newFishNotificationRemote.OnClientEvent:Connect(function(fishData)
-        if fishData and fishData.name and Dashboard and Dashboard.LogFishCatch then
-            Dashboard.LogFishCatch(fishData.name, Dashboard.sessionStats.currentLocation)
-            Notify("New Fish!", "🎣 Caught: " .. fishData.name)
-        elseif fishData and fishData.name then
-            Notify("New Fish!", "🎣 Caught: " .. fishData.name)
+        local fishName = "Unknown Fish"
+        -- Ambil nama ikan dari berbagai kemungkinan format
+        if type(fishData) == "string" then
+            fishName = fishData
+        elseif type(fishData) == "table" then
+            fishName = fishData.name or fishData.fishName or fishData.Fish or "Unknown Fish"
+        elseif type(fishData) == "number" then
+            fishName = tostring(fishData)
         end
+        -- Normalisasi nama ikan (hilangkan spasi depan/belakang, samakan huruf kecil)
+        fishName = tostring(fishName):gsub("^%s+", ""):gsub("%s+$", "")
+        -- Catat ke dashboard jika tersedia
+        if Dashboard and Dashboard.LogFishCatch then
+            Dashboard.LogFishCatch(fishName, Dashboard.sessionStats.currentLocation)
+        end
+        Notify("New Fish!", "🎣 Caught: " .. fishName)
     end)
 end
 
