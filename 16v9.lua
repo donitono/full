@@ -970,11 +970,13 @@ local function LoadFishIdMapping()
     end
 
     -- Try local file first (only .lua, ignore .txt)
-    print("[FishIdMapping][DEBUG] Checking isfile:", isfile and isfile("fishid_map.lua"))
+    local isfile_status, isfile_result = pcall(function() return isfile and isfile("fishid_map.lua") end)
+    print("[FishIdMapping][DEBUG] isfile_status:", isfile_status, "isfile_result:", isfile_result)
     local ok, result = pcall(function()
-        if isfile and isfile("fishid_map.lua") then
+        if isfile_status and isfile_result then
             print("[FishIdMapping][DEBUG] fishid_map.lua found, opening...")
-            local f = io.open("fishid_map.lua", "r")
+            local f, ferr = io.open("fishid_map.lua", "r")
+            print("[FishIdMapping][DEBUG] io.open result:", f, ferr)
             if f then
                 local src = f:read("*a")
                 f:close()
@@ -984,9 +986,10 @@ local function LoadFishIdMapping()
                 print("[FishIdMapping][DEBUG] io.open failed!")
             end
         else
-            print("[FishIdMapping][DEBUG] fishid_map.lua not found!")
+            print("[FishIdMapping][DEBUG] fishid_map.lua not found! (isfile false)")
         end
     end)
+    print("[FishIdMapping][DEBUG] pcall for file block:", ok, result)
     -- If not found, try HTTP (GitHub raw)
     if not success and (syn and syn.request) then
         local url = "https://raw.githubusercontent.com/donitono/full/refs/heads/main/fishid_map.lua"
