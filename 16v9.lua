@@ -964,17 +964,10 @@ local function LoadFishIdMapping()
         return false
     end
 
-    -- Try local file first
+    -- Try local file first (only .lua, ignore .txt)
     local ok, result = pcall(function()
         if isfile and isfile("fishid_map.lua") then
             local f = io.open("fishid_map.lua", "r")
-            if f then
-                local src = f:read("*a")
-                f:close()
-                success = tryLoadFromString(src)
-            end
-        elseif isfile and isfile("fishid_map.txt") then
-            local f = io.open("fishid_map.txt", "r")
             if f then
                 local src = f:read("*a")
                 f:close()
