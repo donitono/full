@@ -1178,10 +1178,10 @@ end
 local function LogFishCatch(fishName, location)
     local currentTime = tick()
     local rarity = GetFishRarity(fishName)
-    
+
     -- Debug: Print to confirm function is called
     print("[Dashboard] Fish caught:", fishName, "Rarity:", rarity, "Location:", location or "Unknown")
-    
+
     -- Log to main fish database
     table.insert(Dashboard.fishCaught, {
         name = fishName,
@@ -1190,9 +1190,9 @@ local function LogFishCatch(fishName, location)
         timestamp = currentTime,
         hour = tonumber(os.date("%H", currentTime))
     })
-    
-    -- Log rare fish separately
-    if rarity ~= "COMMON" then
+
+    -- Log rare fish separately (hanya MYTHIC dan SECRET)
+    if rarity == "MYTHIC" or rarity == "SECRET" then
         table.insert(Dashboard.rareFishCaught, {
             name = fishName,
             rarity = rarity,
@@ -1201,7 +1201,7 @@ local function LogFishCatch(fishName, location)
         })
         Dashboard.sessionStats.rareCount = Dashboard.sessionStats.rareCount + 1
     end
-    
+
     -- Update location stats
     local loc = location or Dashboard.sessionStats.currentLocation
     if not Dashboard.locationStats[loc] then
@@ -1209,17 +1209,18 @@ local function LogFishCatch(fishName, location)
     end
     Dashboard.locationStats[loc].total = Dashboard.locationStats[loc].total + 1
     Dashboard.locationStats[loc].lastCatch = currentTime
-    
-    if rarity ~= "COMMON" then
+
+    -- Hanya MYTHIC dan SECRET yang dihitung rare
+    if rarity == "MYTHIC" or rarity == "SECRET" then
         Dashboard.locationStats[loc].rare = Dashboard.locationStats[loc].rare + 1
     else
         Dashboard.locationStats[loc].common = Dashboard.locationStats[loc].common + 1
     end
-    
+
     -- Update session stats (REAL FISH COUNT)
     Dashboard.sessionStats.fishCount = Dashboard.sessionStats.fishCount + 1
     print("[Real Fish] Count updated:", Dashboard.sessionStats.fishCount, "Fish:", fishName)
-    
+
     -- Update heatmap data
     if LocationMap[loc] then
         local key = loc
@@ -1227,19 +1228,19 @@ local function LogFishCatch(fishName, location)
             Dashboard.heatmap[key] = {count = 0, rare = 0, efficiency = 0}
         end
         Dashboard.heatmap[key].count = Dashboard.heatmap[key].count + 1
-        if rarity ~= "COMMON" then
+        if rarity == "MYTHIC" or rarity == "SECRET" then
             Dashboard.heatmap[key].rare = Dashboard.heatmap[key].rare + 1
         end
         Dashboard.heatmap[key].efficiency = Dashboard.heatmap[key].rare / Dashboard.heatmap[key].count
     end
-    
+
     -- Update optimal times
     local hour = tonumber(os.date("%H", currentTime))
     if not Dashboard.optimalTimes[hour] then
         Dashboard.optimalTimes[hour] = {total = 0, rare = 0}
     end
     Dashboard.optimalTimes[hour].total = Dashboard.optimalTimes[hour].total + 1
-    if rarity ~= "COMMON" then
+    if rarity == "MYTHIC" or rarity == "SECRET" then
         Dashboard.optimalTimes[hour].rare = Dashboard.optimalTimes[hour].rare + 1
     end
 end
