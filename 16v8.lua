@@ -200,6 +200,12 @@ local FishDetection = {
 -- Event listeners untuk enhanced detection (setelah AnimationMonitor didefinisikan)
 if newFishNotificationRemote then
     newFishNotificationRemote.OnClientEvent:Connect(function(fishData)
+        print("[DEBUG] fishData:", fishData, "type:", type(fishData))
+        if type(fishData) == "table" then
+            for k, v in pairs(fishData) do
+                print("[DEBUG] key:", k, "value:", v)
+            end
+        end
         local fishName = "Unknown Fish"
         -- Ambil nama ikan dari berbagai kemungkinan format
         if type(fishData) == "string" then
