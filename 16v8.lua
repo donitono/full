@@ -956,11 +956,15 @@ local LocationMap = {
 }
 
 -- Statistics Functions
+local function normalizeFishName(name)
+    return string.lower(tostring(name)):gsub("^%s+", ""):gsub("%s+$", "")
+end
+
 local function GetFishRarity(fishName)
-    local nameLower = string.lower(fishName)
+    local nameNorm = normalizeFishName(fishName)
     for rarity, fishList in pairs(FishRarity) do
         for _, fish in pairs(fishList) do
-            if nameLower == string.lower(fish) then
+            if nameNorm == normalizeFishName(fish) then
                 return rarity
             end
         end
