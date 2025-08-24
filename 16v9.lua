@@ -4380,13 +4380,14 @@ local function BuildUI()
 
     -- Rarity bars (Updated for real fish data)
     local rarityTypes = {
-        {name = "MYTHIC", color = Color3.fromRGB(255,50,50), icon = "🔥"},
-        {name = "LEGENDARY", color = Color3.fromRGB(255,100,255), icon = "✨"},
-        {name = "EPIC", color = Color3.fromRGB(150,50,200), icon = "💜"},
-        {name = "RARE", color = Color3.fromRGB(100,150,255), icon = "⭐"},
-        {name = "UNCOMMON", color = Color3.fromRGB(0,255,200), icon = "💎"},
-        {name = "COMMON", color = Color3.fromRGB(150,150,150), icon = "🐟"}
-    }
+            {name = "SECRET", color = Color3.fromRGB(0,0,0), icon = "🕵️"}, -- warna dan icon bisa diganti sesuai selera
+            {name = "MYTHIC", color = Color3.fromRGB(255,50,50), icon = "🔥"},
+            {name = "LEGENDARY", color = Color3.fromRGB(255,100,255), icon = "✨"},
+            {name = "EPIC", color = Color3.fromRGB(150,50,200), icon = "💜"},
+            {name = "RARE", color = Color3.fromRGB(100,150,255), icon = "⭐"},
+            {name = "UNCOMMON", color = Color3.fromRGB(0,255,200), icon = "💎"},
+            {name = "COMMON", color = Color3.fromRGB(150,150,150), icon = "🐟"}
+        }
 
     local rarityBars = {}
     for i, rarity in ipairs(rarityTypes) do
