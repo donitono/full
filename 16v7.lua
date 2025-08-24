@@ -412,8 +412,7 @@ local Config = {
     antiAfkEnabled = false,
     enhancementEnabled = false,
     autoReconnectEnabled = false,
-    autoModeEnabled = false, -- New state for Auto Mode
-    autoModeInterval = 1,    -- Interval detik antar aksi Auto Mode (default 1 detik)
+    autoModeEnabled = false -- New state for Auto Mode
 }
 
 -- ====================================================================
@@ -1487,7 +1486,7 @@ local function AutoModeRunner(mySessionId)
             Config.autoModeEnabled = false -- Stop if remote is missing
             break
         end
-        task.wait(Config.autoModeInterval or 1) -- Pakai interval dari config
+        task.wait(1) -- Wait for 1 second
     end
     if autoModeSessionId == mySessionId then -- Only notify if it's the same session stopping
         Notify("Auto Mode", "🔥 Auto Mode Stopped.")
@@ -4499,18 +4498,6 @@ local function BuildUI()
         autoModeStatus.TextColor3 = Color3.fromRGB(220, 70, 70)
     end)
 
-    -- UI: Tombol - dan + untuk mengatur interval Auto Mode
-    autoModeIntervalMinusBtn.MouseButton1Click:Connect(function()
-        Config.autoModeInterval = math.max(0.1, (Config.autoModeInterval or 1) - 0.1)
-        autoModeIntervalLabel.Text = string.format("Interval: %.1f detik", Config.autoModeInterval)
-    end)
-    autoModeIntervalPlusBtn.MouseButton1Click:Connect(function()
-        Config.autoModeInterval = math.min(10, (Config.autoModeInterval or 1) + 0.1)
-        autoModeIntervalLabel.Text = string.format("Interval: %.1f detik", Config.autoModeInterval)
-    end)
-    -- Inisialisasi label interval
-    autoModeIntervalLabel.Text = string.format("Interval: %.1f detik", Config.autoModeInterval or 1)
-
     -- AntiAFK toggle
     antiAfkToggle.MouseButton1Click:Connect(function()
         AntiAFK.enabled = not AntiAFK.enabled
@@ -4702,9 +4689,7 @@ local function BuildUI()
             
             yPos = yPos + 30
         end
-        if locationList.CanvasSize.Y.Offset ~= yPos then
-            locationList.CanvasSize = UDim2.new(0, 0, 0, yPos)
-        end
+        locationList.CanvasSize = UDim2.new(0, 0, 0, yPos)
         
         -- Update optimal times
         local bestHour, bestPercent = GetBestFishingTime()
