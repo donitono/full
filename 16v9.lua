@@ -941,92 +941,202 @@ local FishRarity = {
         "Zoster Butterfly",
     },
 }
--- Ensure fishIdToName is always a table
-fishIdToName = {}
-local function LoadFishIdMapping()
-    local success = false
-    local function tryLoadFromString(src)
-        print("[FishIdMapping][DEBUG] Source preview:", (src or ""):sub(1, 120))
-        local chunk, err = loadstring(src)
-        if not chunk then print("[FishIdMapping][DEBUG] loadstring error:", err) return false end
-        local env = {}
-        setfenv(chunk, env)
-        local ok, res = pcall(chunk)
-        if not ok then print("[FishIdMapping][DEBUG] pcall error:", res) end
-        if ok then
-            if type(res) == "table" then
-                print("[FishIdMapping][DEBUG] Loaded as return value table.")
-                fishIdToName = res
-                return true
-            end
-            if type(env.fishIdToName) == "table" then
-                print("[FishIdMapping][DEBUG] Loaded as env.fishIdToName table.")
-                fishIdToName = env.fishIdToName
-                return true
-            end
-            print("[FishIdMapping][DEBUG] No table found in result or env.")
-        end
-        return false
-    end
-
-    -- Try local file first (only .lua, ignore .txt)
-    local isfile_status, isfile_result = pcall(function() return isfile and isfile("fishid_map.lua") end)
-    print("[FishIdMapping][DEBUG] isfile_status:", isfile_status, "isfile_result:", isfile_result)
-    local ok, result = pcall(function()
-        if isfile_status and isfile_result then
-            print("[FishIdMapping][DEBUG] fishid_map.lua found, opening...")
-            local f, ferr = io.open("fishid_map.lua", "r")
-            print("[FishIdMapping][DEBUG] io.open result:", f, ferr)
-            if f then
-                local src = f:read("*a")
-                f:close()
-                print("[FishIdMapping][DEBUG] File read, length:", #src)
-                success = tryLoadFromString(src)
-            else
-                print("[FishIdMapping][DEBUG] io.open failed!")
-            end
-        else
-            print("[FishIdMapping][DEBUG] fishid_map.lua not found! (isfile false)")
-        end
-    end)
-    print("[FishIdMapping][DEBUG] pcall for file block:", ok, result)
-    -- Always try HTTP (GitHub raw) if not loaded from file
-    if not success then
-        if syn and syn.request then
-            local url = "https://raw.githubusercontent.com/donitono/full/refs/heads/main/fishid_map.lua"
-            print("[FishIdMapping][DEBUG] Trying HTTP:", url)
-            local resp = nil
-            local ok_http, err_http = pcall(function()
-                resp = syn.request({Url=url, Method="GET"})
-            end)
-            print("[FishIdMapping][DEBUG] HTTP pcall:", ok_http, err_http)
-            if resp then
-                print("[FishIdMapping][DEBUG] HTTP status:", resp.StatusCode, "body length:", resp.Body and #resp.Body)
-            else
-                print("[FishIdMapping][DEBUG] HTTP resp is nil!")
-            end
-            if resp and resp.StatusCode == 200 and resp.Body then
-                print("[FishIdMapping][DEBUG] HTTP success, length:", #resp.Body)
-                success = tryLoadFromString(resp.Body)
-            else
-                print("[FishIdMapping][DEBUG] HTTP failed! resp:", resp and resp.StatusCode)
-            end
-        else
-            print("[FishIdMapping][DEBUG] syn or syn.request not available!\nJika Anda menggunakan executor/script runner, pastikan mendukung syn.request (misal: Synapse X, Script-Ware, Fluxus, dll).\nCoba jalankan manual di console Roblox:")
-            print([[local resp = syn and syn.request and syn.request({Url="https://raw.githubusercontent.com/donitono/full/refs/heads/main/fishid_map.lua", Method="GET"}) print(resp and resp.StatusCode, resp and #resp.Body)]])
-        end
-    end
-    if not success then
-        print("[FishIdMapping] Failed to load fishId mapping!")
-        fishIdToName = {} -- Always set to table to avoid nil
-    else
-        local count = 0
-        for _ in pairs(fishIdToName) do count = count + 1 end
-        print("[FishIdMapping] Loaded fishId mapping, total:", count)
-    end
-end
-
-LoadFishIdMapping()
+-- Paste fishIdToName table di bawah ini:
+fishIdToName = {
+    -- contoh:
+   [1] = "!!! Chrome Rod",
+    [2] = "!!! Lucky Rod",
+    [3] = "!!! Magma Rod",
+    [4] = "!!! Starter Rod",
+    [5] = "!!! Steampunk Rod",
+    [6] = "!!! Hyper Rod",
+    [7] = "!!! Gold Rod",
+    [8] = "Super Enchant Stone",
+    [9] = "!!! Lava Rod",
+    [10] = "Reef Chromis",
+    [11] = "Abyss Seahorse",
+    [12] = "Ash Basslet",
+    [13] = "Astra Damsel",
+    [14] = "Azure Damsel",
+    [15] = "Banded Butterfly",
+    [16] = "Blue Lobster",
+    [17] = "Blueflame Ray",
+    [18] = "Boa Angelfish",
+    [19] = "Bumblebee Grouper",
+    [20] = "Candy Butterfly",
+    [21] = "Charmed Tang",
+    [22] = "Chrome Tuna",
+    [23] = "Clownfish",
+    [24] = "Coal Tang",
+    [25] = "Copperband Butterfly",
+    [26] = "Corazon Damsel",
+    [27] = "Cow Clownfish",
+    [28] = "Darwin Clownfish",
+    [29] = "Domino Damsel",
+    [30] = "Dorhey Tang",
+    [31] = "Dotted Stingray",
+    [32] = "Enchant Stone",
+    [33] = "Enchanted Angelfish",
+    [34] = "Fire Goby",
+    [35] = "Firecoal Damsel",
+    [36] = "Flame Angelfish",
+    [37] = "Greenbee Grouper",
+    [38] = "Hammerhead Shark",
+    [39] = "Hawks Turtle",
+    [40] = "Starjam Tang",
+    [41] = "Jennifer Dottyback",
+    [42] = "Jewel Tang",
+    [43] = "Kau Cardinal",
+    [44] = "Korean Angelfish",
+    [45] = "Lavafin Tuna",
+    [46] = "Lobster",
+    [47] = "Loggerhead Turtle",
+    [48] = "Longnose Butterfly",
+    [49] = "Magic Tang",
+    [50] = "Magma Goby",
+    [51] = "Manta Ray",
+    [52] = "Maroon Butterfly",
+    [53] = "Maze Angelfish",
+    [54] = "Moorish Idol",
+    [55] = "DEC24 - Wood Plaque",
+    [56] = "Bandit Angelfish",
+    [57] = "Zoster Butterfly",
+    [58] = "Orangy Goby",
+    [59] = "Panther Grouper",
+    [60] = "Prismy Seahorse",
+    [61] = "Scissortail Dartfish",
+    [62] = "Shrimp Goby",
+    [63] = "Skunk Tilefish",
+    [64] = "Specked Butterfly",
+    [65] = "Strawberry Dotty",
+    [66] = "Sushi Cardinal",
+    [67] = "Tricolore Butterfly",
+    [68] = "Unicorn Tang",
+    [69] = "Vintage Blue Tang",
+    [70] = "Vintage Damsel",
+    [71] = "Volcanic Basslet",
+    [72] = "White Clownfish",
+    [73] = "Yello Damselfish",
+    [74] = "Yellowfin Tuna",
+    [75] = "Yellowstate Angelfish",
+    [76] = "!!! Carbon Rod",
+    [77] = "!!! Gingerbread Rod",
+    [78] = "!!! Ice Rod",
+    [79] = "!!! Luck Rod",
+    [80] = "!!! Midnight Rod",
+    [81] = "Fishing Radar",
+    [82] = "Salmon",
+    [83] = "Blob Shark",
+    [84] = "!!! Toy Rod",
+    [85] = "!!! Grass Rod",
+    [86] = "Volsail Tang",
+    [87] = "Rockform Cardianl",
+    [88] = "Lava Butterfly",
+    [89] = "Slurpfish Chromis",
+    [90] = "Festive Goby",
+    [91] = "Mistletoe Damsel",
+    [92] = "Gingerbread Tang",
+    [93] = "Great Christmas Whale",
+    [94] = "Gingerbread Clownfish",
+    [95] = "Gingerbread Turtle",
+    [96] = "Gingerbread Shark",
+    [97] = "Christmastree Longnose",
+    [98] = "Candycane Lobster",
+    [99] = "Festive Pufferfish",
+    [100] = "!!! Candy Cane Rod",
+    [101] = "!!! Christmas Tree Rod",
+    [102] = "!!! Demascus Rod",
+    [103] = "!!! Frozen Rod",
+    [104] = "Christmas Trophy 2024",
+    [105] = "!!! Abyssal Chroma",
+    [106] = "Blue-Banded Goby",
+    [107] = "Blumato Clownfish",
+    [108] = "Conspi Angelfish",
+    [109] = "Fade Tang",
+    [110] = "Lined Cardinal Fish",
+    [111] = "Masked Angelfish",
+    [112] = "Pygmy Goby",
+    [113] = "Sail Tang",
+    [114] = "Watanabei Angelfish",
+    [115] = "White Tang",
+    [116] = "DEC24 - Sapphire Plaque",
+    [117] = "DEC24 - Silver Plaque",
+    [118] = "DEC24 - Golden Plaque",
+    [119] = "Ballina Angelfish",
+    [120] = "!!! Cute Rod",
+    [121] = "Bleekers Damsel",
+    [122] = "Loving Shark",
+    [123] = "Pink Smith Damsel",
+    [124] = "!!! Angelic Rod",
+    [125] = "!!! Astral Rod",
+    [126] = "!!! Ares Rod",
+    [127] = "!!! Ghoul Rod",
+    [128] = "!!! Forsaken",
+    [129] = "!!! Red Matter",
+    [130] = "!!! Lightsaber",
+    [131] = "!!! Crystalized",
+    [132] = "!!! Earthly",
+    [133] = "!!! Neptune's Trident",
+    [134] = "!!! Polarized",
+    [135] = "Axolotl",
+    [136] = "Silver Tuna",
+    [137] = "Pilot Fish",
+    [138] = "Patriot Tang",
+    [139] = "Frostborn Shark",
+    [140] = "Plasma Shark",
+    [141] = "Pufferfish",
+    [142] = "Racoon Butterfly Fish",
+    [143] = "Orange Basslet",
+    [144] = "Strippled Seahorse",
+    [145] = "Thresher Shark",
+    [146] = "Great Whale",
+    [147] = "!!! Monochrome",
+    [148] = "Worm Fish",
+    [149] = "Viperfish",
+    [150] = "Deep Sea Crab",
+    [151] = "Spotted Lantern Fish",
+    [152] = "Robot Kraken",
+    [153] = "Monk Fish",
+    [154] = "King Crab",
+    [155] = "Jellyfish",
+    [156] = "Giant Squid",
+    [157] = "Fangtooth",
+    [158] = "Electric Eel",
+    [159] = "Vampire Squid",
+    [160] = "Dark Eel",
+    [161] = "Boar Fish",
+    [162] = "Blob Fish",
+    [163] = "Angler Fish",
+    [164] = "Dead Fish",
+    [165] = "Skeleton Fish",
+    [166] = "Swordfish",
+    [167] = "!!! Lightning",
+    [168] = "!!! Loving",
+    [169] = "!!! Aqua Prism",
+    [170] = "!!! Aquatic",
+    [171] = "!!! Blossom",
+    [172] = "!!! Heavenly",
+    [173] = "Diving Gear",
+    [174] = "!!! Angler Rod",
+    [175] = "Ghost Worm Fish",
+    [176] = "Ghost Shark",
+    [177] = "Rockfish",
+    [178] = "!!! Aether Shard",
+    [179] = "!!! Flower Garden",
+    [180] = "Sheepshead Fish",
+    [181] = "!!! Amber",
+    [182] = "Blackcap Basslet",
+    [183] = "Catfish",
+    [184] = "Coney Fish",
+    [185] = "Hermit Crab",
+    [186] = "Parrot Fish",
+    [187] = "Queen Crab",
+    [188] = "Red Snapper",
+    [189] = "!!! Jelly",
+    [190] = "!!! Ghostfinn Rod",
+    [191] = "!!! Cursed",
+    -- dst, copy seluruh isi fishid_map.lua Anda di sini
+}
 -- Location mapping for heatmap
 local LocationMap = {
     ["Kohana Volcano"] = {x = -594, z = 149},
