@@ -2539,37 +2539,6 @@ local function BuildUI()
     autoModeStatus.BackgroundTransparency = 1
     autoModeStatus.TextXAlignment = Enum.TextXAlignment.Center
 
-    -- Tombol - dan + serta label interval
-    local autoModeIntervalMinusBtn = Instance.new("TextButton", autoModeSection)
-    autoModeIntervalMinusBtn.Size = UDim2.new(0, 32, 0, 24)
-    autoModeIntervalMinusBtn.Position = UDim2.new(0, 30, 0, 110)
-    autoModeIntervalMinusBtn.Text = "-"
-    autoModeIntervalMinusBtn.Font = Enum.Font.GothamBold
-    autoModeIntervalMinusBtn.TextSize = 18
-    autoModeIntervalMinusBtn.BackgroundColor3 = Color3.fromRGB(60,60,60)
-    autoModeIntervalMinusBtn.TextColor3 = Color3.fromRGB(255,255,255)
-    Instance.new("UICorner", autoModeIntervalMinusBtn)
-
-    local autoModeIntervalPlusBtn = Instance.new("TextButton", autoModeSection)
-    autoModeIntervalPlusBtn.Size = UDim2.new(0, 32, 0, 24)
-    autoModeIntervalPlusBtn.Position = UDim2.new(0, 180, 0, 110)
-    autoModeIntervalPlusBtn.Text = "+"
-    autoModeIntervalPlusBtn.Font = Enum.Font.GothamBold
-    autoModeIntervalPlusBtn.TextSize = 18
-    autoModeIntervalPlusBtn.BackgroundColor3 = Color3.fromRGB(60,60,60)
-    autoModeIntervalPlusBtn.TextColor3 = Color3.fromRGB(255,255,255)
-    Instance.new("UICorner", autoModeIntervalPlusBtn)
-
-    local autoModeIntervalLabel = Instance.new("TextLabel", autoModeSection)
-    autoModeIntervalLabel.Size = UDim2.new(0, 100, 0, 24)
-    autoModeIntervalLabel.Position = UDim2.new(0, 70, 0, 110)
-    autoModeIntervalLabel.Text = string.format("Interval: %.1f detik", Config.autoModeInterval or 1)
-    autoModeIntervalLabel.Font = Enum.Font.GothamSemibold
-    autoModeIntervalLabel.TextSize = 12
-    autoModeIntervalLabel.BackgroundTransparency = 1
-    autoModeIntervalLabel.TextColor3 = Color3.fromRGB(255,255,255)
-    autoModeIntervalLabel.TextXAlignment = Enum.TextXAlignment.Center
-
     -- AntiAFK Section in Fishing AI Tab
     local antiAfkSection = Instance.new("Frame", fishingAIScrollFrame)
     antiAfkSection.Size = UDim2.new(1, -10, 0, 60)
