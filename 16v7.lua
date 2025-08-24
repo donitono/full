@@ -405,7 +405,7 @@ end
 local Config = {
     mode = "smart",  -- Default to smart mode
     autoRecastDelay = 0.4,
-    safeModeChance = 70,
+    safeModeChance = 85,
     secure_max_actions_per_minute = 12000000,
     secure_detection_cooldown = 5,
     enabled = false,
@@ -1750,7 +1750,7 @@ local function DoSmartCycle()
     AnimationMonitor.currentState = "charging"
     FixRodOrientation() -- Fix during charging phase (critical!)
     
-    local usePerfect = math.random(1,100) <= Config.safeModeChance
+    local usePerfect = math.random(85,100) <= Config.safeModeChance
     local timestamp = usePerfect and GetServerTime() or GetServerTime() + math.random()*0.5
     
     if rodRemote and rodRemote:IsA("RemoteFunction") then 
