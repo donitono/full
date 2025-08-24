@@ -35,9 +35,15 @@ RandomLocationFeature.cframes = DefaultLocations
 
 -- UI builder (parent = Tab Fitur frame)
 function RandomLocationFeature.CreateUI(parent)
+    local numLocations = 0
+    for _ in pairs(RandomLocationFeature.locations) do
+        numLocations = numLocations + 1
+    end
+    local calculatedHeight = 95 + (numLocations * 24)
+
     local section = Instance.new("Frame", parent)
-    section.Size = UDim2.new(1, -10, 0, 320)
-    section.Position = UDim2.new(0, 5, 0, 30) -- Tambah jarak vertikal agar tidak menempel
+    section.Size = UDim2.new(1, -10, 0, calculatedHeight)
+    section.Position = UDim2.new(0, 5, 0, 30) 
     section.BackgroundColor3 = Color3.fromRGB(45,45,52)
     section.BorderSizePixel = 0
     Instance.new("UICorner", section)
@@ -82,23 +88,24 @@ function RandomLocationFeature.CreateUI(parent)
         end
     end)
 
-    -- Daftar lokasi dengan toggle
-    -- Daftar lokasi dengan toggle
+    -- Daftar lokasi dengan toggle (Checkbox style)
     local y = 95
     for loc, on in pairs(RandomLocationFeature.locations) do
         local cb = Instance.new("TextButton", section)
         cb.Size = UDim2.new(0.8, 0, 0, 20)
         cb.Position = UDim2.new(0, 10, 0, y)
-        cb.Text = (on and "[ON] " or "[OFF] ") .. loc
+        cb.Text = (on and "[✓] " or "[ ] ") .. loc
         cb.Font = Enum.Font.Gotham
         cb.TextSize = 12
-        cb.TextColor3 = on and Color3.fromRGB(100,255,100) or Color3.fromRGB(255,100,100)
+        cb.TextColor3 = on and Color3.fromRGB(100,255,100) or Color3.fromRGB(200,200,200)
         cb.BackgroundColor3 = Color3.fromRGB(35,35,42)
+        cb.TextXAlignment = Enum.TextXAlignment.Left
         Instance.new("UICorner", cb)
         cb.MouseButton1Click:Connect(function()
             RandomLocationFeature.locations[loc] = not RandomLocationFeature.locations[loc]
-            cb.Text = (RandomLocationFeature.locations[loc] and "[ON] " or "[OFF] ") .. loc
-            cb.TextColor3 = RandomLocationFeature.locations[loc] and Color3.fromRGB(100,255,100) or Color3.fromRGB(255,100,100)
+            local state = RandomLocationFeature.locations[loc]
+            cb.Text = (state and "[✓] " or "[ ] ") .. loc
+            cb.TextColor3 = state and Color3.fromRGB(100,255,100) or Color3.fromRGB(200,200,200)
         end)
         y = y + 24
     end
