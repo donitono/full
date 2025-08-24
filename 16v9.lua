@@ -941,63 +941,66 @@ local FishRarity = {
         "Zoster Butterfly",
     },
 }
+-- Ensure fishIdToName is always a table
+fishIdToName = {}
 local function LoadFishIdMapping()
-            local success = false
-            local function tryLoadFromString(src)
-                local chunk, err = loadstring(src)
-                if not chunk then return false end
-                local env = {}
-                setfenv(chunk, env)
-                local ok, res = pcall(chunk)
-                if ok then
-                    if type(res) == "table" then
-                        fishIdToName = res
-                        return true
-                    end
-                    if type(env.fishIdToName) == "table" then
-                        fishIdToName = env.fishIdToName
-                        return true
-                    end
-                end
-                return false
+    local success = false
+    local function tryLoadFromString(src)
+        local chunk, err = loadstring(src)
+        if not chunk then return false end
+        local env = {}
+        setfenv(chunk, env)
+        local ok, res = pcall(chunk)
+        if ok then
+            if type(res) == "table" then
+                fishIdToName = res
+                return true
             end
-
-            -- Try local file first
-            local ok, result = pcall(function()
-                if isfile and isfile("fishid_map.lua") then
-                    local f = io.open("fishid_map.lua", "r")
-                    if f then
-                        local src = f:read("*a")
-                        f:close()
-                        success = tryLoadFromString(src)
-                    end
-                elseif isfile and isfile("fishid_map.txt") then
-                    local f = io.open("fishid_map.txt", "r")
-                    if f then
-                        local src = f:read("*a")
-                        f:close()
-                        success = tryLoadFromString(src)
-                    end
-                end
-            end)
-            -- If not found, try HTTP (GitHub raw)
-            if not success and (syn and syn.request) then
-                local url = "https://raw.githubusercontent.com/donitono/full/refs/heads/main/fishid_map.txt"
-                local resp = syn.request({Url=url, Method="GET"})
-                if resp and resp.StatusCode == 200 and resp.Body then
-                    success = tryLoadFromString(resp.Body)
-                end
-            end
-            if not success then
-                print("[FishIdMapping] Failed to load fishId mapping!")
-            else
-                local count = 0
-                for _ in pairs(fishIdToName) do count = count + 1 end
-                print("[FishIdMapping] Loaded fishId mapping, total:", count)
+            if type(env.fishIdToName) == "table" then
+                fishIdToName = env.fishIdToName
+                return true
             end
         end
+        return false
+    end
 
-        LoadFishIdMapping()
+    -- Try local file first
+    local ok, result = pcall(function()
+        if isfile and isfile("fishid_map.lua") then
+            local f = io.open("fishid_map.lua", "r")
+            if f then
+                local src = f:read("*a")
+                f:close()
+                success = tryLoadFromString(src)
+            end
+        elseif isfile and isfile("fishid_map.txt") then
+            local f = io.open("fishid_map.txt", "r")
+            if f then
+                local src = f:read("*a")
+                f:close()
+                success = tryLoadFromString(src)
+            end
+        end
+    end)
+    -- If not found, try HTTP (GitHub raw)
+    if not success and (syn and syn.request) then
+        local url = "https://raw.githubusercontent.com/donitono/full/refs/heads/main/fishid_map.txt"
+        local resp = syn.request({Url=url, Method="GET"})
+        if resp and resp.StatusCode == 200 and resp.Body then
+            success = tryLoadFromString(resp.Body)
+        end
+    end
+    if not success then
+        print("[FishIdMapping] Failed to load fishId mapping!")
+        fishIdToName = {} -- Always set to table to avoid nil
+    else
+        local count = 0
+        for _ in pairs(fishIdToName) do count = count + 1 end
+        print("[FishIdMapping] Loaded fishId mapping, total:", count)
+    end
+end
+
+LoadFishIdMapping()
 -- Location mapping for heatmap
 local LocationMap = {
     ["Kohana Volcano"] = {x = -594, z = 149},
@@ -1226,9 +1229,14 @@ local function SetupFishCaughtListener()
                 fishName = fishData
             end
 
-            -- If fishName is a number (fishId), map to name
-            if tonumber(fishName) and fishIdToName[tonumber(fishName)] then
-                fishName = fishIdToName[tonumber(fishName)]
+            -- If fishName is a number (fishId), map to name (safe)
+            if tonumber(fishName) and type(fishIdToName) == "table" then
+                local mapped = fishIdToName[tonumber(fishName)]
+                if mapped then
+                    fishName = mapped
+                else
+                    print("[FishIdMapping] fishIdToName missing key:", fishName)
+                end
             end
 
             print("[Dashboard] Real fish caught via event:", fishName, "at", location)
