@@ -94,7 +94,13 @@ function RandomLocationFeature.CreateUI(parent)
 
     -- Daftar lokasi dengan toggle (Checkbox style)
     local y = 95
-    for loc, on in pairs(RandomLocationFeature.locations) do
+    local locationNames = {}
+    for loc in pairs(RandomLocationFeature.locations) do
+        table.insert(locationNames, loc)
+    end
+    table.sort(locationNames)
+    for _, loc in ipairs(locationNames) do
+        local on = RandomLocationFeature.locations[loc]
         local cb = Instance.new("TextButton", section)
         cb.Size = UDim2.new(0.8, 0, 0, 20)
         cb.Position = UDim2.new(0, 10, 0, y)
@@ -156,9 +162,7 @@ function RandomLocationFeature.Start()
                     _G.TeleportTo(cframe)
                 elseif game.Players and game.Players.LocalPlayer and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
                     if cframe and typeof(cframe) == "CFrame" then
-                        local pos = cframe.Position
-                        local newCFrame = CFrame.new(pos, pos + Vector3.new(0, 0, 1)) -- menghadap ke depan (Z+)
-                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = newCFrame
+                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = cframe
                     end
                 end
             end
